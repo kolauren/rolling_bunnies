@@ -120,5 +120,3 @@ $.extend(true, c.DependencyWheel.prototype, {
     return edges;
   }
 });
-
-g.dependencyWheel = new c.DependencyWheel({ selector: "#main", json: "test1.json" });
