@@ -13,20 +13,23 @@ import org.json.XML;
 
 public class Converter {
 
-	public static void main(String[] args) throws IOException {
-		File file = new File("C:\\Users\\rchon_000\\Desktop\\Fennec Dependency.xml");
-		InputStream inputStream = new FileInputStream(file);
-		StringBuilder builder = new StringBuilder();
-		
-		int pointer = 0;
-		
-		while ((pointer = inputStream.read()) != -1) {
-			builder.append((char) pointer);
-		}
-		
-		String xml = builder.toString();
+	public static void main(String[] args) {
+		File file = new File(args[0]);
 		
 		try {
+			InputStream inputStream = new FileInputStream(file);
+			StringBuilder builder = new StringBuilder();
+			
+			int pointer = 0;
+			
+			while ((pointer = inputStream.read()) != -1) {
+				builder.append((char) pointer);
+			}
+			
+			String xml = builder.toString();
+			
+			inputStream.close();
+			
 			JSONObject json = XML.toJSONObject(xml);
 			JSONObject customJSON = new JSONObject();
 
@@ -81,9 +84,11 @@ public class Converter {
 			String indentedJSON = customJSON.toString(4);
 			System.out.println(indentedJSON);
 			
-			PrintStream output = new PrintStream(new FileOutputStream("C:\\Users\\rchon_000\\Desktop\\out.txt"));
+			PrintStream output = new PrintStream(new FileOutputStream(args[1]));
 			output.println(indentedJSON);
 			output.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
