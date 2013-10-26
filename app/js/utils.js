@@ -1,3 +1,8 @@
+// global variables
+var g = g || {};
+// global classes
+var c = c || {};
+
 /**
  * Singleton class for all utils
  *
