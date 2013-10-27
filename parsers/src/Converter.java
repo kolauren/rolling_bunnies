@@ -50,7 +50,7 @@ public class Converter {
 				// Getting the name of the current child.
 				temp.put("name", ((JSONObject) projectClassArray.get(i)).get("name"));
 				
-				System.out.println(((JSONObject) projectClassArray.get(i)).get("name"));
+				// System.out.println(((JSONObject) projectClassArray.get(i)).get("name"));
 				
 				if (((JSONObject) projectClassArray.get(i)).has("reference")) {
 					if (((JSONObject) projectClassArray.get(i)).get("reference").getClass().equals(JSONArray.class)) {
@@ -82,7 +82,7 @@ public class Converter {
 			customJSON.put("children", children);
 			
 			String indentedJSON = customJSON.toString(4);
-			System.out.println(indentedJSON);
+			// System.out.println(indentedJSON);
 			
 			PrintStream output = new PrintStream(new FileOutputStream(args[1]));
 			output.println(indentedJSON);
