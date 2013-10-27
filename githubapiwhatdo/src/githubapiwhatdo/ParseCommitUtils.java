@@ -8,6 +8,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
 
+/**
+ * A parser for the github commit json.
+ * 
+ * This class is a workaround for egit's inability to fetch files from a commit
+ * @author p
+ *
+ */
 public class ParseCommitUtils {
 	//commit json objects
 	public static String COMMIT_FILES = "files";
@@ -18,6 +25,7 @@ public class ParseCommitUtils {
 		MODIFIED("modified"),
 		ADDED("added"),
 		REMOVED("removed"),
+		RENAMED("renamed"),
 		INVALID("otters");
 		
 		private String statusName;
@@ -33,6 +41,8 @@ public class ParseCommitUtils {
 				return ADDED;
 			else if(status.equals(REMOVED.statusName))
 				return REMOVED;
+			else if(status.equals(RENAMED.statusName))
+				return RENAMED;
 			else
 				return INVALID;
 		}
@@ -42,15 +52,25 @@ public class ParseCommitUtils {
 		}
 	}
 	
-	//parses json commit for java files
+	/**
+	 * parses json commit for java files
+	 * 
+	 * returns null if the map is empty since we are not interested in commits with no java file changes
+	 * 
+	 * @param jsonCommit
+	 * @return
+	 * @throws IOException
+	 */
 	public static Map<String, List<String>> getJavaFileNames(String jsonCommit) throws IOException {
 		List<String> modified = Lists.newArrayList();
 		List<String> added = Lists.newArrayList();
 		List<String> removed = Lists.newArrayList();
+		List<String> renamed = Lists.newArrayList();
 		Map<String, List<String>> files = Maps.newHashMap();
 		files.put(CommitFileStatus.ADDED.getName(), added);
 		files.put(CommitFileStatus.MODIFIED.getName(), modified);
 		files.put(CommitFileStatus.REMOVED.getName(), removed);
+		files.put(CommitFileStatus.RENAMED.getName(), renamed);
 		
 		JsonParser jsonParser = new JsonParser();
 		JsonObject jsonObj = jsonParser.parse(jsonCommit).getAsJsonObject();
@@ -72,13 +92,19 @@ public class ParseCommitUtils {
 					case REMOVED:
 						removed.add(filename); 
 						break;
-					case INVALID:
-						throw new IOException("Commit file status is: "+status);
+					case RENAMED:
+						renamed.add(filename);
+						break;
+					default:
+						throw new Error("Commit file status is: "+status+"\n");
 				}
 				
 			}
 		}
-
+		
+		if(modified.isEmpty() && added.isEmpty() && removed.isEmpty() && renamed.isEmpty())
+			files = null;
+		
 		return files;
 	}
 }

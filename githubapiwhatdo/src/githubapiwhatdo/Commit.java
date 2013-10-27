@@ -2,22 +2,21 @@ package githubapiwhatdo;
 
 import java.util.List;
 
-import org.eclipse.egit.github.core.RepositoryCommit;
 
 //commit data we're interested in for our visualization
 public class Commit {
-	private RepositoryCommit githubCommit;
-	private String id;
+	private int commitNumber;
 	private List<String> addedJavaFiles;
 	private List<String> removedJavaFiles;
 	private List<String> modifiedJavaFiles;
+	private List<String> renamedJavaFiles;
 	
-	public RepositoryCommit getGithubCommit() {
-		return githubCommit;
+	public List<String> getRenamedJavaFiles() {
+		return renamedJavaFiles;
 	}
 	
-	public String getId() {
-		return id;
+	public int getCommitNumber() {
+		return commitNumber;
 	}
 	
 	public List<String> getAddedJavaFiles() {
@@ -32,12 +31,8 @@ public class Commit {
 		return removedJavaFiles;
 	}
 	
-	public void setGithubCommit(RepositoryCommit githubCommit) {
-		this.githubCommit = githubCommit;
-	}
-	
-	public void setId(String id) {
-		this.id = id;
+	public void setCommitNumber(int commitNumber) {
+		this.commitNumber = commitNumber;
 	}
 	
 	public void setAddedJavaFiles(List<String> addedJavaFiles) {
@@ -50,5 +45,9 @@ public class Commit {
 	
 	public void setRemovedJavaFiles(List<String> removedJavaFiles) {
 		this.removedJavaFiles = removedJavaFiles;
+	}
+	
+	public void setRenamedJavaFiles(List<String> renamedJavaFiles) {
+		this.renamedJavaFiles = renamedJavaFiles;
 	}
 }

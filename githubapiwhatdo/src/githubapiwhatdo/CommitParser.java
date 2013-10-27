@@ -16,7 +16,7 @@ public class CommitParser {
 	}
 	
 	// parses a commit to JSON
-	public String commitToJSON(Commit c) {
+	public static String commitToJSON(Commit c) {
 		Gson gson = new Gson();
 		return gson.toJson(c);
 	}

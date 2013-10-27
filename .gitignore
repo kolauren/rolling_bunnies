@@ -47,3 +47,6 @@ local.properties
 *.jar
 *.war
 *.ear
+
+# 410 output #
+*_commits.json
