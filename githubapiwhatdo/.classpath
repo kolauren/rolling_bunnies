@@ -5,13 +5,9 @@
 	<classpathentry kind="lib" path="libs/commons-codec-1.8.jar"/>
 	<classpathentry kind="lib" path="libs/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="libs/commons-lang3-3.1.jar"/>
-	<classpathentry kind="lib" path="libs/org.eclipse.egit.github.core-2.1.5.jar">
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="libs/gson-2.2.4.jar"/>
 	<classpathentry kind="lib" path="libs/guava-15.0.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.egit.github.core-2.1.5.jar"/>
-	<classpathentry kind="lib" path="libs/gson-2.2.4.jar"/>
-	<classpathentry kind="lib" path="libs/guava-15.0.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="libs/github-api-1.44.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

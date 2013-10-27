@@ -20,7 +20,7 @@ public class CommitParserTest {
 		CommitParser commitParser = new CommitParser();
 		
 		Commit c = new Commit();
-		c.setCommitNumber(1);
+		c.setId("1");
 		c.setAddedJavaFiles(Arrays.asList("class1.java", "class2.java", "class6.java"));
 		c.setModifiedJavaFiles(Arrays.asList("class2.java", "class6.java"));
 		c.setRemovedJavaFiles(Arrays.asList("class0.java"));

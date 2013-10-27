@@ -1,7 +1,9 @@
 package githubapiwhatdo;
 
 import java.util.List;
+
 import org.eclipse.egit.github.core.RepositoryCommit;
+
 import com.google.gson.Gson;
 
 public class CommitParser {

@@ -7,7 +7,7 @@ import org.eclipse.egit.github.core.RepositoryCommit;
 //commit data we're interested in for our visualization
 public class Commit {
 	private RepositoryCommit githubCommit;
-	private int commitNumber;
+	private String id;
 	private List<String> addedJavaFiles;
 	private List<String> removedJavaFiles;
 	private List<String> modifiedJavaFiles;
@@ -16,8 +16,8 @@ public class Commit {
 		return githubCommit;
 	}
 	
-	public int getCommitNumber() {
-		return commitNumber;
+	public String getId() {
+		return id;
 	}
 	
 	public List<String> getAddedJavaFiles() {
@@ -36,8 +36,8 @@ public class Commit {
 		this.githubCommit = githubCommit;
 	}
 	
-	public void setCommitNumber(int commitNumber) {
-		this.commitNumber = commitNumber;
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 	public void setAddedJavaFiles(List<String> addedJavaFiles) {
