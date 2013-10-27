@@ -11,7 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
-public class Converter {
+public class XMLtoJSON {
 
 	public static void main(String[] args) {
 		File file = new File(args[0]);
