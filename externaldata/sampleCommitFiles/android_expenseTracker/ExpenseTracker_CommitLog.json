@@ -1,0 +1,229 @@
+[
+    {
+        "commitHash": " d38d801",
+        "addedJavaFiles": [
+            "AboutActivity.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "R.java",
+            "AboutActivity.java",
+            "MainActivity.java"
+        ]
+    },
+    {
+        "commitHash": " 17cf355",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DisplayExpensesActivity.java",
+            "ExpenseDao.java",
+            "MainActivity.java"
+        ]
+    },
+    {
+        "commitHash": " c20fbd4",
+        "addedJavaFiles": [
+            "ExpenseExporter.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DisplayExpensesActivity.java",
+            "ExpenseExporter.java",
+            "MainActivity.java"
+        ]
+    },
+    {
+        "commitHash": " 6c21f75",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": " 4cbeb7d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "R.java"
+        ]
+    },
+    {
+        "commitHash": " d94bb97",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DisplayExpensesActivity.java",
+            "ExpenseDao.java",
+            "MainActivity.java",
+            "ViewExpenseActivity.java"
+        ]
+    },
+    {
+        "commitHash": " afff119",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DisplayExpensesActivity.java",
+            "MainActivity.java",
+            "ViewExpenseActivity.java"
+        ]
+    },
+    {
+        "commitHash": " edb10c3",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "MainActivity.java",
+            "ViewExpenseActivity.java"
+        ]
+    },
+    {
+        "commitHash": " ce5205e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "AddExpenseActivity.java",
+            "ExpenseDao.java",
+            "ViewExpenseActivity.java"
+        ]
+    },
+    {
+        "commitHash": " 0396bc1",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "AddExpenseActivity.java",
+            "ExpenseDao.java",
+            "ViewExpenseActivity.java"
+        ]
+    },
+    {
+        "commitHash": " fc6e91c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "R.java",
+            "AddExpenseActivity.java",
+            "ExpenseDao.java",
+            "MainActivity.java",
+            "ViewExpenseActivity.java"
+        ]
+    },
+    {
+        "commitHash": " e459832",
+        "addedJavaFiles": [
+            "DecimalDigitsInputFilter.java",
+            "DisplayExpensesActivity.java",
+            "DisplayMessageActivity.java",
+            "ViewExpenseActivity.java"
+        ],
+        "removedJavaFiles": [
+            "DisplayMessageActivity.java"
+        ],
+        "modifiedJavaFiles": [
+            "R.java",
+            "AddExpenseActivity.java",
+            "DecimalDigitsInputFilter.java",
+            "DisplayExpensesActivity.java",
+            "DisplayMessageActivity.java",
+            "Expense.java",
+            "ExpenseDao.java",
+            "MainActivity.java",
+            "ViewExpenseActivity.java"
+        ]
+    },
+    {
+        "commitHash": " 8ccf3f5",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": " c2527dc",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "R.java",
+            "AddExpenseActivity.java",
+            "DisplayMessageActivity.java",
+            "Expense.java",
+            "ExpenseDao.java",
+            "MainActivity.java"
+        ]
+    },
+    {
+        "commitHash": " 979ac9a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": " 0f92857",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "R.java",
+            "DisplayMessageActivity.java",
+            "Expense.java",
+            "ExpenseDao.java",
+            "MainActivity.java"
+        ]
+    },
+    {
+        "commitHash": " 43c62fe",
+        "addedJavaFiles": [
+            "AddExpenseActivity.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "AddExpenseActivity.java"
+        ]
+    },
+    {
+        "commitHash": " 9179ec8",
+        "addedJavaFiles": [
+            "DatePickerFragment.java",
+            "Expense.java",
+            "ExpenseDao.java",
+            "ExpenseDbHelper.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "R.java",
+            "DatePickerFragment.java",
+            "DisplayMessageActivity.java",
+            "Expense.java",
+            "ExpenseDao.java",
+            "ExpenseDbHelper.java",
+            "MainActivity.java"
+        ]
+    },
+    {
+        "commitHash": " 875bc22",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": " 0aed9a6",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": " 6d3afb7",
+        "addedJavaFiles": [
+            "BuildConfig.java",
+            "R.java",
+            "DisplayMessageActivity.java",
+            "MainActivity.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "BuildConfig.java",
+            "R.java",
+            "DisplayMessageActivity.java",
+            "MainActivity.java"
+        ]
+    }
+]

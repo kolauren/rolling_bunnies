@@ -1,0 +1,2911 @@
+[
+    {
+        "commitHash": "4b61f0f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "93d5c0a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "a99c546",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DocumentFactory.java",
+            "EditHouseDialog.java"
+        ]
+    },
+    {
+        "commitHash": "02c59a4",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "4beab29",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "e755efb",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "7a5709e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "400e481",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "5c7538e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "49c2484",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "23fd1b1",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "a5e9af8",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d24e51e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "8bbe0a5",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java"
+        ]
+    },
+    {
+        "commitHash": "9dcee9a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "524d97f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d748c95",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "a86e9f9",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3f345a2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "8293269",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "b16b985",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "ec98dce",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "29ae73c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseTable.java"
+        ]
+    },
+    {
+        "commitHash": "2b2513f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "EditHouseDialog.java",
+            "EditUserInfoDialog.java",
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "72b338d",
+        "addedJavaFiles": [
+            "EditDialog.java",
+            "EditHouseDialog.java"
+        ],
+        "removedJavaFiles": [
+            "EditDialog.java"
+        ],
+        "modifiedJavaFiles": [
+            "EditDialog.java",
+            "EditHouseDialog.java",
+            "EditUserInfoDialog.java",
+            "MainResources.java",
+            "PropertyMap.java",
+            "Team_02.java",
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "04101a2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "717473c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "619c58a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "e86bc0f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DocumentFactory.java"
+        ]
+    },
+    {
+        "commitHash": "c5201be",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "a628406",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5c38091",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "6877141",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3f6e9b1",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3fd39a1",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "593a4aa",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "4151689",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DocumentFactory.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "52a01e6",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "f08e842",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "080c47e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "887c8af",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "65b845e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "69e087f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3a7105b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "784a9de",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "79b67f7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "709a12a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "315c24e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "62fdbf8",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "2295d19",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "9d89046",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "7907295",
+        "addedJavaFiles": [
+            "MainResources.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseData.java",
+            "MainResources.java",
+            "PropertyMap.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "ee54a8e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "b019367",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5d244a4",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "bd9b505",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "94a1e73",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "f79fe08",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "PropertyMap.java",
+            "SearchPanel.java"
+        ]
+    },
+    {
+        "commitHash": "f1936cf",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "381782a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "99e00f8",
+        "addedJavaFiles": [
+            "Chart.java"
+        ],
+        "removedJavaFiles": [
+            "Chart.java"
+        ],
+        "modifiedJavaFiles": [
+            "Chart.java",
+            "HouseTable.java",
+            "MapContainerPanel.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "5bdbf9c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "1c3ee37",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "36d8f2b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "MapContainerPanel.java",
+            "SearchPanel.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "3e629a2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "LoginService.java",
+            "LoginServiceAsync.java",
+            "PropertyMap.java",
+            "UserInfoPanel.java",
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "d7c1e1f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "e6a1397",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "9455ee4",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "946b075",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java",
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "1e66a98",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "56d7212",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "0b55686",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "cc54494",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "f9d6314",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "6d851c0",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "0d40363",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "7a8c5c2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9315267",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java",
+            "DataStore.java"
+        ]
+    },
+    {
+        "commitHash": "6c87535",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java",
+            "DataStore.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "8066447",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "185f621",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "60ae652",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d261711",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "0f7a9f5",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "beef922",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "348bfb7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "abd44f2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "a019411",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "236babb",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5254d7d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "4e2f0cd",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "c76a1ff",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java",
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "6c856f2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java",
+            "DataStore.java",
+            "HouseDataServiceImpl.java",
+            "HouseDataServiceTests.java"
+        ]
+    },
+    {
+        "commitHash": "6bcf39e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3368b43",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "PropertyMap.java",
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "b504724",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "6cd1751",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "93c4f4b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "2441695",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "b42c830",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "DataStore.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "5b4cf11",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5158633",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java"
+        ]
+    },
+    {
+        "commitHash": "00a4771",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "PropertyMap.java",
+            "Team_02.java",
+            "UserInfoPanel.java",
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "e7b7291",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "HouseDataServiceImpl.java",
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "5a91c1d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "ee20a36",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9bf6634",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9a40065",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "8a70775",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "8a1555f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "fc7ff8f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "LoginServiceAsync.java"
+        ]
+    },
+    {
+        "commitHash": "ab63ed5",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "00464c2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3cdb740",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "46c519a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "571a6be",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "db1a377",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "2be6c49",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3dca303",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5ff7be6",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "94fef96",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5c20137",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "LoginService.java",
+            "LoginServiceAsync.java",
+            "Team_02.java",
+            "DataStore.java",
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "443dec5",
+        "addedJavaFiles": [
+            "CSVWriter.java",
+            "ResultSetHelper.java",
+            "ResultSetHelperService.java",
+            "ColumnPositionMappingStrategy.java",
+            "CsvToBean.java",
+            "HeaderColumnNameMappingStrategy.java",
+            "HeaderColumnNameTranslateMappingStrategy.java",
+            "MappingStrategy.java",
+            "FieldVerifier.java"
+        ],
+        "removedJavaFiles": [
+            "CSVWriter.java",
+            "ResultSetHelper.java",
+            "ResultSetHelperService.java",
+            "ColumnPositionMappingStrategy.java",
+            "CsvToBean.java",
+            "HeaderColumnNameMappingStrategy.java",
+            "HeaderColumnNameTranslateMappingStrategy.java",
+            "MappingStrategy.java",
+            "FieldVerifier.java"
+        ],
+        "modifiedJavaFiles": [
+            "CSVWriter.java",
+            "ResultSetHelper.java",
+            "ResultSetHelperService.java",
+            "ColumnPositionMappingStrategy.java",
+            "CsvToBean.java",
+            "HeaderColumnNameMappingStrategy.java",
+            "HeaderColumnNameTranslateMappingStrategy.java",
+            "MappingStrategy.java",
+            "FileParser.java",
+            "FieldVerifier.java"
+        ]
+    },
+    {
+        "commitHash": "6f7cd4c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "6b4f420",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "67189be",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "LoginService.java",
+            "LoginServiceAsync.java",
+            "DataStore.java",
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "65f8194",
+        "addedJavaFiles": [
+            "EditPanel.java"
+        ],
+        "removedJavaFiles": [
+            "EditPanel.java"
+        ],
+        "modifiedJavaFiles": [
+            "EditPanel.java",
+            "Team_02.java",
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "6ca2260",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java",
+            "Team_02.java",
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "9165782",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "04f7ca8",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "a3596ad",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d23dcee",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "b147ab4",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "62b61f8",
+        "addedJavaFiles": [
+            "DrawToolButton.java"
+        ],
+        "removedJavaFiles": [
+            "DrawToolButton.java"
+        ],
+        "modifiedJavaFiles": [
+            "DrawToolButton.java",
+            "SearchPanel.java"
+        ]
+    },
+    {
+        "commitHash": "8ad5368",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "PropertyMap.java"
+        ]
+    },
+    {
+        "commitHash": "f9315f5",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "DataStore.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "92ce888",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d48b166",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "928ab35",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DrawToolButton.java"
+        ]
+    },
+    {
+        "commitHash": "d55a314",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "SearchPanel.java"
+        ]
+    },
+    {
+        "commitHash": "37635ad",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "300b11f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "fec34ce",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "6c9ab47",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "08562e3",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "1568346",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataService.java",
+            "HouseDataServiceAsync.java",
+            "DataStore.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "7b5a588",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "2b2b567",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5cab431",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "6b1992c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseTable.java",
+            "MapContainerPanel.java",
+            "SearchPanel.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "a8cf519",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "DataStore.java"
+        ]
+    },
+    {
+        "commitHash": "26a9f33",
+        "addedJavaFiles": [
+            "EditPanel.java",
+            "MapContainerPanel.java",
+            "SearchPanel.java",
+            "UserInfoPanel.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "EditPanel.java",
+            "MapContainerPanel.java",
+            "SearchPanel.java",
+            "Team_02.java",
+            "UserInfoPanel.java"
+        ]
+    },
+    {
+        "commitHash": "29cb086",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "f2ee124",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "bd39b8f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "DataStore.java",
+            "HouseDataServiceImpl.java",
+            "DataStoreTests.java",
+            "TestSuite.java"
+        ]
+    },
+    {
+        "commitHash": "d7146ac",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "534ab8b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "d0de4ba",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "71818fb",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "a9c9ae4",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "e0568b2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "a1bb3ac",
+        "addedJavaFiles": [
+            "MapContainerPanel.java"
+        ],
+        "removedJavaFiles": [
+            "MapContainerPanel.java"
+        ],
+        "modifiedJavaFiles": [
+            "MapContainerPanel.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "d5978ce",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "12fda6c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "PropertyMap.java"
+        ]
+    },
+    {
+        "commitHash": "369b350",
+        "addedJavaFiles": [
+            "MapContainerPanel.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "MapContainerPanel.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "d2968b0",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "DataStore.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "b4c89ec",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "e0e5118",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "e83e39d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "a9dcb0d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "82d4a04",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "d804263",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "cbb441b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "f5febcc",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5cdcbc0",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DataStore.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "c693b0e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DrawToolButton.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "df5cdee",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "43c832d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5fbe1fd",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "Team_02.java",
+            "DataStore.java",
+            "HouseDataServiceImpl.java",
+            "DataStoreTests.java"
+        ]
+    },
+    {
+        "commitHash": "59ef39b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "439785a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3db3c1e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "15a692e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataService.java",
+            "HouseDataServiceAsync.java",
+            "HouseTable.java",
+            "Team_02.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "4d533ac",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "de03bfa",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "c2b39e5",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "413830a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "DataStore.java",
+            "HouseDataServiceImpl.java",
+            "DataStoreTests.java"
+        ]
+    },
+    {
+        "commitHash": "48e2c73",
+        "addedJavaFiles": [
+            "HouseIDComparator.java",
+            "StreetNameComparator.java"
+        ],
+        "removedJavaFiles": [
+            "StreetNameComparator.java"
+        ],
+        "modifiedJavaFiles": [
+            "HouseIDComparator.java",
+            "StreetNameComparator.java",
+            "DataStoreTests.java"
+        ]
+    },
+    {
+        "commitHash": "537b164",
+        "addedJavaFiles": [
+            "PreviousLandValueComparator.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "PreviousLandValueComparator.java"
+        ]
+    },
+    {
+        "commitHash": "7084233",
+        "addedJavaFiles": [
+            "BigImprovementYearComparator.java",
+            "CurrentImprovementValueComparator.java",
+            "CurrentLandValueComparator.java",
+            "ForSaleComparator.java",
+            "OwnerComparator.java",
+            "PreviousImprovementValueComparator.java",
+            "PriceComparator.java",
+            "YearBuiltComparator.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "BigImprovementYearComparator.java",
+            "CurrentImprovementValueComparator.java",
+            "CurrentLandValueComparator.java",
+            "ForSaleComparator.java",
+            "OwnerComparator.java",
+            "PreviousImprovementValueComparator.java",
+            "PriceComparator.java",
+            "YearBuiltComparator.java"
+        ]
+    },
+    {
+        "commitHash": "9412db7",
+        "addedJavaFiles": [
+            "PostalCodeComparator.java",
+            "StreetNameComparator.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DataStore.java",
+            "FileParser.java",
+            "PostalCodeComparator.java",
+            "StreetNameComparator.java",
+            "DataStoreTests.java"
+        ]
+    },
+    {
+        "commitHash": "8b5016e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "eec1bad",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "595317b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d2901a7",
+        "addedJavaFiles": [
+            "Chart.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Chart.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "6bffff1",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "df71e55",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseTable.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "4d23485",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "8f9891d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "aa8c413",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DataStoreTests.java"
+        ]
+    },
+    {
+        "commitHash": "c5a65c8",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DataStore.java",
+            "FileParser.java",
+            "HouseDataPoint.java",
+            "DataStoreTests.java",
+            "ParserTests.java"
+        ]
+    },
+    {
+        "commitHash": "d7f116b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "76c4eca",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "f83e7d7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "1eae74c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "4a65a7b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "1d4bb28",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "4c10440",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "de22a93",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "e15a3f3",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5d6e8da",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "7ea09d2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "TestSuite.java"
+        ]
+    },
+    {
+        "commitHash": "d676fd7",
+        "addedJavaFiles": [
+            "DataStoreTests.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "FileParser.java",
+            "HouseDataServiceImpl.java",
+            "DataStoreTests.java"
+        ]
+    },
+    {
+        "commitHash": "0de0c0e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9846df0",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "HouseTable.java",
+            "FileParser.java",
+            "HouseDataServiceImpl.java",
+            "ParserTests.java"
+        ]
+    },
+    {
+        "commitHash": "714715d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "68ce9b3",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "bd6a9ff",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "91c464f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "0881bd1",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "c19fc0b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "dd03185",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "85d9531",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "7decc30",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "acf64f8",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "PropertyMap.java"
+        ]
+    },
+    {
+        "commitHash": "b7c21a9",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "75778ff",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "c9228f2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d528edb",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataService.java",
+            "HouseDataServiceAsync.java",
+            "HouseTable.java",
+            "Team_02.java",
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "cb31bed",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "0af21df",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "247ef7b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "309f022",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "1bfa28b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataPoint.java"
+        ]
+    },
+    {
+        "commitHash": "45b2f2d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataPoint.java"
+        ]
+    },
+    {
+        "commitHash": "8ceb595",
+        "addedJavaFiles": [
+            "DataBaseIndexer.java"
+        ],
+        "removedJavaFiles": [
+            "DataBaseIndexer.java"
+        ],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "Team_02.java",
+            "DataBaseIndexer.java",
+            "HouseDataServiceImpl.java",
+            "IntegrationTests.java"
+        ]
+    },
+    {
+        "commitHash": "daaa18f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataPoint.java",
+            "ParserTests.java"
+        ]
+    },
+    {
+        "commitHash": "5bb8c05",
+        "addedJavaFiles": [
+            "GreetingServiceAsync.java",
+            "GreetingServiceImpl.java"
+        ],
+        "removedJavaFiles": [
+            "GreetingServiceAsync.java",
+            "GreetingServiceImpl.java"
+        ],
+        "modifiedJavaFiles": [
+            "GreetingServiceAsync.java",
+            "Team_02.java",
+            "GreetingServiceImpl.java",
+            "HouseDataPoint.java"
+        ]
+    },
+    {
+        "commitHash": "edd0245",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataService.java",
+            "HouseDataServiceAsync.java",
+            "HouseTable.java",
+            "PropertyMap.java",
+            "Team_02.java",
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "771c1db",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "4edfe94",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "12881af",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "4ab1ad8",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "ObserverTests.java",
+            "ParserTests.java",
+            "TestSuite.java"
+        ]
+    },
+    {
+        "commitHash": "1d40897",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "20b99c2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "b563d1a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "8805312",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java"
+        ]
+    },
+    {
+        "commitHash": "b97c407",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "33e7918",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "b5a1eb0",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "0633fd6",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "e7a14a1",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9ce1136",
+        "addedJavaFiles": [
+            "HouseTable.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseTable.java"
+        ]
+    },
+    {
+        "commitHash": "c3ae0ac",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "ObserverTests.java"
+        ]
+    },
+    {
+        "commitHash": "e5e0375",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "cabc408",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "FileParser.java",
+            "ParserTests.java"
+        ]
+    },
+    {
+        "commitHash": "0bca3cb",
+        "addedJavaFiles": [
+            "propertyMap.java"
+        ],
+        "removedJavaFiles": [
+            "propertyMap.java"
+        ],
+        "modifiedJavaFiles": [
+            "Team_02.java",
+            "propertyMap.java"
+        ]
+    },
+    {
+        "commitHash": "7ba25a7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "0683856",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9c830d7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "FileParser.java",
+            "HouseDataPoint.java",
+            "ParserTests.java"
+        ]
+    },
+    {
+        "commitHash": "67897d4",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "6d8160d",
+        "addedJavaFiles": [
+            "DataBaseIndexer.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DataBaseIndexer.java",
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "1fc3cb2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "6c57599",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataService.java",
+            "LoginService.java",
+            "LoginServiceAsync.java",
+            "propertyMap.java",
+            "DataCatalogueObserverImpl.java",
+            "FileParser.java",
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java",
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "c4ee22a",
+        "addedJavaFiles": [
+            "DownloadFailedException.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DownloadFailedException.java",
+            "ObserverTests.java",
+            "ParserTests.java"
+        ]
+    },
+    {
+        "commitHash": "592edf7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "a366c4f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "646912e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "fac681d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "0e8edb6",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "37bf45a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "81124a5",
+        "addedJavaFiles": [
+            "BasicTests.java",
+            "ParameterizedTest.java",
+            "ParserTests.java"
+        ],
+        "removedJavaFiles": [
+            "BasicTests.java",
+            "ParameterizedTest.java"
+        ],
+        "modifiedJavaFiles": [
+            "BasicTests.java",
+            "ParameterizedTest.java",
+            "ParserTests.java",
+            "TestSuite.java"
+        ]
+    },
+    {
+        "commitHash": "6203d8b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "c616c3c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "7bfa992",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "e861b51",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceAsync.java",
+            "Team_02.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "7bd6e54",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataService.java",
+            "HouseDataServiceAsync.java",
+            "Team_02.java",
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "6813aaa",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d75800f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "adc2ea3",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "cf9281c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "FileParser.java"
+        ]
+    },
+    {
+        "commitHash": "573dbc3",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3a3a0a4",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "TestSuite.java"
+        ]
+    },
+    {
+        "commitHash": "17b18e7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DataCatalogueObserverAsync.java",
+            "DataCatalogueObserverImpl.java"
+        ]
+    },
+    {
+        "commitHash": "5aa1b16",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "fcaa8f1",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataService.java",
+            "HouseDataServiceAsync.java",
+            "Team_02.java",
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "7d6c2a6",
+        "addedJavaFiles": [
+            "BasicTests.java",
+            "ParameterizedTest.java",
+            "TestSuite.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "BasicTests.java",
+            "ParameterizedTest.java",
+            "TestSuite.java"
+        ]
+    },
+    {
+        "commitHash": "0bf106b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DataCatalogueObserverAsync.java",
+            "DataCatalogueObserverImpl.java"
+        ]
+    },
+    {
+        "commitHash": "9b9f87e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "aff062f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "325e962",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "b93148a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "089a3d0",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DataCatalogueObserverAsync.java",
+            "DataCatalogueObserverImpl.java"
+        ]
+    },
+    {
+        "commitHash": "a5dfdac",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d5efeec",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "1394b65",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "22f9836",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java",
+            "propertyMap.java"
+        ]
+    },
+    {
+        "commitHash": "76e0c6f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "ecc293c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "dec5207",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "42f5b31",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataPoint.java"
+        ]
+    },
+    {
+        "commitHash": "7fa0e78",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3a91bd0",
+        "addedJavaFiles": [
+            "CellTableResources.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "CellTableResources.java",
+            "HouseData.java",
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "f9f8f1a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "f8f8a7f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3390819",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "74c4534",
+        "addedJavaFiles": [
+            "CSVParser.java",
+            "CSVReader.java",
+            "CSVWriter.java",
+            "ResultSetHelper.java",
+            "ResultSetHelperService.java",
+            "ColumnPositionMappingStrategy.java",
+            "CsvToBean.java",
+            "HeaderColumnNameMappingStrategy.java",
+            "HeaderColumnNameTranslateMappingStrategy.java",
+            "MappingStrategy.java",
+            "DataCatalogueObserver.java",
+            "DataCatalogueObserverAsync.java",
+            "GreetingService.java",
+            "GreetingServiceAsync.java",
+            "HouseData.java",
+            "HouseDataService.java",
+            "HouseDataServiceAsync.java",
+            "LoginInfo.java",
+            "LoginService.java",
+            "LoginServiceAsync.java",
+            "Team_02.java",
+            "propertyMap.java",
+            "DataCatalogueObserverImpl.java",
+            "FileParser.java",
+            "GreetingServiceImpl.java",
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java",
+            "LoginServiceImpl.java",
+            "FieldVerifier.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "CSVParser.java",
+            "CSVReader.java",
+            "CSVWriter.java",
+            "ResultSetHelper.java",
+            "ResultSetHelperService.java",
+            "ColumnPositionMappingStrategy.java",
+            "CsvToBean.java",
+            "HeaderColumnNameMappingStrategy.java",
+            "HeaderColumnNameTranslateMappingStrategy.java",
+            "MappingStrategy.java",
+            "DataCatalogueObserver.java",
+            "DataCatalogueObserverAsync.java",
+            "GreetingService.java",
+            "GreetingServiceAsync.java",
+            "HouseData.java",
+            "HouseDataService.java",
+            "HouseDataServiceAsync.java",
+            "LoginInfo.java",
+            "LoginService.java",
+            "LoginServiceAsync.java",
+            "Team_02.java",
+            "propertyMap.java",
+            "DataCatalogueObserverImpl.java",
+            "FileParser.java",
+            "GreetingServiceImpl.java",
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java",
+            "LoginServiceImpl.java",
+            "FieldVerifier.java"
+        ]
+    },
+    {
+        "commitHash": "ec31d9f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseData.java",
+            "Team_02.java",
+            "HouseDataPoint.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "c8a0840",
+        "addedJavaFiles": [
+            "DataCatalogueObserverAsync.java",
+            "DataCatalogueObserverImpl.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "DataCatalogueObserverAsync.java",
+            "DataCatalogueObserverImpl.java"
+        ]
+    },
+    {
+        "commitHash": "c139999",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "propertyMap.java"
+        ]
+    },
+    {
+        "commitHash": "a3b5ed7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "59d743f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "6276130",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "09779a5",
+        "addedJavaFiles": [
+            "LoginService.java",
+            "LoginServiceAsync.java",
+            "LoginServiceImpl.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "LoginService.java",
+            "LoginServiceAsync.java",
+            "LoginServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "928ff75",
+        "addedJavaFiles": [
+            "CSVParser.java",
+            "CSVReader.java",
+            "ResultSetHelper.java",
+            "ResultSetHelperService.java",
+            "ColumnPositionMappingStrategy.java",
+            "CsvToBean.java",
+            "HeaderColumnNameMappingStrategy.java",
+            "HeaderColumnNameTranslateMappingStrategy.java",
+            "MappingStrategy.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "CSVParser.java",
+            "CSVReader.java",
+            "ResultSetHelper.java",
+            "ResultSetHelperService.java",
+            "ColumnPositionMappingStrategy.java",
+            "CsvToBean.java",
+            "HeaderColumnNameMappingStrategy.java",
+            "HeaderColumnNameTranslateMappingStrategy.java",
+            "MappingStrategy.java",
+            "HouseDataPoint.java"
+        ]
+    },
+    {
+        "commitHash": "c2499ec",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "637000f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "28b593f",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "b99d530",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9254df0",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseData.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "369121e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "c125685",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "1bbd826",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9cca617",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3ba979b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "69ff7bb",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java",
+            "HouseDataServiceImpl.java"
+        ]
+    },
+    {
+        "commitHash": "b11574d",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "0429aa7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "f10bc08",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "06e8f9c",
+        "addedJavaFiles": [
+            "CSVParser.java",
+            "CSVReader.java",
+            "CSVWriter.java",
+            "ResultSetHelper.java",
+            "ResultSetHelperService.java",
+            "ColumnPositionMappingStrategy.java",
+            "CsvToBean.java",
+            "HeaderColumnNameMappingStrategy.java",
+            "HeaderColumnNameTranslateMappingStrategy.java",
+            "MappingStrategy.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "CSVParser.java",
+            "CSVReader.java",
+            "CSVWriter.java",
+            "ResultSetHelper.java",
+            "ResultSetHelperService.java",
+            "ColumnPositionMappingStrategy.java",
+            "CsvToBean.java",
+            "HeaderColumnNameMappingStrategy.java",
+            "HeaderColumnNameTranslateMappingStrategy.java",
+            "MappingStrategy.java"
+        ]
+    },
+    {
+        "commitHash": "8523cd9",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataPoint.java"
+        ]
+    },
+    {
+        "commitHash": "db8ba5c",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "91f7888",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3305ed7",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "2409e04",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "551cec6",
+        "addedJavaFiles": [
+            "HouseDataPoint.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "HouseDataPoint.java"
+        ]
+    },
+    {
+        "commitHash": "0d3fa20",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "49c0d6b",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "Team_02.java"
+        ]
+    },
+    {
+        "commitHash": "5560844",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "5e94dfb",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "e4c6f70",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "edb2904",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "4619acc",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "23278c0",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "36616ae",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "1a1f3a4",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "b214670",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9c29ca7",
+        "addedJavaFiles": [
+            "TestClass.java"
+        ],
+        "removedJavaFiles": [
+            "TestClass.java"
+        ],
+        "modifiedJavaFiles": [
+            "TestClass.java"
+        ]
+    },
+    {
+        "commitHash": "8275ed2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "4ab2331",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "52e148a",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "3c86911",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "354c890",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "715c4c2",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "0158755",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "33aa339",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "d1ccc0b",
+        "addedJavaFiles": [
+            "GreetingService.java",
+            "GreetingServiceAsync.java",
+            "Team_02.java",
+            "GreetingServiceImpl.java",
+            "FieldVerifier.java"
+        ],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": [
+            "GreetingService.java",
+            "GreetingServiceAsync.java",
+            "Team_02.java",
+            "GreetingServiceImpl.java",
+            "FieldVerifier.java"
+        ]
+    },
+    {
+        "commitHash": "79b3de3",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "9f0e40e",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "e5317c1",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "88079c4",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "fcc1de5",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    },
+    {
+        "commitHash": "4ebdd01",
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "modifiedJavaFiles": []
+    }
+]
