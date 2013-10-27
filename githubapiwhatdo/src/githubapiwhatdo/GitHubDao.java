@@ -1,50 +1,69 @@
 package githubapiwhatdo;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
+import java.io.InputStream;
 import java.util.List;
 
-import org.eclipse.egit.github.core.CommitFile;
-import org.eclipse.egit.github.core.Repository;
-import org.eclipse.egit.github.core.RepositoryCommit;
-import org.eclipse.egit.github.core.client.*;
+import org.apache.commons.io.IOUtils;
+import org.eclipse.egit.github.core.*;
+import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.client.GitHubRequest;
+import org.eclipse.egit.github.core.client.GitHubResponse;
+import org.eclipse.egit.github.core.client.PageIterator;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.RepositoryService;
-import org.kohsuke.github.*;
-import org.kohsuke.github.GHCommit.File;
 
-public class WhatDo {
-	/*
-	public static void main(String args[]) throws IOException {
-		System.out.println("What do?");
-		GitHub github = GitHub.connect("pammil", "f2b7e61733b957d2827ee06d6f754e9f38d2423e");
-		GHRepository teamTwo = github.getRepository("iambchan/Team-02");
-		List<GHCommit> commits = teamTwo.listCommits().asList();
-		System.out.println(teamTwo.getName());
-		for(GHCommit c : commits) {
-			for(File f : c.getFiles()) {
-				System.out.println(f.getFileName());
-			}
-		}*/
+/**
+ * if methods have the prefix "query" they are making api calls to github which are limited;
+ * try not to spam query methods cause your ip becomes blocked for an hour or so.
+ * 
+ * @author p
+ *
+ */
+public class GitHubDao {
 	
-	public static void main(String args[]) throws IOException {
-		GitHubClient client = new GitHubClient();
-		client.setOAuth2Token("f2b7e61733b957d2827ee06d6f754e9f38d2423e");
-		RepositoryService repoService = new RepositoryService();
-		Repository teamTwo = repoService.getRepository("iambchan", "Team-02");
-		CommitService commitService = new CommitService();
-		for(PageIterator<RepositoryCommit> commits = commitService.pageCommits(teamTwo); commits.hasNext();) {
-			for(RepositoryCommit commit : commits.next()) {
-				System.out.println(commit.getUrl());
-				List<String> javaFileNames = ParseCommit.getJavaFileNames(commit);
-				for(String s : javaFileNames) {
-					System.out.println(s);
-				}
-				System.out.println();
-			}
-		}
+	private static String COMMIT_URI = "/repos/#OWNER#/#REPO#/commits/#SHA#";
+	private GitHubClient client;
 	
+	public GitHubDao(String user, String password){
+		this.client = basicAuthGitHub(user, password);
 	}
+	
+	public GitHubDao(String user, String password, String oAuth2Token) {
+		this.client = basicAuthGitHub(user, password, oAuth2Token);
+	}
+	
+	private GitHubClient basicAuthGitHub(String user, String password) {
+		GitHubClient client = new GitHubClient();
+		client.setCredentials(user, password);
+		return client;
+	}
+	
+	private GitHubClient basicAuthGitHub(String user, String password, String oAuth2Token) {
+		GitHubClient client = basicAuthGitHub(user, password);
+		client.setOAuth2Token(oAuth2Token);
+		return client;
+	}
+	
+	//cache results; do not call this more than once because github api calls are limited
+	public List<RepositoryCommit> queryCommits(String owner, String repoName) throws IOException {
+		List<RepositoryCommit> commits = null;
+		
+		RepositoryService repoService = new RepositoryService(client);
+		Repository repo = repoService.getRepository(owner, repoName);
+		CommitService commitService = new CommitService(client);
+		commits = commitService.getCommits(repo);
+		
+		return commits;
+	}
+	
+	public String queryCommitJson(String owner, String repo, String sha) throws IOException {
+		String uri = COMMIT_URI.replaceFirst("#OWNER#", owner).replaceFirst("#REPO#", repo).replaceFirst("#SHA#", sha);
+		GitHubRequest request = new GitHubRequest();
+		request.setUri(uri);
+		InputStream in = client.getStream(request);
+		return IOUtils.toString(in, "UTF-8");
+	}
+	
 	//git file statuses: added, removed, modified
 }
