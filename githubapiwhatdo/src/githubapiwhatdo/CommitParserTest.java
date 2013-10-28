@@ -16,7 +16,7 @@ public class CommitParserTest {
 	@Test
 	public void testCommitParser()
 		throws Exception {
-		CommitParser commitParser = new CommitParser();
+		CommitSerializer commitParser = new CommitSerializer();
 		
 		Commit c = new Commit();
 		c.setCommitNumber(1);
@@ -24,7 +24,7 @@ public class CommitParserTest {
 		c.setModifiedJavaFiles(Arrays.asList("class2.java", "class6.java"));
 		c.setRemovedJavaFiles(Arrays.asList("class0.java"));
 		
-		System.out.println(commitParser.commitToJSON(c));
+		System.out.println(commitParser.commitToJSON(c,true));
 
 	}
 

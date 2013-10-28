@@ -4,6 +4,7 @@ import githubapiwhatdo.ParseCommitUtils.CommitFileStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ import com.google.common.collect.Lists;
  */
 public class GitHubDao {
 	
-	private static String COMMIT_URI = "/repos/#OWNER#/#REPO#/commits/#SHA#";
+	private static final String COMMIT_URI = "/repos/#OWNER#/#REPO#/commits/#SHA#";
 	private GitHubClient client;
 	
 	public GitHubDao(String user, String password){
@@ -70,7 +71,7 @@ public class GitHubDao {
 		return IOUtils.toString(in, "UTF-8");
 	}
 	
-	public List<Commit> getCommits(String owner, String repoName, int numCommits) throws IOException {
+	public List<Commit> getCommits(String owner, String repoName, int numCommits) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		List<Commit> commits = Lists.newArrayList();
 		List<RepositoryCommit> githubCommits = queryCommits(owner, repoName);
 		
@@ -85,13 +86,12 @@ public class GitHubDao {
 			RepositoryCommit githubCommit = githubCommits.get(i);
 			System.out.println(githubCommit.getUrl());
 			String jsonCommit = queryCommitJson(owner, repoName, githubCommit.getSha());
-			Map<String, List<String>> javaFiles = ParseCommitUtils.getJavaFileNames(jsonCommit);
+			Map<CommitFileStatus, List<String>> javaFiles = ParseCommitUtils.getJavaFileNames(jsonCommit);
 			if(javaFiles != null) {
 				Commit commit = new Commit();	
-				commit.setAddedJavaFiles(javaFiles.get(CommitFileStatus.ADDED.getName()));
-				commit.setModifiedJavaFiles(javaFiles.get(CommitFileStatus.MODIFIED.getName()));
-				commit.setRemovedJavaFiles(javaFiles.get(CommitFileStatus.REMOVED.getName()));
-				commit.setRenamedJavaFiles(javaFiles.get(CommitFileStatus.RENAMED.getName()));
+				for(CommitFileStatus status : CommitFileStatus.values()) {
+					Commit.getSetMethodByStatus(status).invoke(commit, javaFiles.get(status));
+				}
 				commit.setCommitNumber(count);
 				count++;
 				commits.add(commit);
@@ -101,7 +101,7 @@ public class GitHubDao {
 	}
 	
 	//get all of them
-	public List<Commit> getCommits(String owner, String repoName) throws IOException {
+	public List<Commit> getCommits(String owner, String repoName) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		return getCommits(owner, repoName, -1);
 	}
 	
