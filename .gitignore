@@ -17,7 +17,7 @@ local.properties
 
 # Eclipse Related #
 *.pydevproject
-.project
+#.project
 .metadata
 bin/**
 tmp/**
