@@ -1,6 +1,4 @@
-package githubapiwhatdo;
-
-import githubapiwhatdo.ParseCommitUtils.CommitFileStatus;
+package core;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -10,6 +8,8 @@ import java.util.NoSuchElementException;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Maps;
+
+import core.ParseCommitUtils.CommitFileStatus;
 
 
 //commit data we're interested in for our visualization

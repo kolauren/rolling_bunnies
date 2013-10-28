@@ -1,4 +1,4 @@
-package githubapiwhatdo;
+package core;
 
 import java.util.List;
 

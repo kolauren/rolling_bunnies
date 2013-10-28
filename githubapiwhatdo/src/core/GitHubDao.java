@@ -1,6 +1,4 @@
-package githubapiwhatdo;
-
-import githubapiwhatdo.ParseCommitUtils.CommitFileStatus;
+package core;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +14,8 @@ import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
 import com.google.common.collect.Lists;
+
+import core.ParseCommitUtils.CommitFileStatus;
 
 /**
  * wrapper for the egit github api java wrapper.
