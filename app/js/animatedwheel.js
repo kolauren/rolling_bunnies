@@ -41,22 +41,25 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
         });
     },
 
+    // animate commits in different intervals
     animationCallback: function() {
         var self = this;
         console.log("callback " + this.commits.length);
         self.animateCommits();
         clearTimeout(self.timer);
         if(this.commits.length > 0) 
-            self.timer = setTimeout(function(){
+            self.timer = setTimeo$ut(function(){
                 self.animationCallback();
             }, self.interval);
     },
 
+    // clears the canvas of nodes and edges
     clearWheel: function() {
         d3.selectAll("circle").remove();
         d3.selectAll("path.edge").remove();
     },
 
+    // returns a list of dependencies of given class
     getDependencies: function(className){
         var dependencies = [];
         this.currentDependencies.forEach(function (d){
@@ -66,6 +69,7 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
         return dependencies;
     },
 
+    // creates the tree for parsing using the d3 cluster method
     createTree:  function(currentNodes) {
         var root = {name: "root", children: []};
         var self = this;
@@ -108,6 +112,7 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
             }
         }
         
+        // remove the node from current node list
         commit.removedJavaFiles.forEach(function(deleted){
             self.currentNodes = self.currentNodes.filter(function(elem){
                 return !(elem === deleted)
