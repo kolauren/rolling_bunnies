@@ -1,11 +1,11 @@
 package core;
 
 import java.io.IOException;
-import java.util.Deque;
+import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
 import com.google.gson.*;
 
 /**
@@ -54,22 +54,21 @@ public class ParseGitHubCommit {
 	}
 	
 	/**
-	 * Parses github commit json for java files only. Files are listed in order of
-	 * most recent -> old.
+	 * parses json commit for java files
 	 * 
-	 * Returns null if the map is empty since we are not interested in commits with no java file changes.
+	 * returns null if the map is empty since we are not interested in commits with no java file changes
 	 * 
 	 * @param jsonCommit
 	 * @return
 	 * @throws IOException
 	 */
-	public static Map<CommitFileStatus, Deque<String>> getJavaFileNames(String jsonCommit) throws IOException {
-		Deque<String> modified = Queues.newArrayDeque();
-		Deque<String> added = Queues.newArrayDeque();
-		Deque<String> removed = Queues.newArrayDeque();
-		Deque<String> renamed = Queues.newArrayDeque();
+	public static Map<CommitFileStatus, Collection<String>> getJavaFileNames(String jsonCommit) throws IOException {
+		Collection<String> modified = Lists.newArrayList();
+		Collection<String> added = Lists.newArrayList();
+		Collection<String> removed = Lists.newArrayList();
+		Collection<String> renamed = Lists.newArrayList();
 		
-		Map<CommitFileStatus, Deque<String>> files = Maps.newHashMap();
+		Map<CommitFileStatus, Collection<String>> files = Maps.newHashMap();
 		files.put(CommitFileStatus.ADDED, added);
 		files.put(CommitFileStatus.MODIFIED, modified);
 		files.put(CommitFileStatus.REMOVED, removed);
@@ -87,16 +86,16 @@ public class ParseGitHubCommit {
 				
 				switch(CommitFileStatus.fromString(status)){
 					case MODIFIED:
-						modified.push(filename); 
+						modified.add(filename); 
 						break;
 					case ADDED:
-						added.push(filename); 
+						added.add(filename); 
 						break;
 					case REMOVED:
-						removed.push(filename); 
+						removed.add(filename); 
 						break;
 					case RENAMED:
-						renamed.push(filename);
+						renamed.add(filename);
 						break;
 				}
 				

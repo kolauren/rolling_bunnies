@@ -3,8 +3,7 @@ package core;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
+import java.util.Collection;
 import org.apache.commons.io.FileUtils;
 
 import com.google.gson.Gson;
@@ -32,9 +31,10 @@ public class Main {
 		Gson gson = new Gson();
 		Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
 		
-		List<Commit> commits = githubDao.getCommits(owner, repo, 10);
+		Collection<Commit> commits = githubDao.getCommits(owner, repo);
 		
 		FileUtils.writeStringToFile(json, gson.toJson(commits), true);
 		FileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true);
+	
 	}
 }

@@ -2,7 +2,6 @@ package core;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -17,10 +16,10 @@ import core.ParseGitHubCommit.CommitFileStatus;
 public class Commit {
 	private int commitNumber;
 	//please don't rename these. thx.
-	private Deque<String> addedJavaFiles;
-	private Deque<String> removedJavaFiles;
-	private Deque<String> modifiedJavaFiles;
-	private Deque<String> renamedJavaFiles; 
+	private Collection<String> addedJavaFiles;
+	private Collection<String> removedJavaFiles;
+	private Collection<String> modifiedJavaFiles;
+	private Collection<String> renamedJavaFiles; 
 	
 	//returns the corresponding set method based on the status
 	private static final Map<CommitFileStatus, Method> statusSetMethods = Maps.newHashMap();
@@ -67,19 +66,19 @@ public class Commit {
 		this.commitNumber = commitNumber;
 	}
 	
-	public void setAddedJavaFiles(Deque<String> addedJavaFiles) {
+	public void setAddedJavaFiles(Collection<String> addedJavaFiles) {
 		this.addedJavaFiles = addedJavaFiles;
 	}
 	
-	public void setModifiedJavaFiles(Deque<String> modifiedJavaFiles) {
+	public void setModifiedJavaFiles(Collection<String> modifiedJavaFiles) {
 		this.modifiedJavaFiles = modifiedJavaFiles;
 	}
 	
-	public void setRemovedJavaFiles(Deque<String> removedJavaFiles) {
+	public void setRemovedJavaFiles(Collection<String> removedJavaFiles) {
 		this.removedJavaFiles = removedJavaFiles;
 	}
 	
-	public void setRenamedJavaFiles(Deque<String> renamedJavaFiles) {
+	public void setRenamedJavaFiles(Collection<String> renamedJavaFiles) {
 		this.renamedJavaFiles = renamedJavaFiles;
 	}
 }
