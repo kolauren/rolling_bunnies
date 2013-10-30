@@ -1,10 +1,9 @@
 package core;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
@@ -16,7 +15,7 @@ import com.google.gson.*;
  * @author p
  *
  */
-public class ParseCommitUtils {
+public class ParseGitHubCommit {
 	//commit json objects
 	public static final String COMMIT_FILES = "files";
 	public static final String COMMIT_FILES_FILENAME = "filename";
@@ -63,12 +62,13 @@ public class ParseCommitUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Map<CommitFileStatus, List<String>> getJavaFileNames(String jsonCommit) throws IOException {
-		List<String> modified = Lists.newArrayList();
-		List<String> added = Lists.newArrayList();
-		List<String> removed = Lists.newArrayList();
-		List<String> renamed = Lists.newArrayList();
-		Map<CommitFileStatus, List<String>> files = Maps.newHashMap();
+	public static Map<CommitFileStatus, Collection<String>> getJavaFileNames(String jsonCommit) throws IOException {
+		Collection<String> modified = Lists.newArrayList();
+		Collection<String> added = Lists.newArrayList();
+		Collection<String> removed = Lists.newArrayList();
+		Collection<String> renamed = Lists.newArrayList();
+		
+		Map<CommitFileStatus, Collection<String>> files = Maps.newHashMap();
 		files.put(CommitFileStatus.ADDED, added);
 		files.put(CommitFileStatus.MODIFIED, modified);
 		files.put(CommitFileStatus.REMOVED, removed);

@@ -1,7 +1,7 @@
 package core;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -9,17 +9,19 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Maps;
 
-import core.ParseCommitUtils.CommitFileStatus;
+import core.ParseGitHubCommit.CommitFileStatus;
 
 
 //commit data we're interested in for our visualization
 public class Commit {
 	private int commitNumber;
-	private List<String> addedJavaFiles;
-	private List<String> removedJavaFiles;
-	private List<String> modifiedJavaFiles;
-	private List<String> renamedJavaFiles; 
+	//please don't rename these. thx.
+	private Collection<String> addedJavaFiles;
+	private Collection<String> removedJavaFiles;
+	private Collection<String> modifiedJavaFiles;
+	private Collection<String> renamedJavaFiles; 
 	
+	//returns the corresponding set method based on the status
 	private static final Map<CommitFileStatus, Method> statusSetMethods = Maps.newHashMap();
 	static {
 		for(CommitFileStatus status : CommitFileStatus.values()) {
@@ -40,7 +42,7 @@ public class Commit {
 		return statusSetMethods.get(status);
 	}
 	
-	public List<String> getRenamedJavaFiles() {
+	public Collection<String> getRenamedJavaFiles() {
 		return renamedJavaFiles;
 	}
 	
@@ -48,15 +50,15 @@ public class Commit {
 		return commitNumber;
 	}
 	
-	public List<String> getAddedJavaFiles() {
+	public Collection<String> getAddedJavaFiles() {
 		return addedJavaFiles;
 	}
 	
-	public List<String> getModifiedJavaFiles() {
+	public Collection<String> getModifiedJavaFiles() {
 		return modifiedJavaFiles;
 	}
 	
-	public List<String> getRemovedJavaFiles() {
+	public Collection<String> getRemovedJavaFiles() {
 		return removedJavaFiles;
 	}
 	
@@ -64,19 +66,19 @@ public class Commit {
 		this.commitNumber = commitNumber;
 	}
 	
-	public void setAddedJavaFiles(List<String> addedJavaFiles) {
+	public void setAddedJavaFiles(Collection<String> addedJavaFiles) {
 		this.addedJavaFiles = addedJavaFiles;
 	}
 	
-	public void setModifiedJavaFiles(List<String> modifiedJavaFiles) {
+	public void setModifiedJavaFiles(Collection<String> modifiedJavaFiles) {
 		this.modifiedJavaFiles = modifiedJavaFiles;
 	}
 	
-	public void setRemovedJavaFiles(List<String> removedJavaFiles) {
+	public void setRemovedJavaFiles(Collection<String> removedJavaFiles) {
 		this.removedJavaFiles = removedJavaFiles;
 	}
 	
-	public void setRenamedJavaFiles(List<String> renamedJavaFiles) {
+	public void setRenamedJavaFiles(Collection<String> renamedJavaFiles) {
 		this.renamedJavaFiles = renamedJavaFiles;
 	}
 }
