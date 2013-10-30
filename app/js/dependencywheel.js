@@ -1,13 +1,13 @@
 /**
  * This module creates a dependency wheel based on a range of options
 **/
-c.DependencyWheel = function(options) {
+DependencyWheel = function(options) {
   this.options = $.extend({}, this.options, options);
   this.init(options);
-}
+};
 
-$.extend(true, c.DependencyWheel.prototype, {
-  utils: c.Utils.getInstance(),
+$.extend(true, DependencyWheel.prototype, {
+  utils: Utils.getInstance(),
 
   svg: null,
 
@@ -18,7 +18,9 @@ $.extend(true, c.DependencyWheel.prototype, {
     selector: "", /* class or id of the element containing the dependency wheel */
     radius: 300,
     line: null, /* line function */
-    bundle: null
+    bundle: null,
+    startButton: "",
+    animate: null
   },
 
   init: function(options) {
@@ -48,10 +50,26 @@ $.extend(true, c.DependencyWheel.prototype, {
       .angle(function(d){ return d.x / 180 * Math.PI })
       .interpolate("bundle");
 
-    this.draw();
+    this.initDraw();
+
+    // Initialize animation object
+    this.animate = new Animate();
+    var self = this;
+    $("#start").click(function(){
+      self.animate.start();
+    });
   },
 
-  actualDraw: function(data) {
+  initDraw: function() {
+    var self = this;
+      
+    d3.json(this.options.json, function(resp) {
+        // don't forget that!
+        self.draw.call(self, resp);
+    });
+  },
+
+  draw: function(data) {
       var self = this;
       var nodes = self.getNodes(data);
       var edges = self.getEdges(nodes);
@@ -59,12 +77,9 @@ $.extend(true, c.DependencyWheel.prototype, {
 
       var paths = self.svg.selectAll(self.options.selector)
         .data(edges).enter().append("svg:path")
-        .attr("class", "edge")
+        .attr("class", function(d) { return "edge source-" + d.source.name + " target-" + d.target.name; })
         .style("stroke", function(d) { 
-//          console.log(d); 
           return self.utils.getColour(d.source.hue, 50, 80); })
-        .attr("data-source", function(d) { return d.source.name; })
-        .attr("data-target", function(d) { return d.target.name; })
         .attr("d", function(d, i) { return self.options.line(splines[i]); });
 
       self.svg.selectAll("g")
@@ -76,16 +91,7 @@ $.extend(true, c.DependencyWheel.prototype, {
         .attr("data-name", function(d) { return d.name; })
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
         .append("svg:title")
-        .text(function(d) { return d.name; });        
-  },
-    
-  draw: function() {
-    var that = this;
-      
-    d3.json(this.options.json, function(resp) {
-        // don't forget that!
-        that.actualDraw.call(that, resp);
-    });
+        .text(function(d) { return d.name; });   
   },
 
   /** 

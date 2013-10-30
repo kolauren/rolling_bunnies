@@ -11,16 +11,18 @@
 <body>
     <div id="main"></div>
     <div id="animate"></div>
-    <input type="button" onclick="b.init()" value="Start">
+    <input type="button" id="start" value="Start">
 </body>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">  </script>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="js/utils.js"></script>
     <script src="js/dependencywheel.js"></script>  
+    <script src="js/animateDependencies.js"></script>  
     <script type="text/javascript">
-    g.dependencyWheel = new c.DependencyWheel({ selector: "#main", json: "test1.json" });
+    // store all global variables in globals
+    var globals = globals || {};
+    globals.dependencyWheel = new DependencyWheel({ selector: "#main", json: "test1.json", startButton: "#start" });
     </script>
-   <script src="js/animateDependencies.js"></script>  
 
 </html>

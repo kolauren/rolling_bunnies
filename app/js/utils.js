@@ -1,13 +1,8 @@
-// global variables
-var g = g || {};
-// global classes
-var c = c || {};
-
 /**
  * Singleton class for all utils
  *
  */
-c.Utils = (function() {
+Utils = (function() {
 
     var instance;
 
