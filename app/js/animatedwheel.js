@@ -17,6 +17,9 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
     removedJavaFiles: [],
     renamedJavaFiles: [],
     dependenciesAffected: [],
+    commits: [],
+    interval: 1500,
+    timer: null,
 
     init: function() {
         // invoke super class
@@ -31,9 +34,22 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
         var self = this;
         self.clearWheel();
         $.getJSON("commitTest1.json", function(resp) {
-          self.commits = resp.reverse();
-          self.animateCommits();
+            self.commits = resp.reverse();
+            self.timer = setTimeout(function(){
+                self.animationCallback();
+            }, self.interval);
         });
+    },
+
+    animationCallback: function() {
+        var self = this;
+        console.log("callback " + this.commits.length);
+        self.animateCommits();
+        clearTimeout(self.timer);
+        if(this.commits.length > 0) 
+            self.timer = setTimeout(function(){
+                self.animationCallback();
+            }, self.interval);
     },
 
     clearWheel: function() {
@@ -52,8 +68,9 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
 
     createTree:  function(currentNodes) {
         var root = {name: "root", children: []};
+        var self = this;
         currentNodes.forEach(function(n){
-            var child = {name: n, imports: this.getDependencies(n)};
+            var child = {name: n, imports: self.getDependencies(n)};
             root.children.push(child);
         });
         return root;
@@ -63,7 +80,7 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
     redraw: function () {
         this.clearWheel();
         var tree = this.createTree(this.currentNodes);
-        globals.dependencyWheel.draw(tree);
+        this.draw(tree);
     },
 
     // checks if the dependency is already added
@@ -82,7 +99,8 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
     // updates current node and connections 
     // reads a commit and adds new nodes, removes nodes, 
     update: function (commit) {
-        is.currentNodes = this.currentNodes.concat(commit.addedJavaFiles);
+        var self = this;
+        this.currentNodes = this.currentNodes.concat(commit.addedJavaFiles);
         var i = 0;
         for (i; i < commit.dependenciesAffected.length; i++) {
             if (!this.dependenciesAlreadyAdded(commit.dependenciesAffected[i][0],commit.dependenciesAffected[i][1])) {
@@ -91,14 +109,14 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
         }
         
         commit.removedJavaFiles.forEach(function(deleted){
-            this.currentNodes = this.currentNodes.filter(function(elem){
+            self.currentNodes = self.currentNodes.filter(function(elem){
                 return !(elem === deleted)
             });
         });
         
         // remove the dependencies of the removed classes
         commit.removedJavaFiles.forEach(function(deleted){
-            this.currentDependencies = this.currentDependencies.filter(function(elem){
+            self.currentDependencies = self.currentDependencies.filter(function(elem){
                 return !((elem[0] === deleted) || (elem[1] === deleted))
             });
         });
@@ -117,14 +135,9 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
     },
 
     animateCommits: function () {
-        
         var commit = this.commits.pop();
         this.update(commit);
         this.redraw();
-        
-        if(this.commits.length > 0) {
-           setTimeout(this.animateCommits, 1000);   
-        }
     }
 
 });
