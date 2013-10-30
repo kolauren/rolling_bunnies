@@ -4,9 +4,9 @@
 DependencyWheel = function(options) {
   this.options = $.extend({}, this.options, options);
   this.init(options);
-};
+}
 
-$.extend(true, DependencyWheel.prototype, {
+DependencyWheel.prototype = {
   utils: Utils.getInstance(),
 
   svg: null,
@@ -19,8 +19,7 @@ $.extend(true, DependencyWheel.prototype, {
     radius: 300,
     line: null, /* line function */
     bundle: null,
-    startButton: "",
-    animate: null
+    startButton: ""
   },
 
   init: function(options) {
@@ -51,13 +50,6 @@ $.extend(true, DependencyWheel.prototype, {
       .interpolate("bundle");
 
     this.initDraw();
-
-    // Initialize animation object
-    this.animate = new Animate();
-    var self = this;
-    $("#start").click(function(){
-      self.animate.start();
-    });
   },
 
   initDraw: function() {
@@ -132,4 +124,4 @@ $.extend(true, DependencyWheel.prototype, {
     });
     return edges;
   }
-});
+};

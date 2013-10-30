@@ -1,8 +1,13 @@
-Animate = function() {
+AnimatedWheel = function(options) {
+    this.options = $.extend({}, this.options, options);
+    var self = this;
+    $(this.options.startButton).click(function(){
+        self.startAnimation();
+    });
     this.init();
-};
+}
 
-$.extend(true, Animate.prototype, {
+$.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
     currentNodes: [],
     currentDependencies: [],
 
@@ -13,11 +18,16 @@ $.extend(true, Animate.prototype, {
     renamedJavaFiles: [],
     dependenciesAffected: [],
 
-    // add logic here for initializing object and stuff
-    init: function () {
+    init: function() {
+        // invoke super class
+        DependencyWheel.prototype.init.call(this);
+        var self = this;
+        $(this.options.startButton).click(function(){
+            self.startAnimation();
+        });
     },
 
-    start: function() {
+    startAnimation: function() {
         var self = this;
         self.clearWheel();
         $.getJSON("commitTest1.json", function(resp) {
@@ -115,7 +125,8 @@ $.extend(true, Animate.prototype, {
         if(this.commits.length > 0) {
            setTimeout(this.animateCommits, 1000);   
         }
-    },
+    }
 
 });
+
 
