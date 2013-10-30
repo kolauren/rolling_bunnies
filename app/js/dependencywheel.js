@@ -51,9 +51,8 @@ $.extend(true, c.DependencyWheel.prototype, {
     this.draw();
   },
 
-  draw: function() {
-    var self = this;
-    d3.json(this.options.json, function(data) {
+  actualDraw: function(data) {
+      var self = this;
       var nodes = self.getNodes(data);
       var edges = self.getEdges(nodes);
       var splines = self.options.bundle(edges);
@@ -62,7 +61,7 @@ $.extend(true, c.DependencyWheel.prototype, {
         .data(edges).enter().append("svg:path")
         .attr("class", "edge")
         .style("stroke", function(d) { 
-          console.log(d); 
+//          console.log(d); 
           return self.utils.getColour(d.source.hue, 50, 80); })
         .attr("data-source", function(d) { return d.source.name; })
         .attr("data-target", function(d) { return d.target.name; })
@@ -77,7 +76,15 @@ $.extend(true, c.DependencyWheel.prototype, {
         .attr("data-name", function(d) { return d.name; })
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
         .append("svg:title")
-        .text(function(d) { return d.name; });
+        .text(function(d) { return d.name; });        
+  },
+    
+  draw: function() {
+    var that = this;
+      
+    d3.json(this.options.json, function(resp) {
+        // don't forget that!
+        that.actualDraw.call(that, resp);
     });
   },
 
