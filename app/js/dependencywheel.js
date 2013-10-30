@@ -86,7 +86,7 @@ $.extend(true, DependencyWheel.prototype, {
         .data(nodes.filter(function(n) { return !n.children; }))
         .enter().append("circle")
         .attr("r", 10)
-        .attr("class", "node")
+        .attr("class", function(d) { return "node " + d.name; })
         .style("fill", function(d) { return self.utils.getColour(d.hue, 50, 60); })
         .attr("data-name", function(d) { return d.name; })
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
