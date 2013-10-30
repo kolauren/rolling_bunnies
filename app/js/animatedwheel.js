@@ -48,7 +48,7 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
         self.animateCommits();
         clearTimeout(self.timer);
         if(this.commits.length > 0) 
-            self.timer = setTimeo$ut(function(){
+            self.timer = setTimeout(function(){
                 self.animationCallback();
             }, self.interval);
     },
