@@ -3,6 +3,7 @@ package core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import org.eclipse.egit.github.core.service.RepositoryService;
 
 import com.google.common.collect.Lists;
 
-import core.ParseCommitUtils.CommitFileStatus;
+import core.ParseGitHubCommit.CommitFileStatus;
 
 /**
  * wrapper for the egit github api java wrapper.
@@ -71,6 +72,7 @@ public class GitHubDao {
 		return IOUtils.toString(in, "UTF-8");
 	}
 	
+	//returns numCommits most recent commits
 	public List<Commit> getCommits(String owner, String repoName, int numCommits) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		List<Commit> commits = Lists.newArrayList();
 		List<RepositoryCommit> githubCommits = queryCommits(owner, repoName);
@@ -86,7 +88,7 @@ public class GitHubDao {
 			RepositoryCommit githubCommit = githubCommits.get(i);
 			System.out.println(githubCommit.getUrl());
 			String jsonCommit = queryCommitJson(owner, repoName, githubCommit.getSha());
-			Map<CommitFileStatus, List<String>> javaFiles = ParseCommitUtils.getJavaFileNames(jsonCommit);
+			Map<CommitFileStatus, Deque<String>> javaFiles = ParseGitHubCommit.getJavaFileNames(jsonCommit);
 			if(javaFiles != null) {
 				Commit commit = new Commit();	
 				for(CommitFileStatus status : CommitFileStatus.values()) {
@@ -100,10 +102,8 @@ public class GitHubDao {
 		return commits;
 	}
 	
-	//get all of them
+	//get all commits
 	public List<Commit> getCommits(String owner, String repoName) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		return getCommits(owner, repoName, -1);
 	}
-	
-	//git file statuses: added, removed, modified, renamed
 }

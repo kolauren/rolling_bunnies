@@ -1,12 +1,11 @@
 package core;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Deque;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.google.gson.*;
 
 /**
@@ -16,7 +15,7 @@ import com.google.gson.*;
  * @author p
  *
  */
-public class ParseCommitUtils {
+public class ParseGitHubCommit {
 	//commit json objects
 	public static final String COMMIT_FILES = "files";
 	public static final String COMMIT_FILES_FILENAME = "filename";
@@ -55,20 +54,22 @@ public class ParseCommitUtils {
 	}
 	
 	/**
-	 * parses json commit for java files
+	 * Parses github commit json for java files only. Files are listed in order of
+	 * most recent -> old.
 	 * 
-	 * returns null if the map is empty since we are not interested in commits with no java file changes
+	 * Returns null if the map is empty since we are not interested in commits with no java file changes.
 	 * 
 	 * @param jsonCommit
 	 * @return
 	 * @throws IOException
 	 */
-	public static Map<CommitFileStatus, List<String>> getJavaFileNames(String jsonCommit) throws IOException {
-		List<String> modified = Lists.newArrayList();
-		List<String> added = Lists.newArrayList();
-		List<String> removed = Lists.newArrayList();
-		List<String> renamed = Lists.newArrayList();
-		Map<CommitFileStatus, List<String>> files = Maps.newHashMap();
+	public static Map<CommitFileStatus, Deque<String>> getJavaFileNames(String jsonCommit) throws IOException {
+		Deque<String> modified = Queues.newArrayDeque();
+		Deque<String> added = Queues.newArrayDeque();
+		Deque<String> removed = Queues.newArrayDeque();
+		Deque<String> renamed = Queues.newArrayDeque();
+		
+		Map<CommitFileStatus, Deque<String>> files = Maps.newHashMap();
 		files.put(CommitFileStatus.ADDED, added);
 		files.put(CommitFileStatus.MODIFIED, modified);
 		files.put(CommitFileStatus.REMOVED, removed);
@@ -86,16 +87,16 @@ public class ParseCommitUtils {
 				
 				switch(CommitFileStatus.fromString(status)){
 					case MODIFIED:
-						modified.add(filename); 
+						modified.push(filename); 
 						break;
 					case ADDED:
-						added.add(filename); 
+						added.push(filename); 
 						break;
 					case REMOVED:
-						removed.add(filename); 
+						removed.push(filename); 
 						break;
 					case RENAMED:
-						renamed.add(filename);
+						renamed.push(filename);
 						break;
 				}
 				
