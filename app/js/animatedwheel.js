@@ -143,6 +143,18 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
         var commit = this.commits.pop();
         this.update(commit);
         this.redraw();
+    },
+    
+    // TODO: creates a static wheel for the beginning of animation
+    // static wheel contains all nodes/.java files that were added through commit history
+    createStaticWheel: function() {
+    
+    },
+    
+    // TODO: animates static wheel by iterating through commits
+    animateStaticWheel: function() {
+        // lower opacity of nodes
+        // loop through commits
     }
 
 });
