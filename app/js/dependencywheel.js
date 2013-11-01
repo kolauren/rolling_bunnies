@@ -1,5 +1,5 @@
 /**
- * This module creates a dependency wheel based on a range of options
+ * This class creates a static dependency wheel based on json input
 **/
 DependencyWheel = function(options) {
   this.options = $.extend({}, this.options, options);
@@ -61,6 +61,7 @@ DependencyWheel.prototype = {
     });
   },
 
+  // Draws all the nodes and edges based on input data
   draw: function(data) {
       var self = this;
       var nodes = self.getNodes(data);

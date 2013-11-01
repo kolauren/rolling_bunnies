@@ -1,9 +1,9 @@
+/**
+ * This class creates a animated depedency wheel. inherits from DependencyWheel
+**/
 AnimatedWheel = function(options) {
     this.options = $.extend({}, this.options, options);
     var self = this;
-    $(this.options.startButton).click(function(){
-        self.startAnimation();
-    });
     this.init();
 }
 
