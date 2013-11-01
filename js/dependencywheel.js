@@ -1,12 +1,12 @@
 /**
- * This module creates a dependency wheel based on a range of options
+ * This class creates a static dependency wheel based on json input
 **/
 DependencyWheel = function(options) {
   this.options = $.extend({}, this.options, options);
   this.init(options);
-};
+}
 
-$.extend(true, DependencyWheel.prototype, {
+DependencyWheel.prototype = {
   utils: Utils.getInstance(),
 
   svg: null,
@@ -19,8 +19,7 @@ $.extend(true, DependencyWheel.prototype, {
     radius: 300,
     line: null, /* line function */
     bundle: null,
-    startButton: "",
-    animate: null
+    startButton: ""
   },
 
   init: function(options) {
@@ -51,13 +50,6 @@ $.extend(true, DependencyWheel.prototype, {
       .interpolate("bundle");
 
     this.initDraw();
-
-    // Initialize animation object
-    this.animate = new Animate();
-    var self = this;
-    $("#start").click(function(){
-      self.animate.start();
-    });
   },
 
   initDraw: function() {
@@ -69,6 +61,7 @@ $.extend(true, DependencyWheel.prototype, {
     });
   },
 
+  // Draws all the nodes and edges based on input data
   draw: function(data) {
       var self = this;
       var nodes = self.getNodes(data);
@@ -92,6 +85,14 @@ $.extend(true, DependencyWheel.prototype, {
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
         .append("svg:title")
         .text(function(d) { return d.name; });   
+  },
+
+  /**
+   * TODO: pass in a given node and highlight all the edges that touch the node
+   * 
+   **/
+  highlightDependencies: function(node) {
+
   },
 
   /** 
@@ -132,4 +133,4 @@ $.extend(true, DependencyWheel.prototype, {
     });
     return edges;
   }
-});
+};

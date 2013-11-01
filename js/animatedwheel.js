@@ -1,8 +1,13 @@
-Animate = function() {
+/**
+ * This class creates a animated depedency wheel. inherits from DependencyWheel
+**/
+AnimatedWheel = function(options) {
+    this.options = $.extend({}, this.options, options);
+    var self = this;
     this.init();
-};
+}
 
-$.extend(true, Animate.prototype, {
+$.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
     currentNodes: [],
     currentDependencies: [],
 
@@ -12,25 +17,49 @@ $.extend(true, Animate.prototype, {
     removedJavaFiles: [],
     renamedJavaFiles: [],
     dependenciesAffected: [],
+    commits: [],
+    interval: 1500,
+    timer: null,
 
-    // add logic here for initializing object and stuff
-    init: function () {
-    },
-
-    start: function() {
+    init: function() {
+        // invoke super class
+        DependencyWheel.prototype.init.call(this);
         var self = this;
-        self.clearWheel();
-        $.getJSON("commitTest1.json", function(resp) {
-          self.commits = resp.reverse();
-          self.animateCommits();
+        $(this.options.startButton).click(function(){
+            self.startAnimation();
         });
     },
 
+    startAnimation: function() {
+        var self = this;
+        self.clearWheel();
+        $.getJSON("commitTest1.json", function(resp) {
+            self.commits = resp.reverse();
+            self.timer = setTimeout(function(){
+                self.animationCallback();
+            }, self.interval);
+        });
+    },
+
+    // animate commits in different intervals
+    animationCallback: function() {
+        var self = this;
+        console.log("callback " + this.commits.length);
+        self.animateCommits();
+        clearTimeout(self.timer);
+        if(this.commits.length > 0) 
+            self.timer = setTimeout(function(){
+                self.animationCallback();
+            }, self.interval);
+    },
+
+    // clears the canvas of nodes and edges
     clearWheel: function() {
         d3.selectAll("circle").remove();
         d3.selectAll("path.edge").remove();
     },
 
+    // returns a list of dependencies of given class
     getDependencies: function(className){
         var dependencies = [];
         this.currentDependencies.forEach(function (d){
@@ -40,10 +69,12 @@ $.extend(true, Animate.prototype, {
         return dependencies;
     },
 
+    // creates the tree for parsing using the d3 cluster method
     createTree:  function(currentNodes) {
         var root = {name: "root", children: []};
+        var self = this;
         currentNodes.forEach(function(n){
-            var child = {name: n, imports: this.getDependencies(n)};
+            var child = {name: n, imports: self.getDependencies(n)};
             root.children.push(child);
         });
         return root;
@@ -53,7 +84,7 @@ $.extend(true, Animate.prototype, {
     redraw: function () {
         this.clearWheel();
         var tree = this.createTree(this.currentNodes);
-        globals.dependencyWheel.draw(tree);
+        this.draw(tree);
     },
 
     // checks if the dependency is already added
@@ -72,7 +103,8 @@ $.extend(true, Animate.prototype, {
     // updates current node and connections 
     // reads a commit and adds new nodes, removes nodes, 
     update: function (commit) {
-        is.currentNodes = this.currentNodes.concat(commit.addedJavaFiles);
+        var self = this;
+        this.currentNodes = this.currentNodes.concat(commit.addedJavaFiles);
         var i = 0;
         for (i; i < commit.dependenciesAffected.length; i++) {
             if (!this.dependenciesAlreadyAdded(commit.dependenciesAffected[i][0],commit.dependenciesAffected[i][1])) {
@@ -80,15 +112,16 @@ $.extend(true, Animate.prototype, {
             }
         }
         
+        // remove the node from current node list
         commit.removedJavaFiles.forEach(function(deleted){
-            this.currentNodes = this.currentNodes.filter(function(elem){
+            self.currentNodes = self.currentNodes.filter(function(elem){
                 return !(elem === deleted)
             });
         });
         
         // remove the dependencies of the removed classes
         commit.removedJavaFiles.forEach(function(deleted){
-            this.currentDependencies = this.currentDependencies.filter(function(elem){
+            self.currentDependencies = self.currentDependencies.filter(function(elem){
                 return !((elem[0] === deleted) || (elem[1] === deleted))
             });
         });
@@ -107,15 +140,23 @@ $.extend(true, Animate.prototype, {
     },
 
     animateCommits: function () {
-        
         var commit = this.commits.pop();
         this.update(commit);
         this.redraw();
-        
-        if(this.commits.length > 0) {
-           setTimeout(this.animateCommits, 1000);   
-        }
     },
+    
+    // TODO: creates a static wheel for the beginning of animation
+    // static wheel contains all nodes/.java files that were added through commit history
+    createStaticWheel: function() {
+    
+    },
+    
+    // TODO: animates static wheel by iterating through commits
+    animateStaticWheel: function() {
+        // lower opacity of nodes
+        // loop through commits
+    }
 
 });
+
 
