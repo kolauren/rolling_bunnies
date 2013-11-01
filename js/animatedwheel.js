@@ -27,6 +27,7 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
         var self = this;
         $(this.options.startButton).click(function(){
             self.startAnimation();
+            $(self.options.startButton).attr("disabled", true);
         });
     },
 
