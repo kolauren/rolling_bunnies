@@ -1,25 +1,34 @@
-package core;
+package commit.parser;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+import org.eclipse.egit.github.core.RepositoryCommit;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.google.gson.*;
 
 /**
  * A parser for the github commit json.
  * 
- * This class is a workaround for egit's inability to fetch files from a commit
+ * This class includes workarounds for egit's inability to fetch files from a commit
  * @author p
  *
  */
-public class ParseGitHubCommit {
+public class CommitParser {
 	//commit json objects
 	public static final String COMMIT_FILES = "files";
 	public static final String COMMIT_FILES_FILENAME = "filename";
 	public static final String COMMIT_FILES_STATUS = "status";
+	
+	GitHubDao githubDao;
 	
 	public enum CommitFileStatus {
 		MODIFIED("modified"),
@@ -53,6 +62,15 @@ public class ParseGitHubCommit {
 		}
 	}
 	
+	public CommitParser() {
+		//TODO: move args to properties file
+		String user = "pammil";
+		String password = "5cd8f20e47dfc2ffc846e82c652450c61f0a41a9";
+		
+		//basic authentication
+		githubDao = new GitHubDao(user, password);
+	}
+	
 	/**
 	 * parses json commit for java files
 	 * 
@@ -62,7 +80,7 @@ public class ParseGitHubCommit {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Map<CommitFileStatus, Collection<String>> getJavaFileNames(String jsonCommit) throws IOException {
+	public Map<CommitFileStatus, Collection<String>> getJavaFileNames(String jsonCommit) throws IOException {
 		Collection<String> modified = Lists.newArrayList();
 		Collection<String> added = Lists.newArrayList();
 		Collection<String> removed = Lists.newArrayList();
@@ -106,5 +124,50 @@ public class ParseGitHubCommit {
 			files = null;
 		
 		return files;
+	}
+	
+	//returns numCommits oldest commits
+	public Collection<Commit> getCommits(String owner, String repoName, int numCommits) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Deque<Commit> commits = Queues.newArrayDeque();
+		List<RepositoryCommit> githubCommits = githubDao.queryCommits(owner, repoName);
+		
+		int max;
+		if((numCommits < 0) || (numCommits > githubCommits.size()))
+			max = githubCommits.size();
+		else
+			max = numCommits;
+		
+		for(int i=0; i<max; i++) {
+			RepositoryCommit githubCommit = githubCommits.get(i);
+			System.out.println(githubCommit.getUrl());
+			String jsonCommit = githubDao.queryCommitJson(owner, repoName, githubCommit.getSha());
+			Map<CommitFileStatus, Collection<String>> javaFiles = getJavaFileNames(jsonCommit);
+			if(javaFiles != null) {
+				Commit commit = new Commit();	
+				for(CommitFileStatus status : CommitFileStatus.values()) {
+					Commit.getSetMethodByStatus(status).invoke(commit, javaFiles.get(status));
+				}
+				commits.push(commit);
+			}
+		}
+		
+		//id the commits by order (oldest -> new)
+		int i=0;
+		for(Commit commit : commits) {
+			commit.setCommitNumber(i);
+			i++;
+		}
+		return commits;
+	}
+	
+	//get all commits
+	public Collection<Commit> getCommits(String owner, String repoName) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		return getCommits(owner, repoName, -1);
+	}
+	
+	
+	//TODO
+	public void parseDiff(String diff) {
+		
 	}
 }

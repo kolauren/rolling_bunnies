@@ -1,4 +1,4 @@
-package core;
+package commit.parser;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -8,8 +8,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Maps;
-
-import core.ParseGitHubCommit.CommitFileStatus;
+import commit.parser.CommitParser.CommitFileStatus;
 
 
 //commit data we're interested in for our visualization
@@ -19,7 +18,10 @@ public class Commit {
 	private Collection<String> addedJavaFiles;
 	private Collection<String> removedJavaFiles;
 	private Collection<String> modifiedJavaFiles;
-	private Collection<String> renamedJavaFiles; 
+	private Collection<String> renamedJavaFiles;
+	
+	//TODO
+	private Map<String, Collection<Integer>> linesChanged;
 	
 	//returns the corresponding set method based on the status
 	private static final Map<CommitFileStatus, Method> statusSetMethods = Maps.newHashMap();
@@ -81,4 +83,5 @@ public class Commit {
 	public void setRenamedJavaFiles(Collection<String> renamedJavaFiles) {
 		this.renamedJavaFiles = renamedJavaFiles;
 	}
+	
 }

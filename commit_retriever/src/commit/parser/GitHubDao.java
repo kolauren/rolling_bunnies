@@ -1,23 +1,14 @@
-package core;
+package commit.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Deque;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.io.IOUtils;
 import org.eclipse.egit.github.core.*;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.client.GitHubRequest;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.RepositoryService;
-
-import com.google.common.collect.Queues;
-
-import core.ParseGitHubCommit.CommitFileStatus;
 
 /**
  * wrapper for the egit github api java wrapper.
@@ -71,44 +62,5 @@ public class GitHubDao {
 		request.setUri(uri);
 		InputStream in = client.getStream(request);
 		return IOUtils.toString(in, "UTF-8");
-	}
-	
-	//returns numCommits oldest commits
-	public Collection<Commit> getCommits(String owner, String repoName, int numCommits) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Deque<Commit> commits = Queues.newArrayDeque();
-		List<RepositoryCommit> githubCommits = queryCommits(owner, repoName);
-		
-		int max;
-		if((numCommits < 0) || (numCommits > githubCommits.size()))
-			max = githubCommits.size();
-		else
-			max = numCommits;
-		
-		for(int i=0; i<max; i++) {
-			RepositoryCommit githubCommit = githubCommits.get(i);
-			System.out.println(githubCommit.getUrl());
-			String jsonCommit = queryCommitJson(owner, repoName, githubCommit.getSha());
-			Map<CommitFileStatus, Collection<String>> javaFiles = ParseGitHubCommit.getJavaFileNames(jsonCommit);
-			if(javaFiles != null) {
-				Commit commit = new Commit();	
-				for(CommitFileStatus status : CommitFileStatus.values()) {
-					Commit.getSetMethodByStatus(status).invoke(commit, javaFiles.get(status));
-				}
-				commits.push(commit);
-			}
-		}
-		
-		//id the commits by order (oldest -> new)
-		int i=0;
-		for(Commit commit : commits) {
-			commit.setCommitNumber(i);
-			i++;
-		}
-		return commits;
-	}
-	
-	//get all commits
-	public Collection<Commit> getCommits(String owner, String repoName) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return getCommits(owner, repoName, -1);
 	}
 }

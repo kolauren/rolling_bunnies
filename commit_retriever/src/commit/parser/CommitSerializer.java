@@ -1,4 +1,4 @@
-package core;
+package commit.parser;
 
 import java.util.List;
 

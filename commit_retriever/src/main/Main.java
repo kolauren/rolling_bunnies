@@ -1,16 +1,21 @@
-package core;
+package main;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+
 import org.apache.commons.io.FileUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import commit.parser.Commit;
+import commit.parser.GitHubDao;
 
 public class Main {
 	public static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		//testing commit parser
+		/**
 		//TODO: move args
 		String owner = "kolauren";
 		String repo = "rolling_bunnies";
@@ -35,6 +40,6 @@ public class Main {
 		
 		FileUtils.writeStringToFile(json, gson.toJson(commits), true);
 		FileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true);
-	
+		**/
 	}
 }

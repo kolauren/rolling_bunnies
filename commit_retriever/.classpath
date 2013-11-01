@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="libs/gson-2.2.4.jar"/>
 	<classpathentry kind="lib" path="libs/guava-15.0.jar"/>
 	<classpathentry kind="lib" path="libs/org.eclipse.egit.github.core-2.1.5.jar"/>
+	<classpathentry kind="lib" path="libs/org.json-20120521.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
