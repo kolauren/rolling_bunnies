@@ -9,21 +9,19 @@ import org.apache.commons.io.FileUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import commit.parser.Commit;
+import commit.parser.CommitParser;
 import commit.parser.GitHubDao;
 
 public class Main {
 	public static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		//testing commit parser
-		/**
 		//TODO: move args
 		String owner = "kolauren";
 		String repo = "rolling_bunnies";
-		String user = "pammil";
-		String password = "5cd8f20e47dfc2ffc846e82c652450c61f0a41a9";
 		
-		//basic authentication
-		GitHubDao githubDao = new GitHubDao(user, password);
+		CommitParser p = new CommitParser();
 		
 		//print compact and pretty json
 		File json = new File("output/"+owner+"_"+repo+"_commits.json");
@@ -36,10 +34,9 @@ public class Main {
 		Gson gson = new Gson();
 		Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
 		
-		Collection<Commit> commits = githubDao.getCommits(owner, repo);
+		Collection<Commit> commits = p.getCommits(owner, repo);
 		
 		FileUtils.writeStringToFile(json, gson.toJson(commits), true);
 		FileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true);
-		**/
 	}
 }
