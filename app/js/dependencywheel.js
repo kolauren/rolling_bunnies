@@ -56,7 +56,6 @@ DependencyWheel.prototype = {
     var self = this;
       
     d3.json(this.options.json, function(resp) {
-        // don't forget that!
         self.draw.call(self, resp);
     });
   },
