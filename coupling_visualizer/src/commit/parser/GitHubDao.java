@@ -45,13 +45,13 @@ public class GitHubDao {
 	}
 	
 	//cache results; do not call this more than once because github api calls are limited
-	public List<RepositoryCommit> queryCommits(String owner, String repoName) throws IOException {
+	public List<RepositoryCommit> queryCommits(String owner, String repoName, String branch) throws IOException {
 		List<RepositoryCommit> commits = null;
 		
 		RepositoryService repoService = new RepositoryService(client);
 		Repository repo = repoService.getRepository(owner, repoName);
 		CommitService commitService = new CommitService(client);
-		commits = commitService.getCommits(repo);
+		commits = commitService.getCommits(repo, branch, null);
 		
 		return commits;
 	}

@@ -4,28 +4,26 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.Collections;
-
 import org.apache.commons.io.FileUtils;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import commit.parser.Commit;
 import commit.parser.CommitParser;
 import commit.parser.Diff;
-import commit.parser.GitHubDao;
 import commit.parser.UnifiedDiffParser;
 
 public class Main {
 	public static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		/*
+		
 		//testing commit parser
 		//TODO: move args
 		String owner = "kolauren";
 		String repo = "rolling_bunnies";
+		//master
+		String branch = "4396fa24a6ea94e24a7b3b1e7a63e294229133d";
 		
 		CommitParser p = new CommitParser();
 		
@@ -40,10 +38,15 @@ public class Main {
 		Gson gson = new Gson();
 		Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
 		
-		Collection<Commit> commits = p.getCommits(owner, repo, 10);
+		Collection<Commit> commits = p.getCommits(owner, repo, branch);
 		
 		FileUtils.writeStringToFile(json, gson.toJson(commits), true);
-		FileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true); */
+		FileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true); 
+		
+		
+		/**
+		 * Testing diff parser
+		 */
 		
 		String unifiedDiff="@@ -9,21 +9,19 @@\n \n import com.google.gson.Gson;\n import com.google.gson.GsonBuilder;\n+\n import commit.parser.Commit;\n+import commit.parser.CommitParser;\n import commit.parser.GitHubDao;\n \n public class Main {\n \tpublic static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {\n \t\t//testing commit parser\n-\t\t/**\n \t\t//TODO: move args\n \t\tString owner = \"kolauren\";\n \t\tString repo = \"rolling_bunnies\";\n-\t\tString user = \"pammil\";\n-\t\tString password = \"5cd8f20e47dfc2ffc846e82c652450c61f0a41a9\";\n \t\t\n-\t\t//basic authentication\n-\t\tGitHubDao githubDao = new GitHubDao(user, password);\n+\t\tCommitParser p = new CommitParser();\n \t\t\n \t\t//print compact and pretty json\n \t\tFile json = new File(\"output/\"+owner+\"_\"+repo+\"_commits.json\");\n@@ -36,10 +34,9 @@ public static void main(String[] args) throws IOException, IllegalAccessExceptio\n \t\tGson gson = new Gson();\n \t\tGson gsonPretty = new GsonBuilder().setPrettyPrinting().create();\n \t\t\n-\t\tCollection<Commit> commits = githubDao.getCommits(owner, repo);\n+\t\tCollection<Commit> commits = p.getCommits(owner, repo);\n \t\t\n \t\tFileUtils.writeStringToFile(json, gson.toJson(commits), true);\n \t\tFileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true);\n-\t\t**/\n \t}\n }\n\\ No newline at end of file";
 	
