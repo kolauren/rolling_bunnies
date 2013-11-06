@@ -126,10 +126,10 @@ public class CommitParser {
 		return files;
 	}
 	
-	//returns numCommits oldest commits
-	public Collection<Commit> getCommits(String owner, String repoName, int numCommits) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	//returns numCommits newest commits ordered from oldest -> recent
+	public Collection<Commit> getCommits(String owner, String repoName, String branch, int numCommits) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Deque<Commit> commits = Queues.newArrayDeque();
-		List<RepositoryCommit> githubCommits = githubDao.queryCommits(owner, repoName);
+		List<RepositoryCommit> githubCommits = githubDao.queryCommits(owner, repoName, branch);
 		
 		int max;
 		if((numCommits < 0) || (numCommits > githubCommits.size()))
@@ -161,8 +161,8 @@ public class CommitParser {
 	}
 	
 	//get all commits
-	public Collection<Commit> getCommits(String owner, String repoName) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return getCommits(owner, repoName, -1);
+	public Collection<Commit> getCommits(String owner, String repoName, String branch) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		return getCommits(owner, repoName, branch, -1);
 	}
 	
 	
