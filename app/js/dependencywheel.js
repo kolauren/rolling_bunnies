@@ -62,7 +62,7 @@ DependencyWheel.prototype = {
 
   // Draws all the nodes and edges based on input data
   draw: function(data) {
-      var self = this;
+      var self = this;  
       var nodes = self.getNodes(data);
       var edges = self.getEdges(nodes);
       var splines = self.options.bundle(edges);
@@ -85,7 +85,7 @@ DependencyWheel.prototype = {
         .append("svg:title")
         .text(function(d) { return d.name; });   
   },
-
+  
   /** 
    * @param json data
    * @return returns an array of d3.cluster nodes

@@ -20,15 +20,107 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
     commits: [],
     interval: 1500,
     timer: null,
+    
 
     init: function() {
         // invoke super class
         DependencyWheel.prototype.init.call(this);
         var self = this;
+        
+
+        
         $(this.options.startButton).click(function(){
+            // process the commit data
+            self.processCommitData();
             self.startAnimation();
             $(self.options.startButton).attr("disabled", true);
         });
+    },
+    
+    
+    dependencyExists: function(dependencyList, dependency) {
+        exists = false;
+        dependencyList.forEach(function(d) {
+            if(d.source === dependency.source && d.target === dependency.target)
+                exists = true;
+        });
+        return exists;
+    },
+    
+    
+    // TODO: REFACTOR!!
+    processCommitData: function() {
+        // new fields for pushing current states for each commit
+        var self = this;
+        var nodes = [];
+        var edges = [];
+        
+        $.getJSON("commitsTest2.json", function(resp) {
+            self.commits = resp;
+            self.commits.forEach(function(c){
+                // loop through added files
+                // add added files to nodes array
+                c.addedJavaFiles.forEach(function(a) {
+                  nodes = nodes.concat({"name": a, "deleted": false});  
+                    
+                });
+                //nodes = nodes.concat(c.addedJavaFiles);
+                
+                  // loop through dependencies
+                // add dependency if it doesnt exist already in edges array
+                c.dependencies.forEach(function (d){
+                    if(!self.dependencyExists(edges, d))
+                        //edges.push(d);   <====== fffffffffffffffffff youuuu!!!!!!
+                        edges = edges.concat(d);
+                });
+                
+                
+                // loop through renamed files, rename files in nodes array
+                c.renamedJavaFiles.forEach(function(r){
+                    // search the current nodes list and replace the old with new name
+                    var i = 0;
+                    for(i; i<nodes.length; i++) {
+                     if(nodes[i] === r.old) {
+                         nodes[i] = r.new;
+                         break;
+                     }
+                    }
+                    
+                    // rename the edge if it contains renamed node??
+                    edges.forEach(function(e) {
+                        // if the edge contains the node, rename it??
+                        if(e.target === r.old)
+                            e.target = r.new;
+                        else if(e.source === r.old)
+                            e.source = r.new;
+                    });
+                });
+                
+                // loop through removed files, set deleted flag in nodes array to true
+                c.removedJavaFiles.forEach(function(d) {
+                    var j = 0;
+                    for(j; j<nodes.length; j++) {
+                     if(nodes[j].name === d) {
+                         nodes[j].deleted = "true";
+                         continue;
+                     }
+                    }
+                // set deleted flag to true for all associated edges
+                    edges.forEach(function(e) {
+                        // if the edge contains the node, set deleted flag = true
+                        if(e.target === d || e.source === d)
+                            e.deleted = "true";
+                    });
+
+                });
+                
+                // set commit object's currentNode and currentEdges fields
+                c.currentNodes = nodes;
+                c.currentEdges = edges;
+            });
+            
+        });
+        
     },
 
     startAnimation: function() {

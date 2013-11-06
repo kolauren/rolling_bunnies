@@ -12,12 +12,12 @@
         "dependencies": [
             {
                 "source": "class1",
-                "destination": "class2",
+                "target": "class2",
                 "type": 1
             },
             {
                 "source": "class1",
-                "destination": "class0",
+                "target": "class0",
                 "type": 2
             }
         ]
@@ -36,17 +36,17 @@
         "dependencies": [
             {
                 "source": "class3",
-                "destination": "class0",
+                "target": "class0",
                 "type": 2
             },
             {
                 "source": "class1",
-                "destination": "class0",
-                "type": 1
+                "target": "class0",
+                "type": 2
             },
             {
                 "source": "class0",
-                "destination": "class4",
+                "target": "class4",
                 "type": 2
             }
         ]
@@ -62,7 +62,7 @@
         "dependencies": [
             {
                 "source": "class1",
-                "destination": "class2",
+                "target": "class2",
                 "type": 1
             }
         ]
@@ -81,8 +81,8 @@
         "dependencies": [
             {
                 "source": "class1",
-                "destination": "class0",
-                "type": 1
+                "target": "class0",
+                "type": 2
             }
         ]
     }
