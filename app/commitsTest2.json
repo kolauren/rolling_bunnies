@@ -1,0 +1,89 @@
+[
+    {
+        "commitNumber": 1,
+        "modifiedJavaFiles": [],
+        "addedJavaFiles": [
+            "class0",
+            "class1",
+            "class2"
+        ],
+        "removedJavaFiles": [],
+        "renamedJavaFiles": [],
+        "dependencies": [
+            {
+                "source": "class1",
+                "destination": "class2",
+                "type": 1
+            },
+            {
+                "source": "class1",
+                "destination": "class0",
+                "type": 2
+            }
+        ]
+    },
+    {
+        "commitNumber": 2,
+        "modifiedJavaFiles": [
+            "class0"
+        ],
+        "addedJavaFiles": [
+            "class3",
+            "class4"
+        ],
+        "removedJavaFiles": [],
+        "renamedJavaFiles": [],
+        "dependencies": [
+            {
+                "source": "class3",
+                "destination": "class0",
+                "type": 2
+            },
+            {
+                "source": "class1",
+                "destination": "class0",
+                "type": 1
+            },
+            {
+                "source": "class0",
+                "destination": "class4",
+                "type": 2
+            }
+        ]
+    },
+    {
+        "commitNumber": 3,
+        "modifiedJavaFiles": [],
+        "addedJavaFiles": [],
+        "removedJavaFiles": [
+            "class2"
+        ],
+        "renamedJavaFiles": [],
+        "dependencies": [
+            {
+                "source": "class1",
+                "destination": "class2",
+                "type": 1
+            }
+        ]
+    },
+    {
+        "commitNumber": 4,
+        "modifiedJavaFiles": [],
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "renamedJavaFiles": [
+            {
+                "old": "class1",
+                "new": "classA"
+            }
+        ],
+        "dependencies": [
+            {
+                "source": "class1",
+                "destination": "class0",
+                "type": 1
+            }
+        ]
+    }
+]
