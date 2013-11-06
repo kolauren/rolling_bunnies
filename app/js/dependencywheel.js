@@ -1,5 +1,5 @@
 /**
- * This class creates a static dependency wheel based on json input
+ * This class draws the dependency wheel ie interacts with D3
 **/
 DependencyWheel = function(options) {
   this.options = $.extend({}, this.options, options);
@@ -19,7 +19,6 @@ DependencyWheel.prototype = {
     radius: 300,
     line: null, /* line function */
     bundle: null,
-    startButton: ""
   },
 
   init: function(options) {
@@ -49,15 +48,6 @@ DependencyWheel.prototype = {
       .angle(function(d){ return d.x / 180 * Math.PI })
       .interpolate("bundle");
 
-    this.initDraw();
-  },
-
-  initDraw: function() {
-    var self = this;
-      
-    d3.json(this.options.json, function(resp) {
-        self.draw.call(self, resp);
-    });
   },
 
   // Draws all the nodes and edges based on input data
@@ -84,44 +74,45 @@ DependencyWheel.prototype = {
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
         .append("svg:title")
         .text(function(d) { return d.name; });   
-  },
-  
-  /** 
-   * @param json data
-   * @return returns an array of d3.cluster nodes
-   **/
-  getNodes: function(data) {
-    var self = this;
-    var nodes = self.cluster.nodes(data);
-    // pick hues for each node that are equidistant apart from one another
-    var colours = []
-    var increment = Math.ceil(360 / nodes.length);
-    for(var i = 0; i < 360 && colours.length <= nodes.length; i += increment) {
-      colours.push(i);
-    }
-    nodes.forEach(function(n){
-      n.hue = colours.pop();
-    });
-    return nodes;
-  },
-
-  /** 
-   * @param nodes The nodes created from getNodes()
-   * @return an array of edges
-   **/
-  getEdges: function(nodes) {
-    var map = {};
-    var edges = [];
-    nodes.forEach(function(d) {
-      map[d.name]  = d;
-    });
-    nodes.forEach(function(d) {
-      if(d.imports) {
-        d.imports.forEach(function(a) {
-          edges.push({source: map[d.name], target: map[a]});
-        });
-      }
-    });
-    return edges;
   }
+  
+  // Move these json extraction methods to utils
+  // /** 
+  //  * @param json data
+  //  * @return returns an array of d3.cluster nodes
+  //  **/
+  // getNodes: function(data) {
+  //   var self = this;
+  //   var nodes = self.cluster.nodes(data);
+  //   // pick hues for each node that are equidistant apart from one another
+  //   var colours = []
+  //   var increment = Math.ceil(360 / nodes.length);
+  //   for(var i = 0; i < 360 && colours.length <= nodes.length; i += increment) {
+  //     colours.push(i);
+  //   }
+  //   nodes.forEach(function(n){
+  //     n.hue = colours.pop();
+  //   });
+  //   return nodes;
+  // },
+
+  // /** 
+  //  * @param nodes The nodes created from getNodes()
+  //  * @return an array of edges
+  //  **/
+  // getEdges: function(nodes) {
+  //   var map = {};
+  //   var edges = [];
+  //   nodes.forEach(function(d) {
+  //     map[d.name]  = d;
+  //   });
+  //   nodes.forEach(function(d) {
+  //     if(d.imports) {
+  //       d.imports.forEach(function(a) {
+  //         edges.push({source: map[d.name], target: map[a]});
+  //       });
+  //     }
+  //   });
+  //   return edges;
+  // }
 };

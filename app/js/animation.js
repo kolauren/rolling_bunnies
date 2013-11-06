@@ -1,13 +1,23 @@
 /**
- * This class creates a animated depedency wheel. inherits from DependencyWheel
+ * This class controls the animation.
+ * It is responsible for storing an array of Commits, starting and stopping the animation, 
+ * initializing the dependency wheel, etc
 **/
-AnimatedWheel = function(options) {
+Animation = function(options) {
     this.options = $.extend({}, this.options, options);
     var self = this;
     this.init();
 }
 
-$.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
+Animation.prototype = {
+    utils: Utils.getInstance(),
+
+    options: {
+        selector: "",
+        json: "",
+        startButton: ""
+    },
+
     currentNodes: [],
     currentDependencies: [],
 
@@ -20,14 +30,12 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
     commits: [],
     interval: 1500,
     timer: null,
-    
+    dependencyWheel: null,
 
     init: function() {
-        // invoke super class
-        DependencyWheel.prototype.init.call(this);
+        this.options.dependencyWheel = new DependencyWheel({ selector: this.options.selector, 
+            json: this.options.json });
         var self = this;
-        
-
         
         $(this.options.startButton).click(function(){
             // process the commit data
@@ -134,6 +142,14 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
         });
     },
 
+    pauseAnimation: function() {
+
+    },
+
+    // Jumps to a specific frame in the animation
+    jumpTo: function(frame) {
+    },
+
     // animate commits in different intervals
     animationCallback: function() {
         var self = this;
@@ -177,7 +193,7 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
     redraw: function () {
         this.clearWheel();
         var tree = this.createTree(this.currentNodes);
-        this.draw(tree);
+        this.dependencyWheel.draw(tree);
     },
 
     // checks if the dependency is already added
@@ -250,6 +266,6 @@ $.extend(AnimatedWheel.prototype, DependencyWheel.prototype, {
         // loop through commits
     }
 
-});
+};
 
 
