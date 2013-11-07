@@ -88,9 +88,9 @@ public class CommitRetriever {
 				if(patch == null)
 					continue;
 				Diff diff = UnifiedDiffParser.parse(file.getPatch());
-				//get new code
-				diff.setNewCode(Utils.getHtml(file.getRawUrl()));
-				//get old code
+				//get new code url
+				diff.setNewCode(file.getRawUrl());
+				//get old code url
 				String filename = file.getFilename();
 				String commitSHA = githubCommit.getSha();
 				RepositoryCommit prevCommit = githubDao.getPreviousCommit(owner, repo, commitSHA, filename);
@@ -100,7 +100,7 @@ public class CommitRetriever {
 					boolean found = false;
 					for(CommitFile oldFile : prevCommit.getFiles()) {
 						if(oldFile.getFilename().equals(filename)) {
-							diff.setOldCode(Utils.getHtml(oldFile.getRawUrl()));
+							diff.setOldCode(oldFile.getRawUrl());
 							commit.addDiff(filename, diff);
 							found = true;
 							break;
