@@ -15,7 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
-import commit.parser.Commit;
+import commit.retriever.Commit;
 
 public class CommitCouplingAnalyzer {
 	//TODO: do coupling analysis using AST from java parser

@@ -10,10 +10,10 @@ import org.apache.commons.io.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import commit.parser.Commit;
-import commit.parser.CommitRetriever;
-import commit.parser.Diff;
-import commit.parser.UnifiedDiffParser;
+import commit.retriever.Commit;
+import commit.retriever.CommitRetriever;
+import commit.retriever.Diff;
+import commit.retriever.UnifiedDiffParser;
 
 public class Main {
 	public static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {

@@ -1,4 +1,4 @@
-package commit.parser;
+package commit.retriever;
 
 import java.util.Collection;
 import java.util.Map;

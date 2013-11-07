@@ -1,4 +1,4 @@
-package commit.parser;
+package commit.retriever;
 
 import java.io.BufferedReader;
 import java.io.IOException;

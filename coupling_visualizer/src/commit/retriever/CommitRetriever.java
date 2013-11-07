@@ -1,4 +1,4 @@
-package commit.parser;
+package commit.retriever;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
