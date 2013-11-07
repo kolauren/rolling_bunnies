@@ -4,13 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+
 import org.apache.commons.io.FileUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import commit.parser.Commit;
-import commit.parser.CommitParser;
+import commit.parser.CommitRetriever;
 import commit.parser.Diff;
 import commit.parser.UnifiedDiffParser;
 
@@ -23,9 +24,9 @@ public class Main {
 		String owner = "kolauren";
 		String repo = "rolling_bunnies";
 		//master
-		String branch = "4396fa24a6ea94e24a7b3b1e7a63e294229133d";
+		String branch = "master";
 		
-		CommitParser p = new CommitParser();
+		CommitRetriever p = new CommitRetriever(owner, repo, branch);
 		
 		//print compact and pretty json
 		File json = new File("output/"+owner+"_"+repo+"_commits.json");
@@ -38,7 +39,7 @@ public class Main {
 		Gson gson = new Gson();
 		Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
 		
-		Collection<Commit> commits = p.getCommits(owner, repo, branch);
+		Collection<Commit> commits = p.getCommits();
 		
 		FileUtils.writeStringToFile(json, gson.toJson(commits), true);
 		FileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true); 

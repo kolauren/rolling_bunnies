@@ -1,14 +1,13 @@
 package commit.parser;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
 import org.eclipse.egit.github.core.*;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.client.GitHubRequest;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.RepositoryService;
+
+import com.google.common.collect.Lists;
 
 /**
  * wrapper for the egit github api java wrapper.
@@ -20,8 +19,6 @@ import org.eclipse.egit.github.core.service.RepositoryService;
  *
  */
 public class GitHubDao {
-	
-	private static final String COMMIT_URI = "/repos/#OWNER#/#REPO#/commits/#SHA#";
 	private GitHubClient client;
 	
 	public GitHubDao(String user, String password){
@@ -43,24 +40,58 @@ public class GitHubDao {
 		client.setOAuth2Token(oAuth2Token);
 		return client;
 	}
+	//get all full commits for a [repo]/[branch]
+	public List<RepositoryCommit> queryCommits(String owner, String repoName, String sha) throws IOException {
+		return queryCommits(owner, repoName, sha, null);
+	}
 	
-	//cache results; do not call this more than once because github api calls are limited
-	public List<RepositoryCommit> queryCommits(String owner, String repoName, String branch) throws IOException {
-		List<RepositoryCommit> commits = null;
+	//get full commits that contain [path] for [repo]/[branch]
+	public List<RepositoryCommit> queryCommits(String owner, String repoName, String sha, String path) throws IOException {
+		List<RepositoryCommit> commits = Lists.newArrayList();
 		
 		RepositoryService repoService = new RepositoryService(client);
 		Repository repo = repoService.getRepository(owner, repoName);
 		CommitService commitService = new CommitService(client);
-		commits = commitService.getCommits(repo, branch, null);
+		List<RepositoryCommit> repositoryCommits = commitService.getCommits(repo, sha, path);
+		for(RepositoryCommit commit : repositoryCommits) {
+			RepositoryCommit detailedCommit = commitService.getCommit(repo, commit.getSha());
+			commits.add(detailedCommit);
+		}
 		
 		return commits;
 	}
 	
-	public String queryCommitJson(String owner, String repoName, String sha) throws IOException {
-		String uri = COMMIT_URI.replaceFirst("#OWNER#", owner).replaceFirst("#REPO#", repoName).replaceFirst("#SHA#", sha);
-		GitHubRequest request = new GitHubRequest();
-		request.setUri(uri);
-		InputStream in = client.getStream(request);
-		return IOUtils.toString(in, "UTF-8");
+	/**
+	 * Get the previous commit to the target commit (commitSHA).
+	 * 
+	 * Returns null if there were no previous commit for the target commit.
+	 * 
+	 * @param owner
+	 * @param repoName
+	 * @param sha
+	 * @param filename
+	 * @param commitSHA
+	 * @return
+	 * @throws IOException
+	 */
+	public RepositoryCommit getPreviousCommit(String owner, String repoName, String sha, String filename) throws IOException {
+		RepositoryService repoService = new RepositoryService(client);
+		Repository repo = repoService.getRepository(owner, repoName);
+		CommitService commitService = new CommitService(client);
+		//ordered from newest -> oldest starting at sha
+		List<RepositoryCommit> repositoryCommits = commitService.getCommits(repo, sha, filename);
+		
+		RepositoryCommit prevCommit = null;
+		//TODO: deal with < 2 cases
+		if(repositoryCommits.isEmpty()) {
+			//phantom commit
+			assert false;
+		} else if(repositoryCommits.size() == 1) {
+			//merged with no changes on this file
+		
+		} else {
+			prevCommit = commitService.getCommit(repo, repositoryCommits.get(1).getSha());
+		}
+		return prevCommit;
 	}
 }
