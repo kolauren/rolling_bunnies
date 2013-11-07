@@ -80,10 +80,19 @@
         ],
         "dependencies": [
             {
-                "source": "class1",
+                "source": "classA",
                 "target": "class0",
                 "type": 2
             }
+        ]
+    },
+    {
+        "commitNumber": 5,
+        "modifiedJavaFiles": ["classA"],
+        "addedJavaFiles": [],
+        "removedJavaFiles": [],
+        "renamedJavaFiles": [],
+        "dependencies": [
         ]
     }
 ]
