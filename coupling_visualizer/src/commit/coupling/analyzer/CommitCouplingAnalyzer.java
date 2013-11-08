@@ -3,6 +3,7 @@ package commit.coupling.analyzer;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
+import japa.parser.ast.ImportDeclaration;
 import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.FieldDeclaration;
 import japa.parser.ast.body.TypeDeclaration;
@@ -29,13 +30,14 @@ import org.json.XML;
 import commit.retriever.Commit;
 
 public class CommitCouplingAnalyzer {
+	public static List<String> importList;
+	public static List<String> variableTypeList;
+	
 	//TODO: do coupling analysis using AST from java parser
 	//returns map of class -> coupled classes
 	public Map<String, Collection<String>> getCoupledClasses(Commit commit) {
 		return null;
 	}
-
-
 
 	//creates json file  coupling data based on codePro Analytix xml output
 	public void getCoupledClasses(String xmlFilePath) {
@@ -119,19 +121,14 @@ public class CommitCouplingAnalyzer {
 		}
 	}
 
-	public static void getTypeOneCoupling() throws IOException, ParseException {
-		File file = new File("Diff.java");
-		FileInputStream inputStream = new FileInputStream(file);
-		// BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-		// StringBuilder builder = new StringBuilder();
-
-		// String line;
-
-		// while ((line = bufferedReader.readLine()) != null) {
-		// 	builder.append(line.trim() + " \\n ");
-		// }
+	// Getting the type one coupling for the analysis.
+	public static void getTypeOneCoupling(File file) throws IOException, ParseException {
+		importList = new ArrayList<String>();
+		variableTypeList = new ArrayList<String>();
 		
+		File tempFile = new File("C:\\Users\\rchon_000\\Desktop\\Code.java");
 		CompilationUnit cUnit;
+		FileInputStream inputStream = new FileInputStream(tempFile);
 		
 		try {
 			// Parse the file.
@@ -140,12 +137,24 @@ public class CommitCouplingAnalyzer {
 			inputStream.close();
 		}
 		
+		
+		// Get all the variables.
+		getAllVariables(cUnit);
+
+		System.out.println(variableTypeList);
+		
+        new ImportVisitor().visit(cUnit, null);
+        
+        System.out.println(importList);
+    }
+	
+	public static void getAllVariables(CompilationUnit cUnit) {
 		// Get the global variables.
 		getGlobalVariables(cUnit);
 		
 		// Visit the method's variables.
         new MethodVariableVisitor().visit(cUnit, null);
-    }
+	}
 	
 	/**
 	 * Get the global variables in the code.
@@ -155,13 +164,16 @@ public class CommitCouplingAnalyzer {
 	public static void getGlobalVariables(CompilationUnit cUnit) {
         //List all global variables.
         List<TypeDeclaration> globalVars = cUnit.getTypes();
+        
         for (TypeDeclaration type : globalVars) {
             List<BodyDeclaration> members = type.getMembers();
+
             for (BodyDeclaration member : members) {
                 if (member instanceof FieldDeclaration) {
                     FieldDeclaration memberType = (FieldDeclaration) member;
                     List <VariableDeclarator> fields = memberType.getVariables();
                     System.out.println(memberType.getType() + " : " + fields.get(0).getId().getName());
+                    variableTypeList.add(memberType.getType().toString());
                 }
             }
         }
@@ -176,7 +188,18 @@ public class CommitCouplingAnalyzer {
     		
     		for (VariableDeclarator variable: variables) {
     			System.out.println(n.getType() + " : " + variable.getId().getName());
+    			variableTypeList.add(n.getType().toString());
     		}
         }
+    }
+    
+    /**
+     * Visitor implementation for visiting ImportDeclaration nodes.
+     */
+    private static class ImportVisitor extends VoidVisitorAdapter {
+    	public void visit(ImportDeclaration n, Object arg) {
+    		System.out.println(n.getName().toString());
+    		importList.add(n.getName().toString());
+    	}
     }
 }

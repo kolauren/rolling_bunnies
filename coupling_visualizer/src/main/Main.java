@@ -1,5 +1,7 @@
 package main;
 
+import japa.parser.ParseException;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -10,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import commit.coupling.analyzer.CommitCouplingAnalyzer;
 import commit.retriever.Commit;
 import commit.retriever.CommitRetriever;
 import commit.retriever.Diff;
@@ -18,7 +21,7 @@ import commit.retriever.UnifiedDiffParser;
 public class Main {
 	public static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		
+		/*
 		//testing commit parser
 		//TODO: move args
 		String owner = "kolauren";
@@ -43,7 +46,7 @@ public class Main {
 		
 		FileUtils.writeStringToFile(json, gson.toJson(commits), true);
 		FileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true); 
-		
+		*/
 		
 		/**
 		 * Testing diff parser
@@ -59,6 +62,13 @@ public class Main {
 		System.out.println("Removed-------------");
 		for(int number :difff.getRemovedLines().keySet()) {
 			System.out.println(number+" : "+difff.getRemovedLine(number));
+		}
+		
+		try {
+			CommitCouplingAnalyzer.getTypeOneCoupling(null);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
