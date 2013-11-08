@@ -104,4 +104,13 @@ public class Commit {
 	public Map<String, Diff> getDiffs() {
 		return diffs;
 	}
+	
+	public Diff getDiff(String clazz) {
+		return diffs.get(clazz);
+	}
+	
+	//returns all classes that had a diff
+	public Collection<String> getChangedClasses() {
+		return diffs.keySet();
+	}
 }
