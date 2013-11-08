@@ -1,6 +1,17 @@
 package commit.coupling.analyzer;
 
+import japa.parser.JavaParser;
+import japa.parser.ParseException;
+import japa.parser.ast.CompilationUnit;
+import japa.parser.ast.body.BodyDeclaration;
+import japa.parser.ast.body.FieldDeclaration;
+import japa.parser.ast.body.TypeDeclaration;
+import japa.parser.ast.body.VariableDeclarator;
+import japa.parser.ast.expr.VariableDeclarationExpr;
+import japa.parser.ast.visitor.VoidVisitorAdapter;
+
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.io.File;
 import java.io.FileInputStream;
@@ -108,4 +119,64 @@ public class CommitCouplingAnalyzer {
 		}
 	}
 
+	public static void getTypeOneCoupling() throws IOException, ParseException {
+		File file = new File("Diff.java");
+		FileInputStream inputStream = new FileInputStream(file);
+		// BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+		// StringBuilder builder = new StringBuilder();
+
+		// String line;
+
+		// while ((line = bufferedReader.readLine()) != null) {
+		// 	builder.append(line.trim() + " \\n ");
+		// }
+		
+		CompilationUnit cUnit;
+		
+		try {
+			// Parse the file.
+			cUnit = JavaParser.parse(inputStream);
+		} finally {
+			inputStream.close();
+		}
+		
+		// Get the global variables.
+		getGlobalVariables(cUnit);
+		
+		// Visit the method's variables.
+        new MethodVariableVisitor().visit(cUnit, null);
+    }
+	
+	/**
+	 * Get the global variables in the code.
+	 * 
+	 * @param cUnit
+	 */
+	public static void getGlobalVariables(CompilationUnit cUnit) {
+        //List all global variables.
+        List<TypeDeclaration> globalVars = cUnit.getTypes();
+        for (TypeDeclaration type : globalVars) {
+            List<BodyDeclaration> members = type.getMembers();
+            for (BodyDeclaration member : members) {
+                if (member instanceof FieldDeclaration) {
+                    FieldDeclaration memberType = (FieldDeclaration) member;
+                    List <VariableDeclarator> fields = memberType.getVariables();
+                    System.out.println(memberType.getType() + " : " + fields.get(0).getId().getName());
+                }
+            }
+        }
+	}
+
+    /**
+     * Simple visitor implementation for visiting VariableDeclarationExpr nodes. 
+     */
+    private static class MethodVariableVisitor extends VoidVisitorAdapter {
+    	public void visit(VariableDeclarationExpr n, Object arg) {
+    		List <VariableDeclarator> variables = n.getVars();
+    		
+    		for (VariableDeclarator variable: variables) {
+    			System.out.println(n.getType() + " : " + variable.getId().getName());
+    		}
+        }
+    }
 }
