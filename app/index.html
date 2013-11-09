@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width">
     <title>CS410: Team 19</title>
     <link rel="stylesheet" href="css/main.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="css/d3.slider.css" />
   
 </head>
 <body>
     <div id="main"></div>
     <div id="animate"></div>
-    <input type="button" id="start" value="Start">
+    <input type="button" id="start" value="Start">   
+    <div id="slider" style = "width: 50%; margin: 0 auto;"></div>
 </body>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">  </script>
@@ -19,10 +21,14 @@
     <script src="js/utils.js"></script>
     <script src="js/dependencywheel.js"></script>  
     <script src="js/animation.js"></script>  
+    <script src="js/d3.slider.js"></script>
     <script type="text/javascript">
     // store all global variables in globals
     var globals = globals || {};
-    globals.animation = new Animation({ selector: "#main", json: "test1.json", startButton: "#start" });
+    globals.animation = new Animation({ selector: "#main", json: "test1.json", startButton: "#start", slider: "#slider" });        
     </script>
+
+    
+
 
 </html>

@@ -4,6 +4,7 @@
 DependencyWheel = function(options) {
   this.options = $.extend({}, this.options, options);
   this.init(options);
+    
 }
 
 DependencyWheel.prototype = {

@@ -15,7 +15,8 @@ Animation.prototype = {
     options: {
         selector: "",
         json: "",
-        startButton: ""
+        startButton: "",
+        slider: ""
     },
     commits: [],
     interval: 1500,
@@ -38,6 +39,11 @@ Animation.prototype = {
             self.startAnimation();
             $(self.options.startButton).attr("disabled", true);
         });
+        
+        d3.select(this.options.slider).call(d3.slider().on("slide", function(evt, value) {
+            // do something
+        
+        }));
     },
 
     startAnimation: function() {
