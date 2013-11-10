@@ -126,7 +126,7 @@ public class CommitCouplingAnalyzer {
 		importList = new ArrayList<String>();
 		variableTypeList = new ArrayList<String>();
 		
-		File tempFile = new File("C:\\Users\\rchon_000\\Desktop\\Code.java");
+		File tempFile = new File("C:\\Users\\Richard\\Desktop\\Code.java");
 		CompilationUnit cUnit;
 		FileInputStream inputStream = new FileInputStream(tempFile);
 		
@@ -150,22 +150,36 @@ public class CommitCouplingAnalyzer {
         verifyTypeOneDependency(cUnit);
     }
 	
+	/**
+	 * Get rid of imports that are not in the same package.
+	 * 
+	 * @param cUnit
+	 */
 	public static void verifyTypeOneDependency(CompilationUnit cUnit) {
 		String classPkg = cUnit.getPackage().getName().toString();
 		List<String> classPkgStruct = parsePackageStructure(classPkg.toCharArray());
 		List<String> importPkgStruct;
+		List<String> tempImportList = new ArrayList<String>();
 		
 		for (int i = 0; i < importList.size(); i++) {
 			importPkgStruct = parsePackageStructure(importList.get(i).toCharArray());
 
-			if (!importPkgStruct.get(0).equals(classPkgStruct.get(0))) {
-				importList.remove(i);
+			if (importPkgStruct.get(0).equals(classPkgStruct.get(0))) {
+				tempImportList.add(importList.get(i));
 			}
 		}
+		
+		importList = tempImportList;
 		
 		System.out.println("Verified: " + importList);
 	}
 	
+	/**
+	 * Parse the package name string.
+	 * 
+	 * @param pkgName
+	 * @return
+	 */
 	public static List<String> parsePackageStructure(char[] pkgName) {
 		List<String> pkgStructure = new ArrayList<String>();
 		StringBuilder builder = new StringBuilder();
@@ -184,6 +198,11 @@ public class CommitCouplingAnalyzer {
 		return pkgStructure;
 	}
 	
+	/**
+	 * Method that populates the variableTypeList with all the existing variables in the class.
+	 * 
+	 * @param cUnit
+	 */
 	public static void getAllVariables(CompilationUnit cUnit) {
 		// Get the global variables.
 		getGlobalVariables(cUnit);
