@@ -141,11 +141,11 @@ public class CommitCouplingAnalyzer {
 		// Get all the variables.
 		getAllVariables(cUnit);
 
-		System.out.println("variableTypeList: " + variableTypeList);
+		// System.out.println("variableTypeList: " + variableTypeList);
 		
         new ImportVisitor().visit(cUnit, null);
         
-        System.out.println("importList: " + importList);
+        // System.out.println("importList: " + importList);
         
         verifyTypeOneDependency(cUnit);
     }
@@ -171,7 +171,7 @@ public class CommitCouplingAnalyzer {
 		
 		importList = tempImportList;
 		
-		System.out.println("Verified: " + importList);
+		// System.out.println("Verified: " + importList);
 	}
 	
 	/**
@@ -227,7 +227,7 @@ public class CommitCouplingAnalyzer {
                 if (member instanceof FieldDeclaration) {
                     FieldDeclaration memberType = (FieldDeclaration) member;
                     List <VariableDeclarator> fields = memberType.getVariables();
-                    System.out.println(memberType.getType() + " : " + fields.get(0).getId().getName());
+                    // System.out.println(memberType.getType() + " : " + fields.get(0).getId().getName());
                     variableTypeList.add(memberType.getType().toString());
                 }
             }
@@ -242,7 +242,7 @@ public class CommitCouplingAnalyzer {
     		List <VariableDeclarator> variables = n.getVars();
     		
     		for (VariableDeclarator variable: variables) {
-    			System.out.println(n.getType() + " : " + variable.getId().getName());
+    			// System.out.println(n.getType() + " : " + variable.getId().getName());
     			variableTypeList.add(n.getType().toString());
     		}
         }
@@ -253,7 +253,7 @@ public class CommitCouplingAnalyzer {
      */
     private static class ImportVisitor extends VoidVisitorAdapter {
     	public void visit(ImportDeclaration n, Object arg) {
-    		System.out.println(n.getName().toString());
+    		// System.out.println(n.getName().toString());
     		importList.add(n.getName().toString());
     	}
     }
