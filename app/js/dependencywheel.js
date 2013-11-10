@@ -20,6 +20,8 @@ DependencyWheel.prototype = {
     line: null, /* line function */
     bundle: null,
   },
+    
+    tooltip: null,
 
   init: function(options) {
 
@@ -48,6 +50,27 @@ DependencyWheel.prototype = {
       .angle(function(d){ return d.x / 180 * Math.PI })
       .interpolate("bundle");
 
+    this.tooltip = d3.select("body").append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 0);
+
+  },
+    
+  classOver: function(t) {
+        d3.selectAll("g").selectAll("[data-name=" + t.name + "]")
+            .attr("stroke", "blue")
+            .attr("stroke-width", 4);   
+          
+        this.tooltip.transition().duration(200).style("opacity", .9);      
+        this.tooltip.html(t.name)  
+          .style("left", (d3.event.pageX) + "px")     
+          .style("top", (d3.event.pageY - 28) + "px");
+  },
+    
+  classOut: function(t) {
+      d3.selectAll("g").selectAll("[data-name=" + t.name + "]").attr("stroke-width", 0);
+      this.tooltip.transition().duration(500).style("opacity", 0); 
+      
   },
 
   // Draws all the nodes and edges based on input data
@@ -74,7 +97,17 @@ DependencyWheel.prototype = {
         .attr("data-name", function(d) { return d.name; })
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
         .append("svg:title")
-        .text(function(d) { return d.name; });   
+        .text(function(d) { return d.name; });
+      
+      // event handlers for nodes on mouse over
+      d3.selectAll("svg").selectAll("circle")
+        .on("mouseover", function(t) { self.classOver(t) })
+        .on("mouseout", function(t) { self.classOut(t) });
+      
+      d3.selectAll("svg").selectAll("circle").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+      
   },
 
   lightUp: function(modified, removed, dependencies) {
@@ -135,7 +168,7 @@ DependencyWheel.prototype = {
       });
 
       // create edges from edge data
-      currentEdges.forEach(function(n) {
+      currentEdges.forEach(function(n) {$
         if(cluster_map[n.source] && cluster_map[n.target]) {
           var css_class = "edge source-" + cluster_map[n.source].name + " target-" + cluster_map[n.target].name;
           if(cluster_map[n.source].oldName) css_class += " source-" + cluster_map[n.source].oldName;

@@ -41,7 +41,7 @@ Animation.prototype = {
         });
         
         d3.select(this.options.slider).call(d3.slider().on("slide", function(evt, value) {
-            // do something
+            // run animation again from this point?
         
         }));
     },
@@ -89,18 +89,6 @@ Animation.prototype = {
         var commit = this.commits[this.frame];
         console.log(commit);
         this.dependencyWheel.lightUp(commit.addedJavaFiles.concat(commit.modifiedJavaFiles), commit.removedJavaFiles, commit.dependencies);
-    },
-    
-    // TODO: creates a static wheel for the beginning of animation
-    // static wheel contains all nodes/.java files that were added through commit history
-    createStaticWheel: function() {
-    
-    },
-    
-    // TODO: animates static wheel by iterating through commits
-    animateStaticWheel: function() {
-        // lower opacity of nodes
-        // loop through commits
     }
 
 };
