@@ -141,12 +141,48 @@ public class CommitCouplingAnalyzer {
 		// Get all the variables.
 		getAllVariables(cUnit);
 
-		System.out.println(variableTypeList);
+		System.out.println("variableTypeList: " + variableTypeList);
 		
         new ImportVisitor().visit(cUnit, null);
         
-        System.out.println(importList);
+        System.out.println("importList: " + importList);
+        
+        verifyTypeOneDependency(cUnit);
     }
+	
+	public static void verifyTypeOneDependency(CompilationUnit cUnit) {
+		String classPkg = cUnit.getPackage().getName().toString();
+		List<String> classPkgStruct = parsePackageStructure(classPkg.toCharArray());
+		List<String> importPkgStruct;
+		
+		for (int i = 0; i < importList.size(); i++) {
+			importPkgStruct = parsePackageStructure(importList.get(i).toCharArray());
+
+			if (!importPkgStruct.get(0).equals(classPkgStruct.get(0))) {
+				importList.remove(i);
+			}
+		}
+		
+		System.out.println("Verified: " + importList);
+	}
+	
+	public static List<String> parsePackageStructure(char[] pkgName) {
+		List<String> pkgStructure = new ArrayList<String>();
+		StringBuilder builder = new StringBuilder();
+		
+		for (int i = 0; i < pkgName.length; i++) {
+			if (pkgName[i] != '.') {
+				builder.append(pkgName[i]);
+			} else {
+				pkgStructure.add(builder.toString());
+				builder = new StringBuilder();
+			}
+		}
+		
+		pkgStructure.add(builder.toString());
+		
+		return pkgStructure;
+	}
 	
 	public static void getAllVariables(CompilationUnit cUnit) {
 		// Get the global variables.
