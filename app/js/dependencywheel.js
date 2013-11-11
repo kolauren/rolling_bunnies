@@ -163,17 +163,6 @@ DependencyWheel.prototype = {
         .style('opacity', 1);
       });
       
-      // make modified dependencies opacity 1
-      var modified = commit.modifiedJavaFiles;
-      modified.forEach(function(n){
-      var selector = ".node." + n;
-      self.svg.select(selector)
-        .transition()
-        .delay(function(d,i) { return i * 10; })
-        .duration(1250)
-        .style('opacity', 1);
-      });
-      
       // make deleted files and dependencies grey
       var removedFiles = commit.removedJavaFiles; 
       removedFiles.forEach(function(n) {
@@ -190,6 +179,19 @@ DependencyWheel.prototype = {
       d3.select("g").selectAll(".edge").filter(".target-" + n)
         .style("stroke", "grey"); 
       });
+      
+      // make modified dependencies opacity 1
+      var modified = commit.modifiedJavaFiles;
+      modified.forEach(function(n){
+      var selector = ".node." + n;
+      self.svg.select(selector)
+        .transition()
+        .delay(function(d,i) { return i * 10; })
+        .duration(1250)
+        .style('opacity', 1);
+      });
+      
+      
       
     },
 

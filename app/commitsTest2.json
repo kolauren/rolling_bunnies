@@ -69,7 +69,7 @@
     },
     {
         "commitNumber": 4,
-        "modifiedJavaFiles": [],
+        "modifiedJavaFiles": ["classA","class0"],
         "addedJavaFiles": [],
         "removedJavaFiles": [],
         "renamedJavaFiles": [
