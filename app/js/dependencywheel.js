@@ -58,8 +58,9 @@ DependencyWheel.prototype = {
     
   classOver: function(t) {
         d3.selectAll("g").selectAll("[data-name=" + t.name + "]")
-            .attr("stroke", "blue")
-            .attr("stroke-width", 4);   
+            .attr("r", 15);
+            //.attr("stroke", "blue")
+            //.attr("stroke-width", 4);   
         
       // Show tool tip with class name
         this.tooltip.transition().duration(200).style("opacity", .9);      
@@ -74,7 +75,8 @@ DependencyWheel.prototype = {
     
   classOut: function(t) {
       // de-stroke node
-      d3.selectAll("g").selectAll("[data-name=" + t.name + "]").attr("stroke-width", 0);
+      d3.selectAll("g").selectAll("[data-name=" + t.name + "]")
+        .attr("r", 10);
       this.tooltip.transition().duration(500).style("opacity", 0); 
       
       // de-thicken dependencies
