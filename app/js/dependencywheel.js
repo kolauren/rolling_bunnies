@@ -119,6 +119,77 @@ DependencyWheel.prototype = {
         .style("opacity", 0);
       
   },
+    
+  lightUp2: function(commit) {
+      console.log(commit);
+       var self = this;
+      
+      // existing current nodes that should be present for this frame
+      var existingNodes = commit.currentNodes;
+      existingNodes.forEach(function(n) {
+          console.log(n.name);
+         d3.selectAll("g").selectAll("[data-name=" + n.name + "]")
+            .style('opacity', 0.2);     
+      });
+      
+      // existing current edges that should be present for this frame
+      var existingEdges = commit.currentEdges;
+      existingEdges.forEach(function(n) {
+        self.svg.select(".edge.source-" + n.source + ".target-" + n.target)
+            .style('opacity', 0.2);     
+      });
+      
+      //make added files opacity 1
+      var addedFiles = commit.addedJavaFiles;
+      addedFiles.forEach(function(n){
+      var selector = ".node." + n;
+      console.log(selector);
+      self.svg.select(selector)
+        .transition()
+        .delay(function(d,i) { return i * 10; })
+        .duration(1250)
+        .style('opacity', 1);
+      });
+      
+      // make dependencies opacity 1
+      var dependencies = commit.dependencies;
+      dependencies.forEach(function(n) {
+      self.svg.select(".edge.source-" + n.source + ".target-" + n.target)
+        .transition()
+        .delay(function(d,i) { return i * 10; })
+        .duration(1250)
+        .style('opacity', 1);
+      });
+      
+      // make modified dependencies opacity 1
+      var modified = commit.modifiedJavaFiles;
+      modified.forEach(function(n){
+      var selector = ".node." + n;
+      self.svg.select(selector)
+        .transition()
+        .delay(function(d,i) { return i * 10; })
+        .duration(1250)
+        .style('opacity', 1);
+      });
+      
+      // make deleted files and dependencies grey
+      var removedFiles = commit.removedJavaFiles; 
+      removedFiles.forEach(function(n) {
+      d3.selectAll("g").selectAll("[data-name=" + n + "]")
+        .style("fill", "grey")
+        .transition()
+        .delay(function(d,i) { return i * 10; })
+        .duration(1250)
+        .style('opacity', 1);
+          
+      d3.select("g").selectAll(".edge").filter(".source-" + n)
+        .style("stroke", "grey");   
+          
+      d3.select("g").selectAll(".edge").filter(".target-" + n)
+        .style("stroke", "grey"); 
+      });
+      
+    },
 
   lightUp: function(modified, removed, dependencies) {
     var self = this;
@@ -130,18 +201,6 @@ DependencyWheel.prototype = {
         .delay(function(d,i) { return i * 10; })
         .duration(1250)
         .style('opacity', 1);
-    });
-
-    // TODO: removed nodes + dependencies should be greyed out instead  
-    removed.forEach(function(n) {
-      d3.selectAll("g").selectAll("[data-name=" + n + "]")
-        .style("fill", "grey");
-        
-    // find all edges connected to this class and grey those out too
-        var edgeArray = d3.selectAll("g").selectAll("#edge");
-        edgeArray.forEach(function(e) {
-          console.log(e)  
-        });
     });
 
     dependencies.forEach(function(n) {

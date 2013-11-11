@@ -37,6 +37,10 @@ Animation.prototype = {
 
         $(this.options.startButton).click(function(){
             self.startAnimation();
+            // clear wheel (assume start at beginning)
+            d3.selectAll("g").selectAll("path").filter(".edge").style("opacity", 0);
+            d3.selectAll("g").selectAll("circle").style("opacity", 0);
+            
             $(self.options.startButton).attr("disabled", true);
         });
         
@@ -88,7 +92,8 @@ Animation.prototype = {
     animateCommits: function () {
         var commit = this.commits[this.frame];
         console.log(commit);
-        this.dependencyWheel.lightUp(commit.addedJavaFiles.concat(commit.modifiedJavaFiles), commit.removedJavaFiles, commit.dependencies);
+        this.dependencyWheel.lightUp2(commit);
+        //this.dependencyWheel.lightUp(commit.addedJavaFiles.concat(commit.modifiedJavaFiles), commit.removedJavaFiles, commit.dependencies);
     }
 
 };
