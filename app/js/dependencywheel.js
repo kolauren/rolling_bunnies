@@ -60,16 +60,26 @@ DependencyWheel.prototype = {
         d3.selectAll("g").selectAll("[data-name=" + t.name + "]")
             .attr("stroke", "blue")
             .attr("stroke-width", 4);   
-          
+        
+      // Show tool tip with class name
         this.tooltip.transition().duration(200).style("opacity", .9);      
         this.tooltip.html(t.name)  
           .style("left", (d3.event.pageX) + "px")     
           .style("top", (d3.event.pageY - 28) + "px");
+      // Search for dependencies connected to this node and thicken dependencies
+      d3.select("g").selectAll(".edge").filter(".source-" + t.name)
+            .style("stroke-width", 10);   
+      
   },
     
   classOut: function(t) {
+      // de-stroke node
       d3.selectAll("g").selectAll("[data-name=" + t.name + "]").attr("stroke-width", 0);
       this.tooltip.transition().duration(500).style("opacity", 0); 
+      
+      // de-thicken dependencies
+      d3.select("g").selectAll(".edge").filter(".source-" + t.name)
+            .style("stroke-width", 4);   
       
   },
 
@@ -122,8 +132,16 @@ DependencyWheel.prototype = {
         .style('opacity', 1);
     });
 
+    // TODO: removed nodes + dependencies should be greyed out instead  
     removed.forEach(function(n) {
-      self.svg.select(n).remove();
+      d3.selectAll("g").selectAll("[data-name=" + n + "]")
+        .style("fill", "grey");
+        
+    // find all edges connected to this class and grey those out too
+        var edgeArray = d3.selectAll("g").selectAll("#edge");
+        edgeArray.forEach(function(e) {
+          console.log(e)  
+        });
     });
 
     dependencies.forEach(function(n) {
