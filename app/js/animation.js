@@ -23,6 +23,7 @@ Animation.prototype = {
     timer: null,
     dependencyWheel: null,
     frame: 0,
+    sliderPosition: 0,
 
     init: function() {
         this.dependencyWheel = new DependencyWheel({ selector: this.options.selector});
@@ -38,21 +39,30 @@ Animation.prototype = {
         $(this.options.startButton).click(function(){
             self.startAnimation();
             // clear wheel (assume start at beginning)
-            d3.selectAll("g").selectAll("path").filter(".edge").style("opacity", 0);
-            d3.selectAll("g").selectAll("circle").style("opacity", 0);
+            self.frame = self.sliderPosition;
+            if(self.frame === 0)
+                self.setWheelNodesAndEdgesInvisible();
             
-            $(self.options.startButton).attr("disabled", true);
+            //$(self.options.startButton).attr("disabled", true);
         });
         
         d3.select(this.options.slider).call(d3.slider().on("slide", function(evt, value) {
             // run animation again from this point?
+            self.setWheelNodesAndEdgesInvisible();
+            var commitToStartAt = value * 0.01 * (self.commits.length - 1);
+            commitToStartAt = Math.round(commitToStartAt);
+            var commit = self.commits[commitToStartAt];
+            console.log(commitToStartAt);
+            self.dependencyWheel.drawExistingNodesAndEdges(commit);
+            self.frame = commitToStartAt;
+            self.sliderPosition = commitToStartAt;
+            //self.startAnimation();
         
         }));
     },
 
     startAnimation: function() {
         var self = this;
-        self.frame = 0;
         self.timer = setTimeout(function(){
             self.animationCallback();
         }, self.interval);
@@ -63,6 +73,7 @@ Animation.prototype = {
         var self = this;
         self.animateCommits();
         self.frame++;
+        self.updateSliderPosition(self.frame);
         clearTimeout(self.timer);
         if(self.frame < self.commits.length) 
             self.timer = setTimeout(function(){
@@ -77,16 +88,28 @@ Animation.prototype = {
     // Jumps to a specific frame in the animation
     jumpTo: function(frame) {
     },
+    
+    // updates the position of the slider as the animation progresses
+    updateSliderPosition: function(frame) {
+      var self = this;
+      var newSliderPosition = frame/(0.01*self.commits.length);
+      d3.select("#slider").select(".d3-slider-handle")
+        .style("left","" + newSliderPosition + "%");  
+    },
 
     // clears the canvas of nodes and edges
     clearWheel: function() {
         d3.selectAll("circle").remove();
         d3.selectAll("path.edge").remove();
     },
-
-    // redraws the dependency graph
-    redraw: function () {
-        //this.dependencyWheel.draw(tree);
+    
+    // set opacity of all nodes and edges to 0
+    setWheelNodesAndEdgesInvisible: function() {
+        d3.selectAll("circle")
+            .style('opacity', 0); 
+        d3.selectAll("path.edge")
+            .style('opacity', 0); 
+        
     },
 
     animateCommits: function () {

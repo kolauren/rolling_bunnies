@@ -122,14 +122,12 @@ DependencyWheel.prototype = {
       
   },
     
-  lightUp2: function(commit) {
-      console.log(commit);
-       var self = this;
-      
+    drawExistingNodesAndEdges: function(commit) {
+      var self = this;
+        
       // existing current nodes that should be present for this frame
       var existingNodes = commit.currentNodes;
       existingNodes.forEach(function(n) {
-          console.log(n.name);
          d3.selectAll("g").selectAll("[data-name=" + n.name + "]")
             .style('opacity', 0.2);     
       });
@@ -140,6 +138,14 @@ DependencyWheel.prototype = {
         self.svg.select(".edge.source-" + n.source + ".target-" + n.target)
             .style('opacity', 0.2);     
       });
+        
+    },
+    
+    
+  lightUp2: function(commit) {
+      var self = this;
+      
+      self.drawExistingNodesAndEdges(commit);
       
       //make added files opacity 1
       var addedFiles = commit.addedJavaFiles;
