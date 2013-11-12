@@ -49,10 +49,10 @@ public class UnifiedDiffParser {
 				oldLineNumber = oldStart;
 				newLineNumber = newStart;
 			} else if(getCapturedGroups(ADDED_LINE, line, captured, "added")) {
-				diff.putAddedLine(newLineNumber, line);
+				diff.putAddedLine(newLineNumber, captured[0]);
 				newLineNumber++;
 			} else if(getCapturedGroups(REMOVED_LINE, line, captured, "removed")) {
-				diff.putRemovedLine(oldLineNumber, line);
+				diff.putRemovedLine(oldLineNumber, captured[0]);
 				oldLineNumber++;
 			} else if(getCapturedGroups(UNCHANGED_LINE, line, captured, "unchanged")) {
 				newLineNumber++;
