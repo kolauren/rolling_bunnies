@@ -6,6 +6,15 @@ body {
   margin: 2% 0 0 0;
 }
 
+#buttons {
+  margin: 10px;
+}
+
+#slider {
+ width: 50%;
+ margin: 0 auto;   
+}
+
 .wheel {
   fill: #F7F7F7;
 }
@@ -27,9 +36,9 @@ div.tooltip {
   position: absolute;           
   text-align: center;           
   width: 60px;                  
-  height: 20px;                 
+  height: 25px;                 
   padding: 2px;             
-  font: 12px sans-serif;        
+  font: 16px sans-serif;        
   background: lightsteelblue;   
   border: 0px;      
   border-radius: 8px;           

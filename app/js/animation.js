@@ -16,6 +16,7 @@ Animation.prototype = {
         selector: "",
         json: "",
         startButton: "",
+        pauseButton: "",
         slider: ""
     },
     commits: [],
@@ -24,6 +25,7 @@ Animation.prototype = {
     dependencyWheel: null,
     frame: 0,
     sliderPosition: 0,
+    paused: false,
 
     init: function() {
         this.dependencyWheel = new DependencyWheel({ selector: this.options.selector});
@@ -36,28 +38,36 @@ Animation.prototype = {
             self.dependencyWheel.draw(currentNodes, currentEdges);
         });
 
+        // click event for start button
         $(this.options.startButton).click(function(){
-            self.startAnimation();
+            //self.startAnimation();
             // clear wheel (assume start at beginning)
             self.frame = self.sliderPosition;
             if(self.frame === 0)
                 self.setWheelNodesAndEdgesInvisible();
-            
+            // set paused flag false
+            self.paused = false;
             //$(self.options.startButton).attr("disabled", true);
+            self.startAnimation();
+            
         });
         
+        // click event for pause button
+        $(this.options.pauseButton).click(function(){
+            // set paused flag true
+            console.log("paused");
+            self.paused = true;
+        });
+        
+        // event for slider
         d3.select(this.options.slider).call(d3.slider().on("slide", function(evt, value) {
-            // run animation again from this point?
             self.setWheelNodesAndEdgesInvisible();
             var commitToStartAt = value * 0.01 * (self.commits.length - 1);
             commitToStartAt = Math.round(commitToStartAt);
             var commit = self.commits[commitToStartAt];
-            console.log(commitToStartAt);
             self.dependencyWheel.drawExistingNodesAndEdges(commit);
             self.frame = commitToStartAt;
             self.sliderPosition = commitToStartAt;
-            //self.startAnimation();
-        
         }));
     },
 
@@ -71,6 +81,8 @@ Animation.prototype = {
     // animate commits in different intervals
     animationCallback: function() {
         var self = this;
+        if(self.paused === true)
+            return;
         self.animateCommits();
         self.frame++;
         self.updateSliderPosition(self.frame);
@@ -109,7 +121,6 @@ Animation.prototype = {
             .style('opacity', 0); 
         d3.selectAll("path.edge")
             .style('opacity', 0); 
-        
     },
 
     animateCommits: function () {

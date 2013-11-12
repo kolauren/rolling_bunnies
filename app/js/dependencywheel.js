@@ -58,30 +58,33 @@ DependencyWheel.prototype = {
     
   classOver: function(t) {
         d3.selectAll("g").selectAll("[data-name=" + t.name + "]")
-            .attr("r", 15);
-            //.attr("stroke", "blue")
-            //.attr("stroke-width", 4);   
+            .style('opacity', 0.7)
+            .attr("r", 15); 
         
       // Show tool tip with class name
         this.tooltip.transition().duration(200).style("opacity", .9);      
         this.tooltip.html(t.name)  
           .style("left", (d3.event.pageX) + "px")     
-          .style("top", (d3.event.pageY - 28) + "px");
+          .style("top", (d3.event.pageY - 50) + "px");
+      
       // Search for dependencies connected to this node and thicken dependencies
       d3.select("g").selectAll(".edge").filter(".source-" + t.name)
-            .style("stroke-width", 10);   
+        .style('opacity', 0.7)
+        .style("stroke-width", 10);   
       
   },
     
   classOut: function(t) {
       // de-stroke node
       d3.selectAll("g").selectAll("[data-name=" + t.name + "]")
+        .style('opacity', 0.2)
         .attr("r", 10);
       this.tooltip.transition().duration(500).style("opacity", 0); 
       
       // de-thicken dependencies
       d3.select("g").selectAll(".edge").filter(".source-" + t.name)
-            .style("stroke-width", 4);   
+        .style('opacity', 0.2)
+        .style("stroke-width", 4);   
       
   },
 
@@ -196,8 +199,6 @@ DependencyWheel.prototype = {
         .duration(1250)
         .style('opacity', 1);
       });
-      
-      
       
     },
 

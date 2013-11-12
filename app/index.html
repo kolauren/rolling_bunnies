@@ -12,8 +12,11 @@
 <body>
     <div id="main"></div>
     <div id="animate"></div>
-    <input type="button" id="start" value="Start">   
-    <div id="slider" style = "width: 50%; margin: 0 auto;"></div>
+    <div id="slider"></div>
+    <div id="buttons">
+    <input type="button" id="start" value="Start">
+    <input type="button" id="pause" value="Pause">  
+    </div>
 </body>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">  </script>
@@ -25,7 +28,7 @@
     <script type="text/javascript">
     // store all global variables in globals
     var globals = globals || {};
-    globals.animation = new Animation({ selector: "#main", json: "test1.json", startButton: "#start", slider: "#slider" });        
+    globals.animation = new Animation({ selector: "#main", json: "test1.json", startButton: "#start", pauseButton: "#pause", slider: "#slider" });        
     </script>
 
     
