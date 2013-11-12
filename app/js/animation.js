@@ -94,6 +94,10 @@ Animation.prototype = {
             self.timer = setTimeout(function(){
                 self.animationCallback();
             }, self.interval);
+        else {
+          $(self.options.startButton).attr("disabled", false);
+          $(self.options.pauseButton).attr("disabled", true);
+        }
     },
 
     pauseAnimation: function() {
