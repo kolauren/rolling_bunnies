@@ -30,6 +30,7 @@ Animation.prototype = {
     init: function() {
         this.dependencyWheel = new DependencyWheel({ selector: this.options.selector});
         var self = this;
+        $(self.options.pauseButton).attr("disabled", true);
         
         this.utils.processCommitData(function(commits){
             self.commits = commits;
@@ -40,14 +41,14 @@ Animation.prototype = {
 
         // click event for start button
         $(this.options.startButton).click(function(){
-            //self.startAnimation();
             // clear wheel (assume start at beginning)
             self.frame = self.sliderPosition;
             if(self.frame === 0)
                 self.setWheelNodesAndEdgesInvisible();
             // set paused flag false
             self.paused = false;
-            //$(self.options.startButton).attr("disabled", true);
+            $(self.options.startButton).attr("disabled", true);
+            $(self.options.pauseButton).attr("disabled", false);
             self.startAnimation();
             
         });
@@ -57,6 +58,8 @@ Animation.prototype = {
             // set paused flag true
             console.log("paused");
             self.paused = true;
+            $(self.options.startButton).attr("disabled", false);
+            $(self.options.pauseButton).attr("disabled", true);
         });
         
         // event for slider
