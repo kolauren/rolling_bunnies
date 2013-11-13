@@ -38,9 +38,10 @@ div.tooltip {
   width: 60px;                  
   height: 25px;                 
   padding: 2px;             
-  font: 16px sans-serif;        
-  background: lightsteelblue;   
+  font: 16px sans-serif;
+  color: white;
+  background: black;   
   border: 0px;      
-  border-radius: 8px;           
+  border-radius: 5px;           
   pointer-events: none;         
 }

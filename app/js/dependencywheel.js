@@ -154,11 +154,7 @@ DependencyWheel.prototype = {
       var addedFiles = commit.addedJavaFiles;
       addedFiles.forEach(function(n){
       var selector = ".node." + n;
-      console.log(selector);
       self.svg.select(selector)
-        .transition()
-        .delay(function(d,i) { return i * 10; })
-        .duration(1250)
         .style('opacity', 1);
       });
       
@@ -177,16 +173,21 @@ DependencyWheel.prototype = {
       removedFiles.forEach(function(n) {
       d3.selectAll("g").selectAll("[data-name=" + n + "]")
         .style("fill", "grey")
+        .style('opacity', 1);
+          
+      d3.select("g").selectAll(".edge").filter(".source-" + n)
+        .style("stroke", "grey")  
         .transition()
         .delay(function(d,i) { return i * 10; })
         .duration(1250)
         .style('opacity', 1);
           
-      d3.select("g").selectAll(".edge").filter(".source-" + n)
-        .style("stroke", "grey");   
-          
       d3.select("g").selectAll(".edge").filter(".target-" + n)
-        .style("stroke", "grey"); 
+        .style("stroke", "grey")  
+        .transition()
+        .delay(function(d,i) { return i * 10; })
+        .duration(1250)
+        .style('opacity', 1); 
       });
       
       // make modified dependencies opacity 1
@@ -194,9 +195,6 @@ DependencyWheel.prototype = {
       modified.forEach(function(n){
       var selector = ".node." + n;
       self.svg.select(selector)
-        .transition()
-        .delay(function(d,i) { return i * 10; })
-        .duration(1250)
         .style('opacity', 1);
       });
       
