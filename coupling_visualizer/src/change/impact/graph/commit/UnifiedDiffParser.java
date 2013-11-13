@@ -1,4 +1,4 @@
-package commit.retriever;
+package change.impact.graph.commit;
 
 import java.io.IOException;
 import java.util.regex.Matcher;

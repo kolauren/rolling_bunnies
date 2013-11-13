@@ -1,4 +1,4 @@
-package main;
+package change.impact.graph.driver;
 
 import japa.parser.ParseException;
 
@@ -9,14 +9,14 @@ import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 
+import change.impact.graph.CommitCouplingAnalyzer;
+import change.impact.graph.commit.Commit;
+import change.impact.graph.commit.CommitRetriever;
+import change.impact.graph.commit.Diff;
+import change.impact.graph.commit.UnifiedDiffParser;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import commit.coupling.analyzer.CommitCouplingAnalyzer;
-import commit.retriever.Commit;
-import commit.retriever.CommitRetriever;
-import commit.retriever.Diff;
-import commit.retriever.UnifiedDiffParser;
 
 public class Main {
 	public static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {

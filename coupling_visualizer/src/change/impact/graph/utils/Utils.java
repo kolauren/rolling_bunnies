@@ -1,4 +1,4 @@
-package commit.retriever;
+package change.impact.graph.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

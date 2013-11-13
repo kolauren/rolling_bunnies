@@ -1,4 +1,4 @@
-package commit.retriever;
+package change.impact.graph.commit;
 
 import java.util.Map;
 

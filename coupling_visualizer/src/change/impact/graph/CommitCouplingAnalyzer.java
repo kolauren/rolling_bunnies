@@ -1,4 +1,4 @@
-package commit.coupling.analyzer;
+package change.impact.graph;
 
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
@@ -27,7 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
-import commit.retriever.Commit;
+import change.impact.graph.commit.Commit;
 
 public class CommitCouplingAnalyzer {
 	public static List<String> importList;
