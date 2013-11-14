@@ -1,19 +1,5 @@
 package change.impact.graph;
 
-import japa.parser.JavaParser;
-import japa.parser.ParseException;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.ImportDeclaration;
-import japa.parser.ast.body.BodyDeclaration;
-import japa.parser.ast.body.FieldDeclaration;
-import japa.parser.ast.body.TypeDeclaration;
-import japa.parser.ast.body.VariableDeclarator;
-import japa.parser.ast.expr.VariableDeclarationExpr;
-import japa.parser.ast.visitor.VoidVisitorAdapter;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,9 +18,6 @@ import org.json.XML;
 import change.impact.graph.commit.Commit;
 
 public class CommitCouplingAnalyzer {
-	public static List<String> importList;
-	public static List<String> variableTypeList;
-	
 	//TODO: do coupling analysis using AST from java parser
 	//returns map of class -> coupled classes
 	public Map<String, Collection<String>> getCoupledClasses(Commit commit) {
@@ -120,141 +105,4 @@ public class CommitCouplingAnalyzer {
 			e.printStackTrace();
 		}
 	}
-
-	// Getting the type one coupling for the analysis.
-	public static void getTypeOneCoupling(File file) throws IOException, ParseException {
-		importList = new ArrayList<String>();
-		variableTypeList = new ArrayList<String>();
-		
-		File tempFile = new File("C:\\Users\\Richard\\Desktop\\Code.java");
-		CompilationUnit cUnit;
-		FileInputStream inputStream = new FileInputStream(tempFile);
-		
-		try {
-			// Parse the file.
-			cUnit = JavaParser.parse(inputStream);
-		} finally {
-			inputStream.close();
-		}
-		
-		
-		// Get all the variables.
-		getAllVariables(cUnit);
-
-		// System.out.println("variableTypeList: " + variableTypeList);
-		
-        new ImportVisitor().visit(cUnit, null);
-        
-        // System.out.println("importList: " + importList);
-        
-        verifyTypeOneDependency(cUnit);
-    }
-	
-	/**
-	 * Get rid of imports that are not in the same package.
-	 * 
-	 * @param cUnit
-	 */
-	public static void verifyTypeOneDependency(CompilationUnit cUnit) {
-		String classPkg = cUnit.getPackage().getName().toString();
-		List<String> classPkgStruct = parsePackageStructure(classPkg.toCharArray());
-		List<String> importPkgStruct;
-		List<String> tempImportList = new ArrayList<String>();
-		
-		for (int i = 0; i < importList.size(); i++) {
-			importPkgStruct = parsePackageStructure(importList.get(i).toCharArray());
-
-			if (importPkgStruct.get(0).equals(classPkgStruct.get(0))) {
-				tempImportList.add(importList.get(i));
-			}
-		}
-		
-		importList = tempImportList;
-		
-		// System.out.println("Verified: " + importList);
-	}
-	
-	/**
-	 * Parse the package name string.
-	 * 
-	 * @param pkgName
-	 * @return
-	 */
-	public static List<String> parsePackageStructure(char[] pkgName) {
-		List<String> pkgStructure = new ArrayList<String>();
-		StringBuilder builder = new StringBuilder();
-		
-		for (int i = 0; i < pkgName.length; i++) {
-			if (pkgName[i] != '.') {
-				builder.append(pkgName[i]);
-			} else {
-				pkgStructure.add(builder.toString());
-				builder = new StringBuilder();
-			}
-		}
-		
-		pkgStructure.add(builder.toString());
-		
-		return pkgStructure;
-	}
-	
-	/**
-	 * Method that populates the variableTypeList with all the existing variables in the class.
-	 * 
-	 * @param cUnit
-	 */
-	public static void getAllVariables(CompilationUnit cUnit) {
-		// Get the global variables.
-		getGlobalVariables(cUnit);
-		
-		// Visit the method's variables.
-        new MethodVariableVisitor().visit(cUnit, null);
-	}
-	
-	/**
-	 * Get the global variables in the code.
-	 * 
-	 * @param cUnit
-	 */
-	public static void getGlobalVariables(CompilationUnit cUnit) {
-        //List all global variables.
-        List<TypeDeclaration> globalVars = cUnit.getTypes();
-        
-        for (TypeDeclaration type : globalVars) {
-            List<BodyDeclaration> members = type.getMembers();
-
-            for (BodyDeclaration member : members) {
-                if (member instanceof FieldDeclaration) {
-                    FieldDeclaration memberType = (FieldDeclaration) member;
-                    List <VariableDeclarator> fields = memberType.getVariables();
-                    // System.out.println(memberType.getType() + " : " + fields.get(0).getId().getName());
-                    variableTypeList.add(memberType.getType().toString());
-                }
-            }
-        }
-	}
-
-    /**
-     * Simple visitor implementation for visiting VariableDeclarationExpr nodes. 
-     */
-    private static class MethodVariableVisitor extends VoidVisitorAdapter {
-    	public void visit(VariableDeclarationExpr n, Object arg) {
-    		List <VariableDeclarator> variables = n.getVars();
-    		
-    		for (VariableDeclarator variable: variables) {
-    			// System.out.println(n.getType() + " : " + variable.getId().getName());
-    			variableTypeList.add(n.getType().toString());
-    		}
-        }
-    }
-    
-    /**
-     * Visitor implementation for visiting ImportDeclaration nodes.
-     */
-    private static class ImportVisitor extends VoidVisitorAdapter {
-    	public void visit(ImportDeclaration n, Object arg) {
-    		// System.out.println(n.getName().toString());
-    		importList.add(n.getName().toString());
-    	}
-    }
 }
