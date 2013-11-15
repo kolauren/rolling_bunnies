@@ -110,7 +110,9 @@ Animation.prototype = {
     clearWheel: function() {
         d3.selectAll("circle")
             .style('opacity', 0.2); 
-        d3.selectAll("path.edge")
+        d3.selectAll(".edge")
+            .style('opacity', 0.2); 
+        d3.selectAll(".arrow")
             .style('opacity', 0.2); 
     },
 
