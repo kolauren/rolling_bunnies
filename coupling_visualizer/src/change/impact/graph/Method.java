@@ -4,6 +4,11 @@ public class Method {
 	private String id;
 	private ChangeStatus status;
 
+
+	private String name;
+	private String clazz;
+	private String packageName;
+
 	public String getId() {
 		return id;
 	}
@@ -11,9 +16,6 @@ public class Method {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	private String name;
-	private String clazz;
 
 	public String getName() {
 		return name;
@@ -37,6 +39,14 @@ public class Method {
 
 	public void setStatus(ChangeStatus status) {
 		this.status = status;
+	}
+
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
 	}
 
 	

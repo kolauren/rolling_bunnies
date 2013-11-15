@@ -78,6 +78,8 @@ public class DependencyGraphGenerator {
 		}
 	}
 	
-
+	private CompilationUnit getASTforMethod(Method method) {
+		return null;
+	}
 	
 }
