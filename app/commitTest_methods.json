@@ -1,0 +1,96 @@
+[
+    {
+        "commitSHA": "commitA",
+        "methods": [
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            },
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            }
+        ]
+    },
+    {
+        "commitSHA": "commitB",
+        "methods": [
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            },
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            }
+        ]
+    },
+    {
+        "commitNumber": 3,
+        "methods": [
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            },
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            }
+        ]
+    },
+    {
+        "commitNumber": 4,
+        "methods": [
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            },
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            }
+        ]
+    },
+    {
+        "methods": [
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            },
+            {
+                "name": "method1",
+                "clazz": "classA",
+                "status": "changed",
+                "successors": [],
+                "predecessors": []
+            }
+        ]
+    }
+]
