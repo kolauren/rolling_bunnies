@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import change.impace.graph.ast.parser.ASTparser;
+import change.impact.graph.ast.parser.ASTparser;
 import change.impact.graph.commit.Commit;
 
 public class DependencyGraphGenerator {
