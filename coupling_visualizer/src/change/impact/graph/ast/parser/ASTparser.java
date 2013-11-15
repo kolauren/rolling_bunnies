@@ -1,18 +1,32 @@
 package change.impact.graph.ast.parser;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration;
-import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration;
 
 import change.impact.graph.Method;
 
 public class ASTparser {
-	public static boolean methodExists(Method method, CompilationUnit ast) {
+	public static boolean methodExists(Method method, ICompilationUnit cUnit) throws JavaModelException {
+		IType[] allTypes = cUnit.getAllTypes();
+		
+		for (IType type : allTypes) {
+			IMethod[] methods = type.getMethods();
+			
+			for (IMethod m : methods) {
+				System.out.println("Method name " + m.getElementName());
+			    System.out.println("Signature " + m.getSignature());
+			    System.out.println("Return Type " + m.getReturnType());
+			}
+		}
+		
 		return false;
 	}
 
