@@ -20,6 +20,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import change.impace.graph.ast.parser.ASTparser;
 import change.impact.graph.commit.Commit;
@@ -27,6 +28,8 @@ import change.impact.graph.commit.Commit;
 public class DependencyGraphGenerator {
 	//filepath -> ast
 	private Map<String,CompilationUnit> currentASTs;
+	private Map<String,Set<String>> currentAdjacencyList;
+	private Map<String,Method> currentMethods;
 	
 	public DependencyGraphGenerator() {
 		currentASTs = Maps.newHashMap();
@@ -62,9 +65,15 @@ public class DependencyGraphGenerator {
 		}
 		return null;
 	}
-	
-	private Set<String> findAdjacencies(Method method) {
-		return null;
+
+	//store method ids only
+	private Set<String> filterID(Set<Method> methods) {
+		Set<String> ids = Sets.newHashSet();
+		for(Method method : methods) {
+			boolean unique = ids.add(method.getId());
+			assert(unique);
+		}
+		return ids;
 	}
 
 	public void generateCurrentASTs(Commit commit) throws MalformedURLException, IOException, ParseException {

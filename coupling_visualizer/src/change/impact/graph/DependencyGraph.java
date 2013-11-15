@@ -55,11 +55,11 @@ public class DependencyGraph implements AdjacencyList<String, String> {
 
 	@Override
 	public boolean addAdjacentNode(String node, String adjacent) {
-		Set<String> adjacencies = adjacencyList.get(node);
-		if(adjacencies == null) {
-			adjacencies = Sets.newHashSet();
-			adjacencyList.put(node, adjacencies);
+		Set<String> adjacentNodes = adjacencyList.get(node);
+		if(adjacentNodes == null) {
+			adjacentNodes = Sets.newHashSet();
+			adjacencyList.put(node, adjacentNodes);
 		}
-		return adjacencies.add(adjacent);
+		return adjacentNodes.add(adjacent);
 	}
 }

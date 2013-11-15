@@ -13,11 +13,15 @@ import japa.parser.ast.stmt.BlockStmt;
 import change.impact.graph.Method;
 
 public class ASTparser {
+	public static boolean methodExists(Method method, CompilationUnit ast) {
+		return false;
+	}
+
 	private static Method generateMethod(CompilationUnit ast, MethodDeclaration methodDec) {
 		return null;
 	}
 	
-	public static Set<Method> getMethodsCalledByMethod(CompilationUnit ast, Method method) {
+	public static Set<Method> getMethodsCalledByMethod(Method method, CompilationUnit ast) {
 		return null;
 	}
 	
