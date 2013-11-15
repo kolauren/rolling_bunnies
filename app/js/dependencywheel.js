@@ -19,9 +19,12 @@ DependencyWheel.prototype = {
     radius: 250,
     line: null, /* line function */
     bundle: null,
+    impact_line: null
   },
     
-    tooltip: null,
+  opacity: 0.1,
+  tooltip: null,
+  opacity_increment: 0.1,
 
   init: function(options) {
 
@@ -50,6 +53,12 @@ DependencyWheel.prototype = {
       .angle(function(d){ return d.x / 180 * Math.PI })
       .interpolate("bundle");
 
+    this.options.impact_line = d3.svg.line.radial()
+      .radius(function(d){ return d.y - 10; })
+      .angle(function(d){ return d.x / 180 * Math.PI })
+      .tension(0.1)
+      .interpolate("bundle");
+
     this.tooltip = d3.select("body").append("div")   
     .attr("class", "tooltip")               
     .style("opacity", 0);
@@ -73,38 +82,58 @@ DependencyWheel.prototype = {
   },
     
   classOut: function(t) {
+      var self = this;
       // de-stroke node
       d3.selectAll("g").selectAll("." + t.class)
-        .style('opacity', 0.2);
+        .style('opacity', self.opacity);
       //this.tooltip.transition().duration(500).style("opacity", 0); 
       
       // de-thicken dependencies
       d3.select("g").selectAll("path").filter(".source-" + t.method_id)
-        .style('opacity', 0.2);
+        .style('opacity', self.opacity);
       
   },
 
   // Draws all the nodes and edges based on input data
-  draw: function(state) {
+  draw: function(state, impact_edges) {
       var self = this;  
-      var d3data = self.parseDataToD3(state);
+      var d3data = self.parseDataToD3(state, impact_edges);
+
       var splines = self.options.bundle(d3data.edges);
+      var impact_splines = self.options.bundle(d3data.impact_edges);
 
       var paths = self.svg.selectAll(self.options.selector)
         .data(d3data.edges).enter().append("svg:path")
         .attr("class", function(d) { return "edge " + d.class; })
         .style("stroke", function(d) { 
           return self.utils.getColour(d.source.hue, 70, 60); })
-        .style("opacity", 0.2)
-        .attr("d", function(d, i) { return self.options.line(splines[i]); })
+        .style("opacity", self.opacity)
+        .style("stroke-dasharray", ("3, 3"))
+        .attr("d", function(d, i) { return self.options.line(splines[i]); });
 
-      this.svg.selectAll(".arrow")
+      // Add a second layer of paths for animation purposes
+      self.svg.selectAll(self.options.selector)
         .data(d3data.edges).enter().append("svg:path")
-        .attr("class", function(d) { return "arrow " + d.class; })
-        .attr("d", d3.svg.symbol().type("triangle-up").size(128))
-        .attr("transform", function(d) { return "rotate(" + (d.target.x - 90) + ")translate(" + (d.target.y) + ", -12) rotate(-25) translate(-20)" })
-        .style("fill", function(d) { return self.utils.getColour(d.source.hue, 70, 60); })
-        .style("opacity", 0.2);
+        .attr("class", function(d) { return "animate " + d.class; })
+        .style("stroke", function(d) { 
+          return self.utils.getColour(d.source.hue, 70, 60); })
+        .style('opacity', 0)
+        .attr("d", function(d, i) { return self.options.line(splines[i]); });
+
+      var impact_paths = self.svg.selectAll(self.options.selector)
+        .data(d3data.impact_edges).enter().append("svg:path")
+        .attr("class", function(d) { return "impact_edge " + d.class; })
+        .style("stroke", "#000000")
+        .style("opacity", 0)
+        .attr("d", function(d, i) { return self.options.impact_line(impact_splines[i]); });
+
+      // this.svg.selectAll(".arrow")
+      //   .data(d3data.edges).enter().append("svg:path")
+      //   .attr("class", function(d) { return "arrow " + d.class; })
+      //   .attr("d", d3.svg.symbol().type("triangle-up").size(128))
+      //   .attr("transform", function(d) { return "rotate(" + (d.target.x - 90) + ")translate(" + (d.target.y) + ", -12) rotate(-25) translate(-20)" })
+      //   .style("fill", function(d) { return self.utils.getColour(d.source.hue, 70, 60); })
+      //   .style("opacity", 0.2);
 
       var node = self.svg.selectAll("g.node")
         .data(d3data.nodes.filter(function(n) { return !n.children; }))
@@ -116,7 +145,7 @@ DependencyWheel.prototype = {
         .attr("class", function(d) { return d.class })
         .attr("r", 10)
         .style("fill", function(d) { return self.utils.getColour(d.hue, 70, 60); })
-        .style("opacity", 0.2);
+        .style("opacity", self.opacity);
       node.append("svg:text")
           .attr("dx", function(d) { return d.x < 180 ? 15 : -15; })
           .attr("dy", "0.4em")
@@ -138,22 +167,39 @@ DependencyWheel.prototype = {
       
   },
 
-  glow: function(selector) {
-    this.svg.selectAll(selector)
+  animatePath: function(selector) {
+    var path = this.svg.select(".animate" + selector);
+    var totalLength = path.node().getTotalLength();
+    path.attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
         .transition()
-        .delay(function(d,i) { return i * 10; })
-        .duration(1250)
-        .style('opacity', 1);
+        .duration(1000)
+        .ease("linear")
+        .attr("stroke-dashoffset", 0)
+        .style("opacity", 1);
   },
 
-  lightUp: function(commit) {
+  lightUp: function(commit, callback) {
     var self = this;
-    commit.nodes.forEach(function(n) {
-      self.glow(".node-" + n.method_id);
+    commit.nodes.forEach(function(n, i) {
+      self.svg.selectAll(".node-" + n.method_id)
+        .transition()
+        .delay(function(d,i) { return i * 10; })
+        .duration(1200)
+        .style('opacity', 1);
     });
 
-    commit.edges.forEach(function(e) {
-      self.glow(".source-" + e.source + ".target-" + e.target);
+    commit.edges.forEach(function(e, i) {
+      self.animatePath(".source-" + e.source + ".target-" + e.target);
+    });
+
+    commit.impact_edges.forEach(function(e, i) {
+      self.svg.selectAll(".impact_edge.source-" + e.source + ".target-" + e.target)
+        .transition()
+        .delay(function(d,i) { return i * 10; })
+        .duration(1200)
+        .style('stroke-width', function(d) { return e.count * 2; })
+        .style('opacity', 0.5);
     });
   },
     
@@ -234,11 +280,12 @@ DependencyWheel.prototype = {
   //   },
 
   // parses the data so it will be appropriate to pass to D3
-  parseDataToD3:  function(state) {
+  parseDataToD3:  function(state, impact_edges) {
       var self = this;
       var colours = [];
       var edges = [];
       var cluster_map = {};
+      var d3_impact_edges = [];
 
       // creating equidistant color math
       var increment = Math.ceil(360 / state.values().length);
@@ -260,6 +307,7 @@ DependencyWheel.prototype = {
       });
 
       // create edges from edge data
+      // also create impact edges
       nodes.forEach(function(n) {
         if(n.adjacent) {
           n.adjacent.forEach(function(a){
@@ -269,9 +317,17 @@ DependencyWheel.prototype = {
         }
       });
 
+      for(key in impact_edges) {
+        var source = impact_edges[key].source;
+        var target = impact_edges[key].target;
+        var css_class = "source-" + source + " target-" + target;
+        d3_impact_edges.push({ source: cluster_map[source], target: cluster_map[target], "class": css_class });
+      }
+
       return {
         nodes: nodes,
-        edges: edges
+        edges: edges,
+        impact_edges: d3_impact_edges
       };
   },
 
