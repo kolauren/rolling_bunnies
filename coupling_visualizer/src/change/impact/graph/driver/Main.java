@@ -1,6 +1,5 @@
 package change.impact.graph.driver;
 
-import japa.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;

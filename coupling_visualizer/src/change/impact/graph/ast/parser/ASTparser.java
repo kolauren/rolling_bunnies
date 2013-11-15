@@ -5,11 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.body.BodyDeclaration;
-import japa.parser.ast.body.MethodDeclaration;
-import japa.parser.ast.body.TypeDeclaration;
-import japa.parser.ast.stmt.BlockStmt;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration;
+import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration;
+
 import change.impact.graph.Method;
 
 public class ASTparser {
@@ -26,6 +25,7 @@ public class ASTparser {
 	}
 	
 	public static Method findMethodContainingLine(CompilationUnit ast, int lineNumber) throws IOException {
+		/*
 		List<TypeDeclaration> types = ast.getTypes();
 		
 		for(TypeDeclaration type : types) {
@@ -42,7 +42,15 @@ public class ASTparser {
 					}
 				}
 			}
-		}
-		throw new IOException("couldn't find method containing line: "+lineNumber+" in types: "+Arrays.toString(ast.getTypes().toArray()));
+		}*/
+		//line not part of a method
+		return null;
+	}
+	
+	//return the method calls found in the given list of lines.
+	//note: i'm assuming you can parse a line individually and then cross check with the full ast
+	//to get method information like class and package
+	public static Set<Method> getMethodsCalledByMethodInLines(Method method, List<String> lines, CompilationUnit ast) {
+		return null;
 	}
 }

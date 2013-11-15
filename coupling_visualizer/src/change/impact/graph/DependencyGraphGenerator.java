@@ -1,28 +1,21 @@
 package change.impact.graph;
 
-import japa.parser.JavaParser;
-import japa.parser.ParseException;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.body.BodyDeclaration;
-import japa.parser.ast.body.MethodDeclaration;
-import japa.parser.ast.body.TypeDeclaration;
-import japa.parser.ast.stmt.BlockStmt;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
+
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import change.impact.graph.ast.parser.ASTparser;
 import change.impact.graph.commit.Commit;
 
 public class DependencyGraphGenerator {
@@ -35,7 +28,7 @@ public class DependencyGraphGenerator {
 		currentASTs = Maps.newHashMap();
 	}
 	
-	public List<CommitGraph> generate(Collection<Commit> commits) throws MalformedURLException, ParseException, IOException {
+	public List<CommitGraph> generate(Collection<Commit> commits) throws MalformedURLException, IOException {
 		List<CommitGraph> commitGraphs = Lists.newArrayList();
 		for(Commit commit : commits) {
 			CommitGraph commitGraph = new CommitGraph();
@@ -47,8 +40,8 @@ public class DependencyGraphGenerator {
 	
 	//TODO: generate ASTs for new/modified classes first. When tracing removed line, 
 	//use OLD ast to find method container then use CURRENT ast for building dependencies
-	private Collection<DependencyGraph> generateGraphsForChangedMethods(Commit commit) throws MalformedURLException, ParseException, IOException {
-		generateCurrentASTs(commit);
+	private Collection<DependencyGraph> generateGraphsForChangedMethods(Commit commit) throws MalformedURLException, IOException {
+		updateCurrentASTs(commit);
 		
 		//generate dependency graphs for all modified methods in every class
 		for(String clazz : commit.getDiffs().keySet()) {
@@ -76,17 +69,27 @@ public class DependencyGraphGenerator {
 		return ids;
 	}
 
-	public void generateCurrentASTs(Commit commit) throws MalformedURLException, IOException, ParseException {
-		for(String clazz : commit.getDiffs().keySet()) {
+	public void updateCurrentASTs(Commit commit) throws MalformedURLException, IOException {
+		//add new and modified ASTs
+		Iterable<String> addedOrModified = Iterables.concat(commit.getAddedJavaFiles(), commit.getModifiedJavaFiles());
+		for(String clazz : addedOrModified) {
 			InputStream currentCodeSource = null;
 			try {
 				currentCodeSource = new URL(commit.getDiff(clazz).getNewCode()).openStream();
 			} finally {
 				currentCodeSource.close();
 			}
-			CompilationUnit currentAST = JavaParser.parse(currentCodeSource);
-			currentASTs.put(clazz, currentAST);
+			//CompilationUnit currentAST = JavaParser.parse(currentCodeSource);
+			//currentASTs.put(clazz, currentAST);
 		}
+		
+		for(String clazz : commit.getRemovedJavaFiles()) {
+			currentASTs.remove(clazz);
+		}
+	}
+	
+	private void updateCurrentAdjacencyListAndMethods(Commit commit) {
+		
 	}
 
 	/**
