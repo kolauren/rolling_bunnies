@@ -46,7 +46,7 @@ DependencyWheel.prototype = {
     this.options.bundle = d3.layout.bundle();
 
     this.options.line = d3.svg.line.radial()
-      .radius(function(d){ return d.y; })
+      .radius(function(d){ return d.y - 10; })
       .angle(function(d){ return d.x / 180 * Math.PI })
       .interpolate("bundle");
 
@@ -67,7 +67,7 @@ DependencyWheel.prototype = {
       //     .style("top", (d3.event.pageY - 50) + "px");
       
       // Search for dependencies connected to this node and thicken dependencies
-      d3.select("g").selectAll(".edge").filter(".source-" + t.method_id)
+      d3.select("g").selectAll("path").filter(".source-" + t.method_id)
         .style('opacity', 1);
       
   },
@@ -79,7 +79,7 @@ DependencyWheel.prototype = {
       //this.tooltip.transition().duration(500).style("opacity", 0); 
       
       // de-thicken dependencies
-      d3.select("g").selectAll(".edge").filter(".source-" + t.method_id)
+      d3.select("g").selectAll("path").filter(".source-" + t.method_id)
         .style('opacity', 0.2);
       
   },
@@ -92,11 +92,19 @@ DependencyWheel.prototype = {
 
       var paths = self.svg.selectAll(self.options.selector)
         .data(d3data.edges).enter().append("svg:path")
-        .attr("class", function(d) { return d.class; })
+        .attr("class", function(d) { return "edge " + d.class; })
         .style("stroke", function(d) { 
           return self.utils.getColour(d.source.hue, 70, 60); })
         .style("opacity", 0.2)
-        .attr("d", function(d, i) { return self.options.line(splines[i]); });
+        .attr("d", function(d, i) { return self.options.line(splines[i]); })
+
+      this.svg.selectAll(".arrow")
+        .data(d3data.edges).enter().append("svg:path")
+        .attr("class", function(d) { return "arrow " + d.class; })
+        .attr("d", d3.svg.symbol().type("triangle-up").size(128))
+        .attr("transform", function(d) { return "rotate(" + (d.target.x - 90) + ")translate(" + (d.target.y) + ", -12) rotate(-25) translate(-20)" })
+        .style("fill", function(d) { return self.utils.getColour(d.source.hue, 70, 60); })
+        .style("opacity", 0.2);
 
       var node = self.svg.selectAll("g.node")
         .data(d3data.nodes.filter(function(n) { return !n.children; }))
@@ -117,6 +125,7 @@ DependencyWheel.prototype = {
           .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
           .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
           .text(function(d) { return d.method_name; });
+
       
       //event handlers for nodes on mouse over
       d3.selectAll("svg").selectAll("circle")
@@ -130,7 +139,7 @@ DependencyWheel.prototype = {
   },
 
   glow: function(selector) {
-    this.svg.select(selector)
+    this.svg.selectAll(selector)
         .transition()
         .delay(function(d,i) { return i * 10; })
         .duration(1250)
@@ -144,7 +153,7 @@ DependencyWheel.prototype = {
     });
 
     commit.edges.forEach(function(e) {
-      self.glow(".edge.source-" + e.source + ".target-" + e.target);
+      self.glow(".source-" + e.source + ".target-" + e.target);
     });
   },
     
@@ -254,7 +263,7 @@ DependencyWheel.prototype = {
       nodes.forEach(function(n) {
         if(n.adjacent) {
           n.adjacent.forEach(function(a){
-            var css_class = "edge source-" + n.method_id + " target-" + a;
+            var css_class = "source-" + n.method_id + " target-" + a;
             edges.push({ source: cluster_map[n.method_id], target: cluster_map[a], "class": css_class });
           });
         }
