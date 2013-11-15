@@ -29,6 +29,21 @@ Utils = (function() {
                 return id;
             },
 
+            // Recursive function omg. Returns true if the child is actually a child of the parent
+            isImpactEdge: function(state, parent, child) {
+                if(state.has(parent)) {
+                    if(state.get(parent).adjacent.indexOf(child) > -1)
+                        return true;
+                    else {
+                        var adjacent = state.get(parent).adjacent;
+                        for(var i = 0; i < adjacent.length; i++) {
+                            return this.isImpactEdge(state, adjacent[i], child);
+                        }
+                    }
+                }
+                return false;
+            },
+
             createMatrix: function(length) {
                 var matrix = [];
                 for(var i = 0; i < length; i++) {
@@ -100,18 +115,20 @@ Utils = (function() {
                     });
 
                     matrix_order = final_state.values().map(function(m){ return m.method_id });
+                    var impact_edges_map = d3.map({});
                     data.forEach(function(d) {
                         var commit = {
                             commit_SHA: "",
                             nodes: [],
-                            edges: []
+                            edges: [],
+                            impact_edges: []
                         };
-
                         var matrix = self.createMatrix(matrix_order.length);
 
                         commit.commit_SHA = d.commit_SHA;
                         d.dependency_graphs.forEach(function(g) {
                             commit.nodes.push(final_state.get(g.method_id));
+                            var source_id = g.method_id;
                             // Iterate through every adjacency list to add edges
                             g.adjacency_list.forEach(function(a) {
                                 var parent_id = self.affectedParent(g.adjacency_list, a);
@@ -123,12 +140,29 @@ Utils = (function() {
                                     }
                                     commit.edges.push({ source: parent_id, target: a.method_id });
                                 }
-                            })
+
+                                // if this changed node is a child of the source_id, then add it to impacted edges
+                                if(a.status === "changed" && self.isImpactEdge(final_state, source_id, a.method_id)) {
+                                    var key = source_id + "-" + a.method_id;
+                                    if(impact_edges_map.has(key)) {
+                                        impact_edges_map.get(key).count += 1;
+                                    } else {
+                                        impact_edges_map.set(key, {
+                                            source: source_id,
+                                            target: a.method_id,
+                                            count: 1
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        impact_edges_map.forEach(function(k, v) {
+                            commit.impact_edges.push($.extend(true, {}, v));
                         });
                         commit.matrix = matrix;
                         commits.push(commit);
                     });
-                    if(callback) callback(commits, final_state);
+                    if(callback) callback(commits, final_state, impact_edges_map.values());
                 });
             }
 

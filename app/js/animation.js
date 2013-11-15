@@ -19,22 +19,24 @@ Animation.prototype = {
         slider: ""
     },
     commits: [],
-    interval: 1500,
+    interval: 2000,
     timer: null,
     dependencyWheel: null,
     frame: 0,
     sliderPosition: 0,
     paused: false,
+    opacity: 0.1,
 
     init: function() {
         this.dependencyWheel = new DependencyWheel({ selector: this.options.selector});
         var self = this;
         $(self.options.pauseButton).attr("disabled", true);
         
-        this.utils.processCommitData(self.options.json, function(commits, final_state, matrix_order){
+        this.utils.processCommitData(self.options.json, function(commits, final_state, impact_edges){
             console.log(commits);
+            console.log(impact_edges);
             self.commits = commits;
-            self.dependencyWheel.draw(final_state);
+            self.dependencyWheel.draw(final_state, impact_edges);
         });
 
         // click event for start button
@@ -81,6 +83,7 @@ Animation.prototype = {
     // animate commits in different intervals
     animationCallback: function() {
         var self = this;
+        self.clearWheel();
         if(self.paused === true)
             return;
         self.animateCommits();
@@ -92,8 +95,11 @@ Animation.prototype = {
                 self.animationCallback();
             }, self.interval);
         else {
-          $(self.options.startButton).attr("disabled", false);
-          $(self.options.pauseButton).attr("disabled", true);
+            window.setInterval(function() {
+                self.clearWheel();
+            }, 1500);
+            $(self.options.startButton).attr("disabled", false);
+            $(self.options.pauseButton).attr("disabled", true);
         }
     },
 
@@ -108,22 +114,20 @@ Animation.prototype = {
     
     // set opacity of all nodes and edges to 0
     clearWheel: function() {
+        var self = this;
         d3.selectAll("circle")
-            .style('opacity', 0.2); 
+            .style('opacity', self.opacity); 
         d3.selectAll(".edge")
-            .style('opacity', 0.2); 
-        d3.selectAll(".arrow")
-            .style('opacity', 0.2); 
+            .style('opacity', self.opacity); 
+        d3.selectAll("path.animate")
+            .style('opacity', self.opacity);
     },
 
     animateCommits: function () {
-        this.clearWheel();
+        var self = this;
         var commit = this.commits[this.frame];
-        console.log(commit);
+        $(".info").html("Commit #: " + commit.commit_SHA);
         this.dependencyWheel.lightUp(commit);
-        $(".info").animate({opacity:0}, 400, function() {
-            $(this).text("Commit #: " + commit.commit_SHA).animate({opacity: 1});
-        });
     }
 
 };
