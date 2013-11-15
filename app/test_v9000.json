@@ -1,0 +1,186 @@
+[
+    {
+        "commit_SHA": "1",
+        "dependency_graphs": [
+            {
+                "method_id": "a",
+                "adjacency_list": [
+                    {
+                        "method_id": "a",
+                        "method_name": "a",
+                        "class_name": "A",
+                        "status": "changed",
+                        "adjacent": [
+                            "b",
+                            "c",
+                            "d"
+                        ]
+                    },
+                    {
+                        "method_id": "b",
+                        "method_name": "b",
+                        "class_name": "B",
+                        "status": "affected",
+                        "adjacent": [
+                            "e"
+                        ]
+                    },
+                    {
+                        "method_id": "c",
+                        "method_name": "c",
+                        "class_name": "C",
+                        "status": "unaffected",
+                        "adjacent": []
+                    },
+                    {
+                        "method_id": "d",
+                        "method_name": "d",
+                        "class_name": "D",
+                        "status": "unaffected",
+                        "adjacent": []
+                    },
+                    {
+                        "method_id": "e",
+                        "method_name": "e",
+                        "class_name": "E",
+                        "status": "affected",
+                        "adjacent": [
+                            "f"
+                        ]
+                    },
+                    {
+                        "method_id": "f",
+                        "method_name": "f",
+                        "class_name": "F",
+                        "status": "changed",
+                        "adjacent": []
+                    }
+                ]
+            },
+            {
+                "method_id": "f",
+                "adjacency_list": [
+                    {
+                        "method_id": "f",
+                        "method_name": "f",
+                        "class_name": "F",
+                        "status": "changed",
+                        "adjacent": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "commit_SHA": "2",
+        "dependency_graphs": [
+            {
+                "method_id": "b",
+                "adjacency_list": [
+                    {
+                        "method_id": "b",
+                        "method_name": "b",
+                        "class_name": "B",
+                        "status": "changed",
+                        "adjacent": [
+                            "e"
+                        ]
+                    }
+                ]
+            },
+            {
+                "method_id": "a",
+                "adjacency_list": [
+                    {
+                        "method_id": "a",
+                        "method_name": "a",
+                        "class_name": "A",
+                        "status": "changed",
+                        "adjacent": [
+                            "b",
+                            "c",
+                            "d"
+                        ]
+                    },
+                    {
+                        "method_id": "b",
+                        "method_name": "b",
+                        "class_name": "B",
+                        "status": "changed",
+                        "adjacent": [
+                            "e"
+                        ]
+                    },
+                    {
+                        "method_id": "c",
+                        "method_name": "c",
+                        "class_name": "C",
+                        "status": "unaffected",
+                        "adjacent": []
+                    },
+                    {
+                        "method_id": "d",
+                        "method_name": "d",
+                        "class_name": "D",
+                        "status": "unaffected",
+                        "adjacent": []
+                    },
+                    {
+                        "method_id": "e",
+                        "method_name": "e",
+                        "class_name": "E",
+                        "status": "unaffected",
+                        "adjacent": [
+                            "f"
+                        ]
+                    },
+                    {
+                        "method_id": "f",
+                        "method_name": "f",
+                        "class_name": "F",
+                        "status": "unaffected",
+                        "adjacent": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "commit_SHA": "3",
+        "dependency_graphs": [
+            {
+                "method_id": "e",
+                "adjacency_list": [
+                    {
+                        "method_id": "e",
+                        "method_name": "e",
+                        "class_name": "E",
+                        "status": "changed",
+                        "adjacent": [
+                            "f"
+                        ]
+                    },
+                    {
+                        "method_id": "f",
+                        "method_name": "f",
+                        "class_name": "F",
+                        "status": "changed",
+                        "adjacent": []
+                    }
+                ]
+            },
+            {
+                "method_id": "f",
+                "adjacency_list": [
+                    {
+                        "method_id": "f",
+                        "method_name": "f",
+                        "class_name": "F",
+                        "status": "changed",
+                        "adjacent": []
+                    }
+                ]
+            }
+        ]
+    }
+]

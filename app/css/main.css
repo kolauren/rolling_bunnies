@@ -1,13 +1,35 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300);
+
 body {
-  text-align: center;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 300;
 }
 
 #main {
-  margin: 2% 0 0 0;
+  margin-top: 2%;
+}
+
+.info {
+  padding: 5px 40px;
+  opacity: 0;
+  font-size: 22px;
+}
+
+#graphs {
+  float: left;
+}
+
+#wheel, #matrix {
+  display: inline-block;
 }
 
 #buttons {
   margin: 10px;
+}
+
+.controls {
+  text-align: center;
 }
 
 #slider {
@@ -28,8 +50,12 @@ body {
   font-size: 10px;
 }
 
-.node:hover {
-  cursor: help;
+.node:hover, .edge:hover {
+  cursor: pointer;
+}
+
+.node-label {
+  font-size: 24;
 }
 
 div.tooltip {   
@@ -44,4 +70,8 @@ div.tooltip {
   border: 0px;      
   border-radius: 5px;           
   pointer-events: none;         
+}
+
+.clear {
+  clear: both;
 }

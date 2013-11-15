@@ -10,12 +10,19 @@
   
 </head>
 <body>
-    <div id="main"></div>
-    <div id="animate"></div>
-    <div id="slider"></div>
-    <div id="buttons">
-    <input type="button" id="start" value="Start">
-    <input type="button" id="pause" value="Pause">  
+    <div id="main">
+        <div class="info">&nbsp;</div>
+        <div id="graphs">
+            <div id="wheel"></div>
+            <div id="matrix"><!-- put matrix here !--></div>
+        </div>
+    </div>
+    <div class="clear controls">
+        <div id="slider"></div>
+        <div id="buttons">
+            <input type="button" id="start" value="Start">
+            <input type="button" id="pause" value="Pause">  
+        </div>
     </div>
 </body>
 
@@ -28,7 +35,7 @@
     <script type="text/javascript">
     // store all global variables in globals
     var globals = globals || {};
-    globals.animation = new Animation({ selector: "#main", json: "test1.json", startButton: "#start", pauseButton: "#pause", slider: "#slider" });        
+    globals.animation = new Animation({ selector: "#wheel", json: "test_v9000.json", startButton: "#start", pauseButton: "#pause", slider: "#slider" });
     </script>
 
     

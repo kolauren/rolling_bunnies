@@ -5,7 +5,6 @@
 **/
 Animation = function(options) {
     this.options = $.extend({}, this.options, options);
-    var self = this;
     this.init();
 }
 
@@ -32,21 +31,20 @@ Animation.prototype = {
         var self = this;
         $(self.options.pauseButton).attr("disabled", true);
         
-        this.utils.processCommitData(function(commits){
+        this.utils.processCommitData(self.options.json, function(commits, final_state, matrix_order){
+            console.log(commits);
             self.commits = commits;
-            var currentEdges = self.commits[self.commits.length - 1].currentEdges;
-            var currentNodes = self.commits[self.commits.length - 1].currentNodes;
-            self.dependencyWheel.draw(currentNodes, currentEdges);
+            self.dependencyWheel.draw(final_state);
         });
 
         // click event for start button
         $(this.options.startButton).click(function(){
             // clear wheel (assume start at beginning)
-            self.frame = self.sliderPosition;
-            if(self.frame === 0)
-                self.setWheelNodesAndEdgesInvisible();
-            // set paused flag false
-            self.paused = false;
+            if(self.paused) {
+                self.paused = false;
+            } else {
+                self.frame = self.sliderPosition;
+            } 
             $(self.options.startButton).attr("disabled", true);
             $(self.options.pauseButton).attr("disabled", false);
             self.startAnimation();
@@ -64,11 +62,10 @@ Animation.prototype = {
         
         // event for slider
         d3.select(this.options.slider).call(d3.slider().on("slide", function(evt, value) {
-            self.setWheelNodesAndEdgesInvisible();
+            self.clearWheel();
             var commitToStartAt = value * 0.01 * (self.commits.length - 1);
             commitToStartAt = Math.round(commitToStartAt);
             var commit = self.commits[commitToStartAt];
-            self.dependencyWheel.drawExistingNodesAndEdges(commit);
             self.frame = commitToStartAt;
             self.sliderPosition = commitToStartAt;
         }));
@@ -100,13 +97,6 @@ Animation.prototype = {
         }
     },
 
-    pauseAnimation: function() {
-
-    },
-
-    // Jumps to a specific frame in the animation
-    jumpTo: function(frame) {
-    },
     
     // updates the position of the slider as the animation progresses
     updateSliderPosition: function(frame) {
@@ -115,26 +105,23 @@ Animation.prototype = {
       d3.select("#slider").select(".d3-slider-handle")
         .style("left","" + newSliderPosition + "%");  
     },
-
-    // clears the canvas of nodes and edges
-    clearWheel: function() {
-        d3.selectAll("circle").remove();
-        d3.selectAll("path.edge").remove();
-    },
     
     // set opacity of all nodes and edges to 0
-    setWheelNodesAndEdgesInvisible: function() {
+    clearWheel: function() {
         d3.selectAll("circle")
-            .style('opacity', 0); 
+            .style('opacity', 0.2); 
         d3.selectAll("path.edge")
-            .style('opacity', 0); 
+            .style('opacity', 0.2); 
     },
 
     animateCommits: function () {
+        this.clearWheel();
         var commit = this.commits[this.frame];
         console.log(commit);
-        this.dependencyWheel.lightUp2(commit);
-        //this.dependencyWheel.lightUp(commit.addedJavaFiles.concat(commit.modifiedJavaFiles), commit.removedJavaFiles, commit.dependencies);
+        this.dependencyWheel.lightUp(commit);
+        $(".info").animate({opacity:0}, 400, function() {
+            $(this).text("Commit #: " + commit.commit_SHA).animate({opacity: 1});
+        });
     }
 
 };
