@@ -9,18 +9,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jdt.core.dom.CompilationUnit;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import change.impact.graph.ast.parser.AST;
+import change.impact.graph.ast.parser.ASTparser;
 import change.impact.graph.commit.Commit;
 
 public class DependencyGraphGenerator {
 	//filepath -> ast
-	private Map<String,CompilationUnit> currentASTs;
+	private Map<String,AST> currentASTs;
+	private Map<String,AST> previousASTs;
 	private Map<String,Set<String>> currentAdjacencyList;
 	private Map<String,Method> currentMethods;
 	
@@ -41,21 +42,10 @@ public class DependencyGraphGenerator {
 	//TODO: generate ASTs for new/modified classes first. When tracing removed line, 
 	//use OLD ast to find method container then use CURRENT ast for building dependencies
 	private Collection<DependencyGraph> generateGraphsForChangedMethods(Commit commit) throws MalformedURLException, IOException {
-		updateCurrentASTs(commit);
+		updateASTs(commit);
 		
 		//generate dependency graphs for all modified methods in every class
-		for(String clazz : commit.getDiffs().keySet()) {
-			//keep track of graphs already generated for a method 
-			Map<String,DependencyGraph> generated = Maps.newHashMap();
-			//generate dependency graph for method with added lines
-			for(int lineNumber : commit.getDiff(clazz).getAddedLines().keySet()) {
-				CompilationUnit currentAST = currentASTs.get(clazz);
-			}
-			//generate dependency graph for methods with removed lines
-			for(int lineNumber : commit.getDiff(clazz).getRemovedLines().keySet()) {
-				
-			}
-		}
+		
 		return null;
 	}
 
@@ -69,27 +59,36 @@ public class DependencyGraphGenerator {
 		return ids;
 	}
 
-	public void updateCurrentASTs(Commit commit) throws MalformedURLException, IOException {
+	public void updateASTs(Commit commit) throws MalformedURLException, IOException {
 		//add new and modified ASTs
 		Iterable<String> addedOrModified = Iterables.concat(commit.getAddedJavaFiles(), commit.getModifiedJavaFiles());
 		for(String clazz : addedOrModified) {
-			InputStream currentCodeSource = null;
-			try {
-				currentCodeSource = new URL(commit.getDiff(clazz).getNewCode()).openStream();
-			} finally {
-				currentCodeSource.close();
-			}
-			//CompilationUnit currentAST = JavaParser.parse(currentCodeSource);
-			//currentASTs.put(clazz, currentAST);
+			//update previous AST
+			AST previousAST = currentASTs.get(clazz);
+			previousASTs.put(clazz, previousAST);
+			//update current AST
+			String url = commit.getDiff(clazz).getNewCode();
+			AST currentAST = ASTparser.generateAST(url);
+			currentASTs.put(clazz, currentAST);
 		}
 		
 		for(String clazz : commit.getRemovedJavaFiles()) {
+			previousASTs.put(clazz, currentASTs.get(clazz));
 			currentASTs.remove(clazz);
 		}
 	}
 	
 	private void updateCurrentAdjacencyListAndMethods(Commit commit) {
-		
+		for(String clazz : commit.getDiffs().keySet()) {
+			//generate dependency graph for method with added lines
+			for(int lineNumber : commit.getDiff(clazz).getAddedLines().keySet()) {
+				AST currentAST = currentASTs.get(clazz);
+			}
+			//generate dependency graph for methods with removed lines
+			for(int lineNumber : commit.getDiff(clazz).getRemovedLines().keySet()) {
+				
+			}
+		}
 	}
 
 	/**
@@ -97,7 +96,7 @@ public class DependencyGraphGenerator {
 	 * @param method
 	 * @return
 	 */
-	private CompilationUnit getASTforMethod(Method method) {
+	private AST getASTforMethod(Method method) {
 		return null;
 	}
 	

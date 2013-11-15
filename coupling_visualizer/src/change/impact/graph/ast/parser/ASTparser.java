@@ -1,21 +1,21 @@
 package change.impact.graph.ast.parser;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration;
 
 import change.impact.graph.Method;
 
-public class ASTparser {
-	public static boolean methodExists(Method method, ICompilationUnit cUnit) throws JavaModelException {
-		IType[] allTypes = cUnit.getAllTypes();
+public class ASTparser {	  
+	//wrap Eclipse AST objects into our AST class
+	public static AST generateAST(String url) {
+		return null;
+	}
+	
+	public static boolean methodExists(Method method, AST ast) throws JavaModelException {
+		/*IType[] allTypes = cUnit.getAllTypes();
 		
 		for (IType type : allTypes) {
 			IMethod[] methods = type.getMethods();
@@ -23,22 +23,20 @@ public class ASTparser {
 			for (IMethod m : methods) {
 				System.out.println("Method name " + m.getElementName());
 			    System.out.println("Signature " + m.getSignature());
-			    System.out.println("Return Type " + m.getReturnType());
+			    System.out.println("Return Type " + m=getReturnType());
 			}
-		}
+		}*/
+		
+		MethodDeclaration m; 
 		
 		return false;
 	}
 
-	private static Method generateMethod(CompilationUnit ast, MethodDeclaration methodDec) {
+	private static Method generateMethod(Method method, AST ast) {
 		return null;
 	}
 	
-	public static Set<Method> getMethodsCalledByMethod(Method method, CompilationUnit ast) {
-		return null;
-	}
-	
-	public static Method findMethodContainingLine(CompilationUnit ast, int lineNumber) throws IOException {
+	public static Method findMethodContainingLine(int lineNumber, AST ast) throws IOException {
 		/*
 		List<TypeDeclaration> types = ast.getTypes();
 		
@@ -64,7 +62,7 @@ public class ASTparser {
 	//return the method calls found in the given list of lines.
 	//note: i'm assuming you can parse a line individually and then cross check with the full ast
 	//to get method information like class and package
-	public static Set<Method> getMethodsCalledByMethodInLines(Method method, List<String> lines, CompilationUnit ast) {
+	public static Map<Method, Set<Method>> getMethodsCalledByMethodsInLines(Map<Integer,String> lines, AST ast) {
 		return null;
 	}
 }
