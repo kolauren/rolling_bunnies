@@ -1,4 +1,4 @@
-package change.impace.graph.ast.parser;
+package change.impact.graph.ast.parser;
 
 import java.io.IOException;
 import java.util.Arrays;
