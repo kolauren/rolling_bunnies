@@ -21,6 +21,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import change.impace.graph.ast.parser.ASTparser;
 import change.impact.graph.commit.Commit;
 
 public class DependencyGraphGenerator {
@@ -51,15 +52,6 @@ public class DependencyGraphGenerator {
 			//generate dependency graph for method with added lines
 			for(int lineNumber : commit.getDiff(clazz).getAddedLines().keySet()) {
 				CompilationUnit currentAST = currentASTs.get(clazz);
-				MethodDeclaration methodDec = findMethodContainingLine(currentAST, lineNumber);
-				String methodName = methodDec.getName();
-				if(!generated.containsKey(methodName)) {
-					DependencyGraph dependencyGraph = new DependencyGraph();
-					dependencyGraph.setMethodName(methodName);
-					Set<String> adjacencies = findAdjacencies(methodDec);
-					//do not put into map until complete
-					generated.put(methodName, dependencyGraph);
-				}
 			}
 			//generate dependency graph for methods with removed lines
 			for(int lineNumber : commit.getDiff(clazz).getRemovedLines().keySet()) {
@@ -86,26 +78,6 @@ public class DependencyGraphGenerator {
 		}
 	}
 	
-	private MethodDeclaration findMethodContainingLine(CompilationUnit ast, int lineNumber) throws IOException {
-		List<TypeDeclaration> types = ast.getTypes();
-		
-		for(TypeDeclaration type : types) {
-			List<BodyDeclaration> members = type.getMembers();
-			for(BodyDeclaration member : members) {
-				if(member instanceof MethodDeclaration) {
-					MethodDeclaration method = (MethodDeclaration) member;
-					BlockStmt body = method.getBody();
-					boolean inBody = body.getBeginLine() <= lineNumber && body.getEndLine() >= lineNumber;
-					boolean inDeclaration = method.getBeginLine() == lineNumber;
 
-					if(inDeclaration || inBody) {
-						return method;
-					}
-				}
-			}
-		}
-		throw new IOException("couldn't find method containing line: "+lineNumber+" in types: "+Arrays.toString(ast.getTypes().toArray()));
-
-	}
 	
 }
