@@ -63,12 +63,5 @@ public class Main {
 		for(int number :difff.getRemovedLines().keySet()) {
 			System.out.println(number+" : "+difff.getRemovedLine(number));
 		}
-		
-		try {
-			CommitCouplingAnalyzer.getTypeOneCoupling(null);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }
