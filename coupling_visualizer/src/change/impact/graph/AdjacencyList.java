@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public interface AdjacencyList<K,A> {
 	Collection<K> getNodes();
-	Collection<A> getAdjacencies(K node);
+	Collection<A> getAdjacentNodes(K node);
 	boolean isAdjacent(K node);
-	boolean addAdjacency(String node, String adjacent);
+	boolean addAdjacentNode(String node, String adjacent);
 }

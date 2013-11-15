@@ -9,7 +9,8 @@ import com.google.common.collect.Sets;
 
 public class DependencyGraph implements AdjacencyList<String, String> {
 	private Map<String,Set<String>> adjacencyList;
-	private String methodName;
+	private String methodID;
+	//method id -> method
 	private Map<String, Method> methods;
 
 	public DependencyGraph() {
@@ -17,24 +18,24 @@ public class DependencyGraph implements AdjacencyList<String, String> {
 		methods = Maps.newHashMap();
 	}
 	
-	public String getMethodName() {
-		return methodName;
+	public String getMethodID() {
+		return methodID;
 	}
 
 	public void setMethodName(String methodName) {
-		this.methodName = methodName;
+		this.methodID = methodName;
 	}
 	
-	public void addMethod(String methodName, Method method) {
-		methods.put(methodName, method);
+	public void addMethod(String id, Method method) {
+		methods.put(id, method);
 	}
 	
-	public Method getMethod(String methodName) {
-		return methods.get(methodName);
+	public Method getMethod(String id) {
+		return methods.get(id);
 	}
 	
-	public void setAdjacencies(String node, Set<String> adjacencies) {
-		adjacencyList.put(node, adjacencies);
+	public void setAdjacentNodes(String node, Set<String> adjacentNodes) {
+		adjacencyList.put(node, adjacentNodes);
 	}
 	
 	@Override
@@ -43,7 +44,7 @@ public class DependencyGraph implements AdjacencyList<String, String> {
 	}
 
 	@Override
-	public Collection<String> getAdjacencies(String node) {
+	public Collection<String> getAdjacentNodes(String node) {
 		return adjacencyList.get(node);
 	}
 
@@ -53,7 +54,7 @@ public class DependencyGraph implements AdjacencyList<String, String> {
 	}
 
 	@Override
-	public boolean addAdjacency(String node, String adjacent) {
+	public boolean addAdjacentNode(String node, String adjacent) {
 		Set<String> adjacencies = adjacencyList.get(node);
 		if(adjacencies == null) {
 			adjacencies = Sets.newHashSet();

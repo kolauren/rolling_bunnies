@@ -25,6 +25,7 @@ import change.impace.graph.ast.parser.ASTparser;
 import change.impact.graph.commit.Commit;
 
 public class DependencyGraphGenerator {
+	//filepath -> ast
 	private Map<String,CompilationUnit> currentASTs;
 	
 	public DependencyGraphGenerator() {
@@ -43,8 +44,9 @@ public class DependencyGraphGenerator {
 	
 	//TODO: generate ASTs for new/modified classes first. When tracing removed line, 
 	//use OLD ast to find method container then use CURRENT ast for building dependencies
-	public Collection<DependencyGraph> generateGraphsForChangedMethods(Commit commit) throws MalformedURLException, ParseException, IOException {
+	private Collection<DependencyGraph> generateGraphsForChangedMethods(Commit commit) throws MalformedURLException, ParseException, IOException {
 		generateCurrentASTs(commit);
+		
 		//generate dependency graphs for all modified methods in every class
 		for(String clazz : commit.getDiffs().keySet()) {
 			//keep track of graphs already generated for a method 
@@ -61,7 +63,7 @@ public class DependencyGraphGenerator {
 		return null;
 	}
 	
-	private Set<String> findAdjacencies(MethodDeclaration method) {
+	private Set<String> findAdjacencies(Method method) {
 		return null;
 	}
 
@@ -77,7 +79,12 @@ public class DependencyGraphGenerator {
 			currentASTs.put(clazz, currentAST);
 		}
 	}
-	
+
+	/**
+	 * returns null if method is not part of project
+	 * @param method
+	 * @return
+	 */
 	private CompilationUnit getASTforMethod(Method method) {
 		return null;
 	}
