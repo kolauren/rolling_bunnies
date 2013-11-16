@@ -16,7 +16,7 @@
 	<classpathentry kind="lib" path="libs/eclipseAST/org.eclipse.core.runtime_3.5.0.v20090525.jar"/>
 	<classpathentry kind="lib" path="libs/eclipseAST/org.eclipse.equinox.common_3.5.1.R35x_v20090807-1100.jar"/>
 	<classpathentry kind="lib" path="libs/eclipseAST/org.eclipse.equinox.preferences_3.2.301.R35x_v20091117.jar"/>
-	<classpathentry kind="lib" path="libs/eclipseAST/org.eclipse.jdt.core_3.5.2.v_981_R35x.jar"/>
 	<classpathentry kind="lib" path="libs/eclipseAST/org.eclipse.osgi_3.5.2.R35x_v20100126.jar"/>
+	<classpathentry kind="lib" path="E:/Projects/CPSC 410/coupling_visualizer/libs/eclipseAST/org.eclipse.jdt.core-3.8.2.v20120814-155456.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
