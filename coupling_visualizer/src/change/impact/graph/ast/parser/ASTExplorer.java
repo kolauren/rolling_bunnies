@@ -3,40 +3,28 @@ package change.impact.graph.ast.parser;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration;
 
 import change.impact.graph.Method;
 
-public class ASTparser {	  
+public class ASTExplorer {	  
 	//wrap Eclipse AST objects into our AST class
-	public static AST generateAST(String url) {
+	public static ASTWrapper generateAST(String url) {
 		return null;
 	}
 	
-	public static boolean methodExists(Method method, AST ast) throws JavaModelException {
-		/*IType[] allTypes = cUnit.getAllTypes();
-		
-		for (IType type : allTypes) {
-			IMethod[] methods = type.getMethods();
-			
-			for (IMethod m : methods) {
-				System.out.println("Method name " + m.getElementName());
-			    System.out.println("Signature " + m.getSignature());
-			    System.out.println("Return Type " + m=getReturnType());
-			}
-		}*/
-		
-		MethodDeclaration m; 
-		
+	public static boolean methodExists(Method method, ASTWrapper ast) throws JavaModelException {
 		return false;
 	}
 
-	private static Method generateMethod(Method method, AST ast) {
+	private static Method generateMethod(Method method, ASTWrapper ast) {
 		return null;
 	}
 	
-	public static Method findMethodContainingLine(int lineNumber, AST ast) throws IOException {
+	public static Method findMethodContainingLine(int lineNumber, ASTWrapper ast) throws IOException {
 		/*
 		List<TypeDeclaration> types = ast.getTypes();
 		
@@ -62,7 +50,7 @@ public class ASTparser {
 	//return the method calls found in the given list of lines.
 	//note: i'm assuming you can parse a line individually and then cross check with the full ast
 	//to get method information like class and package
-	public static Map<Method, Set<Method>> getMethodsCalledByMethodsInLines(Map<Integer,String> lines, AST ast) {
+	public static Map<Method, Set<Method>> getMethodsCalledByMethodsInLines(Map<Integer,String> lines, ASTWrapper ast) {
 		return null;
 	}
 }
