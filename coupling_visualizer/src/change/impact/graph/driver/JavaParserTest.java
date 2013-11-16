@@ -1,10 +1,12 @@
 package change.impact.graph.driver;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
+import change.impact.graph.ast.parser.ASTparser;
 
 public class JavaParserTest {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ExecutionException {
 		/*
 		FileInputStream in = new FileInputStream("src/change/impact/graph/Method.java");
 		
