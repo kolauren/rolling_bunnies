@@ -54,7 +54,7 @@ public class ASTExplorer {
 	}
 	
 	/**
-	 * 
+	 * Given a Method, check to see if the method exists in the source code.
 	 * 
 	 * @param method
 	 * @param ast
@@ -92,6 +92,12 @@ public class ASTExplorer {
 		return foundMethods;
 	}
 
+	/**
+	 * Generate a list of all the Methods in the source code.
+	 * 
+	 * @param wrapper
+	 * @return
+	 */
 	private static List<Method> generateMethodsList(ASTWrapper wrapper) {
 		List<Method> methods = new ArrayList<Method>();
 		
@@ -105,7 +111,7 @@ public class ASTExplorer {
 			String packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
 			String className = typeVisitor.getClassName();
 			String methodName = method.getName().toString();
-			List<String> parameters = getParameterTypes(method.parameters());
+			List<String> parameters = getParameterTypes(method);
 			String id = generateMethodID(packageName, className, methodName, parameters);
 			int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
 			int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
@@ -116,7 +122,14 @@ public class ASTExplorer {
 		return methods;
 	}
 	
-	private static List<String> getParameterTypes(List<String> parameters) {
+	/**
+	 * Get all the parameters given a Method.
+	 * 
+	 * @param method
+	 * @return
+	 */
+	private static List<String> getParameterTypes(MethodDeclaration method) {
+		List<String> parameters = method.parameters();
 		List<String> params = new ArrayList<String>();
 		
 		for (String param : parameters) {
@@ -127,6 +140,15 @@ public class ASTExplorer {
 		return params;
 	}
 	
+	/**
+	 * Given the various information for a method, generate the unique ID for a method.
+	 * 
+	 * @param packageName
+	 * @param className
+	 * @param methodName
+	 * @param parameters
+	 * @return
+	 */
 	private static String generateMethodID(String packageName, String className, String methodName, List<String> parameters) {
 		String id = packageName + " " + className + " " + methodName;
 		
