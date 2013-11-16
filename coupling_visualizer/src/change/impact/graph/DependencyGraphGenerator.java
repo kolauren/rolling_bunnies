@@ -81,23 +81,35 @@ public class DependencyGraphGenerator {
 	private void updateCurrentAdjacencyListAndMethods(Commit commit) {
 		for(String clazz : commit.getDiffs().keySet()) {
 			//generate dependency graph for method with added lines
-			for(int lineNumber : commit.getDiff(clazz).getAddedLines().keySet()) {
-				ASTWrapper currentAST = currentASTs.get(clazz);
+			ASTWrapper currentAST = currentASTs.get(clazz);
+			Map<Integer,String> addedLines = commit.getDiff(clazz).getAddedLines();
+			Map<Method, Set<Method>> newAdjacentNodes = ASTExplorer.getMethodsCalledByMethodsInLines(addedLines, currentAST);
+			for(Method m : newAdjacentNodes.keySet()) {
+				if(isExistingMethod(m.getId())) {
+					for(Method adjacent : newAdjacentNodes.get(m)) {
+						if(isProjectMethod(adjacent.getId())) {
+							
+						}
+					}
+				}
 			}
 			//generate dependency graph for methods with removed lines
-			for(int lineNumber : commit.getDiff(clazz).getRemovedLines().keySet()) {
-				
-			}
 		}
 	}
+	
+	private boolean isExistingMethod(String id) {
+		return currentMethods.containsKey(id);
+	}
 
+	private boolean isProjectMethod(String id) {
+		return getASTforMethod(id) != null;
+	}
 	/**
 	 * returns null if method is not part of project
 	 * @param method
 	 * @return
 	 */
-	private ASTWrapper getASTforMethod(Method method) {
+	private ASTWrapper getASTforMethod(String id) {
 		return null;
 	}
-	
 }
