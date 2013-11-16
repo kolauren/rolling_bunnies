@@ -11,33 +11,22 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class ASTWrapper {
 	//this class is a wrapper for Eclipse AST objects
-	private CompilationUnit cUnit;
 	private ASTParser parser;
+	private CompilationUnit cUnit;
 	
-	public ASTWrapper(URL url) throws IOException {
-		createParser(url);
+	public ASTWrapper(ASTParser parser, CompilationUnit cUnit) throws IOException {
+		this.parser = parser;
+		this.cUnit = cUnit;
 	}
 	
-	public void createParser(URL url) throws IOException {
-		parser = ASTParser.newParser(AST.JLS3);
-		InputStreamReader inputReader = new InputStreamReader(url.openStream());
-        BufferedReader bufferedReader = new BufferedReader(inputReader);
-		StringBuilder builder = new StringBuilder();
-        String code;
-        
-		while ((code = bufferedReader.readLine()) != null) {
-			builder.append(code.trim() + " \\n ");
-		}
-		
-		bufferedReader.close();
-		inputReader.close();
+	public ASTParser getParser() {
+		return parser;
+	}
 
-		code = builder.toString();
-		
-		parser.setSource(code.toCharArray());
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+	public void setParser(ASTParser parser) {
+		this.parser = parser;
 	}
-	
+
 	public CompilationUnit getCompilationUnit() {
 		return cUnit;
 	}
