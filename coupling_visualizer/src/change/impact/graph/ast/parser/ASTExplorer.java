@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +30,7 @@ public class ASTExplorer {
 	 */
 	public static ASTWrapper generateAST(String urlString) throws IOException {
 		URL url = new URL(urlString);
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		InputStreamReader inputReader = new InputStreamReader(url.openStream());
         BufferedReader bufferedReader = new BufferedReader(inputReader);
 		StringBuilder builder = new StringBuilder();
@@ -63,7 +65,7 @@ public class ASTExplorer {
 		List<Method> methods = generateMethodsList(wrapper);
 		
 		for (Method method : methods) {
-			if (method.getId().equals(m.getId())) {
+			if (method.equals(m)) {
 				return true;
 			}
 		}
@@ -76,9 +78,18 @@ public class ASTExplorer {
 	//to get method information like class and package
 	public static Map<Method, Set<Method>> getMethodsCalledByMethodsInLines(List<Integer> lineNumbers, ASTWrapper wrapper) {
 		List<Method> methods = generateMethodsList(wrapper);
+		Map<Method, Set<Method>> foundMethods = new HashMap<Method, Set<Method>>();
 		
+		for (int lineNumber : lineNumbers) {
+			for (Method method : methods) {
+				if (lineNumber > method.getStartLine() && lineNumber < method.getEndLine()) {
+					Set<Method> bodyMethods = new HashSet<Method>();
+					break;
+				}
+			}
+		}
 		
-		return null;
+		return foundMethods;
 	}
 
 	private static List<Method> generateMethodsList(ASTWrapper wrapper) {
@@ -96,8 +107,10 @@ public class ASTExplorer {
 			String methodName = method.getName().toString();
 			List<String> parameters = getParameterTypes(method.parameters());
 			String id = generateMethodID(packageName, className, methodName, parameters);
+			int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
+			int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
 			
-			methods.add(new Method(id, packageName, className, methodName, parameters));
+			methods.add(new Method(id, packageName, className, methodName, parameters, startLine, endLine));
 		}
 		
 		return methods;

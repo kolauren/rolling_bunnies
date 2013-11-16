@@ -49,8 +49,8 @@ import change.impact.graph.ast.parser.TypeVisitor;
 
 public class JavaParserTest {
 	public static void main(String[] args) throws IOException, ExecutionException {
-		File file = new File("C:\\Users\\Richard\\Desktop\\MethodVisitor.java");
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		File file = new File("src/change/impact/graph/commit/UnifiedDiffParser.java");
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		
 		FileInputStream inputStream = new FileInputStream(file);
 		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
@@ -58,23 +58,12 @@ public class JavaParserTest {
 		String code;	
 		
 		while ((code = bufferedReader.readLine()) != null) {
-			builder.append(code + "\\n ");
+			builder.append(code + "\n ");
 		}
 		
 		code = builder.toString();
-		System.out.println("----------------------");
-		System.out.println(code);
-		System.out.println("----------------------");
+		// System.out.println(code);
 		
-		/**code = "package p;\n" + 
-				"public class X {\n" + 
-				"	public int i;\n" + 
-				"	public static void main(String[] args) {\n" + 
-				"		int length = args.length;\n" + 
-				"		System.out.println(length);\n" + 
-				"	}\n" + 
-				"}";
-		*/
 		parser.setSource(code.toCharArray());
 		parser.setEnvironment(null, null, null, true);
 		parser.setResolveBindings(true);
@@ -82,7 +71,7 @@ public class JavaParserTest {
 		parser.setBindingsRecovery(true);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		
-		String unitName = "change.impact.graph.ast.parser/MethodVisitor.java";
+		String unitName = "";
 		parser.setUnitName(unitName);
 
 		final CompilationUnit cUnit = (CompilationUnit) parser.createAST(null);
@@ -100,7 +89,9 @@ public class JavaParserTest {
 		
 		for (MethodDeclaration method : visitor.getMethods()) {
 			System.out.println("Method Name: " + method.getName().toString());
-			System.out.println("Return Type: " + method.getReturnType2().toString());
+			if (method.getReturnType2() != null) {
+				System.out.println("Return Type: " + method.getReturnType2().toString());
+			}
 			System.out.print("Parameter  : ");
 			
 			for (Object param : method.parameters()) {
@@ -108,19 +99,28 @@ public class JavaParserTest {
 				String[] splitString = p.split("\\s+");
 				System.out.print(splitString[0] + " ");
 			}
-
 			System.out.println();
-			System.out.println("cUnit Length: " + cUnit.getLength());
-			System.out.println("method Start: " + method.getStartPosition());
-			System.out.println("No Idea HURR: " + cUnit.getLineNumber(method.getStartPosition()));
 			
-			int start = cUnit.getLength() - method.getStartPosition();
-			int methodLength = method.getLength();
-			int end = cUnit.getLineNumber(method.getStartPosition() + methodLength) - 1;
+			int start = cUnit.getLineNumber(method.getStartPosition());
+			int end = cUnit.getLineNumber(method.getStartPosition() + method.getLength());
 			
 			System.out.println("Starting   : " + start);
 			System.out.println("End        : " + end);
 			System.out.println();
+			
+			System.out.println("--- Inner Methods ---");
+			Block block = method.getBody();
+			block.accept(new ASTVisitor() {
+				public boolean visit(MethodInvocation node) {
+					System.out.println("Expression Binding: " + node.resolveTypeBinding());
+					System.out.println("Expression: " + node.getExpression());
+					System.out.println("Name: " + node.getName());
+					System.out.println();
+
+                return true;
+            }
+			});
+			System.out.println("---------------------");
 		}
 		
 		/*

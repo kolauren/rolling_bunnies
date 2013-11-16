@@ -11,12 +11,14 @@ public class Method {
 	private int startLine;
 	private int endLine;
 	
-	public Method(String id, String packageName, String className, String name, List<String> parameters) {
+	public Method(String id, String packageName, String className, String name, List<String> parameters, int startLine, int endLine) {
 		this.id = id;
 		this.packageName = packageName;
 		this.className = className;
 		this.name = name;
 		this.parameters = parameters;
+		this.startLine = startLine;
+		this.endLine = endLine;
 	}
 
 	public String getId() {
@@ -73,5 +75,13 @@ public class Method {
 
 	public void setEndLine(int endLine) {
 		this.endLine = endLine;
+	}
+	
+	public boolean equals(Method method) {
+		if (this.id.equals(method.getId())) {
+			return true;
+		}
+		
+		return false;
 	}
 }
