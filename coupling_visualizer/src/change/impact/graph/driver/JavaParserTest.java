@@ -54,13 +54,6 @@ public class JavaParserTest {
 			System.out.println("Return Type: " + method.getReturnType2().toString());
 			System.out.print("Parameter  : ");
 			
-			int start = cUnit.getLineNumber(method.getStartPosition()) - 1;
-			int methodLength = method.getLength();
-			int end = cUnit.getLineNumber(method.getStartPosition() + methodLength) - 1;
-			
-			System.out.println("Starting   : " + start);
-			System.out.println("End        : " + end);
-			
 			for (Object param : method.parameters()) {
 				String p = param.toString();
 				String[] splitString = p.split("\\s+");
@@ -68,6 +61,13 @@ public class JavaParserTest {
 			}
 
 			System.out.println();
+			
+			int start = cUnit.getLineNumber(method.getStartPosition()) - 1;
+			int methodLength = method.getLength();
+			int end = cUnit.getLineNumber(method.getStartPosition() + methodLength) - 1;
+			
+			System.out.println("Starting   : " + start);
+			System.out.println("End        : " + end);
 			System.out.println();
 		}
 		
