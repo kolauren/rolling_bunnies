@@ -14,14 +14,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import change.impact.graph.ast.parser.AST;
-import change.impact.graph.ast.parser.ASTparser;
+import change.impact.graph.ast.parser.ASTWrapper;
+import change.impact.graph.ast.parser.ASTExplorer;
 import change.impact.graph.commit.Commit;
 
 public class DependencyGraphGenerator {
 	//filepath -> ast
-	private Map<String,AST> currentASTs;
-	private Map<String,AST> previousASTs;
+	private Map<String,ASTWrapper> currentASTs;
+	private Map<String,ASTWrapper> previousASTs;
 	private Map<String,Set<String>> currentAdjacencyList;
 	private Map<String,Method> currentMethods;
 	
@@ -64,11 +64,11 @@ public class DependencyGraphGenerator {
 		Iterable<String> addedOrModified = Iterables.concat(commit.getAddedJavaFiles(), commit.getModifiedJavaFiles());
 		for(String clazz : addedOrModified) {
 			//update previous AST
-			AST previousAST = currentASTs.get(clazz);
+			ASTWrapper previousAST = currentASTs.get(clazz);
 			previousASTs.put(clazz, previousAST);
 			//update current AST
 			String url = commit.getDiff(clazz).getNewCode();
-			AST currentAST = ASTparser.generateAST(url);
+			ASTWrapper currentAST = ASTExplorer.generateAST(url);
 			currentASTs.put(clazz, currentAST);
 		}
 		
@@ -81,9 +81,9 @@ public class DependencyGraphGenerator {
 	private void updateCurrentAdjacencyListAndMethods(Commit commit) {
 		for(String clazz : commit.getDiffs().keySet()) {
 			//generate dependency graph for method with added lines
-			AST currentAST = currentASTs.get(clazz);
+			ASTWrapper currentAST = currentASTs.get(clazz);
 			Map<Integer,String> addedLines = commit.getDiff(clazz).getAddedLines();
-			Map<Method, Set<Method>> newAdjacentNodes = ASTparser.getMethodsCalledByMethodsInLines(addedLines, currentAST);
+			Map<Method, Set<Method>> newAdjacentNodes = ASTExplorer.getMethodsCalledByMethodsInLines(addedLines, currentAST);
 			for(Method m : newAdjacentNodes.keySet()) {
 				if(isExistingMethod(m.getId())) {
 					for(Method adjacent : newAdjacentNodes.get(m)) {
@@ -109,7 +109,7 @@ public class DependencyGraphGenerator {
 	 * @param method
 	 * @return
 	 */
-	private AST getASTforMethod(String id) {
+	private ASTWrapper getASTforMethod(String id) {
 		return null;
 	}
 }
