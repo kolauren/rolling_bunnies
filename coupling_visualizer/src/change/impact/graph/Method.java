@@ -1,13 +1,17 @@
 package change.impact.graph;
 
-public class Method {	
+import java.util.List;
+
+public class Method {
 	private String id;
-	private ChangeStatus status;
-
-
-	private String name;
-	private String clazz;
 	private String packageName;
+	private String className;
+	private String name;
+	private List<String> parameters;
+	
+	public Method() {
+		
+	}
 
 	public String getId() {
 		return id;
@@ -15,30 +19,6 @@ public class Method {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getClazz() {
-		return clazz;
-	}
-
-	public void setClazz(String clazz) {
-		this.clazz = clazz;
-	}
-
-	public ChangeStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(ChangeStatus status) {
-		this.status = status;
 	}
 
 	public String getPackageName() {
@@ -49,6 +29,27 @@ public class Method {
 		this.packageName = packageName;
 	}
 
-	
+	public String getClassName() {
+		return className;
+	}
 
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<String> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(List<String> parameters) {
+		this.parameters = parameters;
+	}
 }
