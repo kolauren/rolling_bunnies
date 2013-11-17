@@ -66,8 +66,13 @@ DependencyWheel.prototype = {
   },
     
   classOver: function(t) {
+      // highlight nodes
         d3.selectAll("g").selectAll("." + t.class)
             .style('opacity', 1);
+      
+      // highlight node labels
+        $("." + t.class).siblings()
+            .css("opacity", 1);
         
       // // Show tool tip with class name
       //   this.tooltip.transition().duration(200).style("opacity", .9);      
@@ -88,9 +93,13 @@ DependencyWheel.prototype = {
         .style('opacity', self.opacity);
       //this.tooltip.transition().duration(500).style("opacity", 0); 
       
-      // de-thicken dependencies
+      // de-highlight dependencies
       d3.select("g").selectAll("path").filter(".source-" + t.method_id)
         .style('opacity', self.opacity);
+      
+      // de-highlight node labels
+        $("." + t.class).siblings()
+            .css("opacity", 0.5);
       
   },
 
@@ -153,7 +162,8 @@ DependencyWheel.prototype = {
           .attr("font-size", "15")
           .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
           .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
-          .text(function(d) { return d.method_name; });
+          .text(function(d) { return d.method_name; })
+          .style("opacity", 0.5);
 
       
       //event handlers for nodes on mouse over
