@@ -35,15 +35,24 @@ public class ChangeImpactGraphGenerator {
 		currentMethods = Maps.newHashMap();
 	}
 
-	public List<CommitGraph> generate(Collection<Commit> commits) throws MalformedURLException, IOException {
+	public List<CommitGraph> generate(List<Commit> commits, int numCommits) throws MalformedURLException, IOException {
 		List<CommitGraph> commitGraphs = Lists.newArrayList();
-		for(Commit commit : commits) {
+
+		for(int i=0; i<commits.size(); i+=numCommits) {
 			CommitGraph commitGraph = new CommitGraph();
-			commitGraph.setCommit_SHA(commit.getSha());
+			Set<String> changedMethods = Sets.newHashSet();
+			for(int j=0; j<numCommits && i+j < commits.size(); j++) {
+				Commit commit = commits.get(i+j);
 
-			Set<String> changedMethods = updateState(commit);
-
+				if(commitGraph.getCommit_SHA() == null)
+					commitGraph.setCommit_SHA(commit.getSha());
+				else
+					commitGraph.setCommit_SHA(commitGraph.getCommit_SHA()+"_"+commit.getSha());
+				
+				changedMethods.addAll(updateState(commit));
+			}
 			commitGraph.setGraphs(generateGraphsForChangedMethods(changedMethods));
+			commitGraphs.add(commitGraph);
 		}
 		return commitGraphs;
 	}
@@ -146,7 +155,7 @@ public class ChangeImpactGraphGenerator {
 		return idMap;
 	}
 
-	public void updateASTs(Commit commit) throws MalformedURLException, IOException {
+	private void updateASTs(Commit commit) throws MalformedURLException, IOException {
 		//add new and modified ASTs
 		Iterable<String> addedOrModified = Iterables.concat(commit.getAddedJavaFiles(), commit.getModifiedJavaFiles());
 		for(String clazz : addedOrModified) {
