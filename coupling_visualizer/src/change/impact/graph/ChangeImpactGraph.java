@@ -1,16 +1,24 @@
 package change.impact.graph;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class DependencyGraph implements AdjacencyList<CommitMethod, String> {
+public class ChangeImpactGraph implements AdjacencyList<CommitMethod, String> {
 	private Map<CommitMethod,Set<String>> adjacencyList;
 	private CommitMethod root;
 
+	public CommitMethod getCommitMethod(String id) {
+		Set<CommitMethod> methods = adjacencyList.keySet();
+		for(CommitMethod method : methods) {
+			if(method.getMethod().getId().equals(id)) {
+				return method;
+			}
+		}
+		return null;
+	}
 	
 	public Map<CommitMethod, Set<String>> getAdjacencyList() {
 		return adjacencyList;
@@ -33,12 +41,12 @@ public class DependencyGraph implements AdjacencyList<CommitMethod, String> {
 	}
 	
 	@Override
-	public Collection<CommitMethod> getNodes() {
+	public Set<CommitMethod> getNodes() {
 		return adjacencyList.keySet();
 	}
 
 	@Override
-	public Collection<String> getAdjacentNodes(CommitMethod node) {
+	public Set<String> getAdjacentNodes(CommitMethod node) {
 		return adjacencyList.get(node);
 	}
 

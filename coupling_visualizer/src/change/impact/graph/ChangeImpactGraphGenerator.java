@@ -18,7 +18,7 @@ import change.impact.graph.ast.parser.ASTWrapper;
 import change.impact.graph.ast.parser.ASTExplorer;
 import change.impact.graph.commit.Commit;
 
-public class DependencyGraphGenerator {
+public class ChangeImpactGraphGenerator {
 	//filepath -> ast
 	private Map<String,ASTWrapper> currentASTs;
 	private Map<String,ASTWrapper> previousASTs;
@@ -28,7 +28,7 @@ public class DependencyGraphGenerator {
 	//never removes a method once its added
 	private Map<String,Method> currentMethods;
 
-	public DependencyGraphGenerator() {
+	public ChangeImpactGraphGenerator() {
 		currentASTs = Maps.newHashMap();
 		previousASTs = Maps.newHashMap();
 		currentAdjacencyList = Maps.newHashMap();
@@ -54,14 +54,12 @@ public class DependencyGraphGenerator {
 		return changedMethods;
 	}
 
-	//TODO: generate ASTs for new/modified classes first. When tracing removed line, 
-	//use OLD ast to find method container then use CURRENT ast for building dependencies
-	private Collection<DependencyGraph> generateGraphsForChangedMethods(Set<String> changedMethods) {
-		Collection<DependencyGraph> graphs = Lists.newArrayList();
+	private Collection<ChangeImpactGraph> generateGraphsForChangedMethods(Set<String> changedMethods) {
+		Collection<ChangeImpactGraph> graphs = Lists.newArrayList();
 
 		//generate dependency graph for each method
 		for(String rootID : changedMethods) {
-			DependencyGraph graph = new DependencyGraph();
+			ChangeImpactGraph graph = new ChangeImpactGraph();
 			Queue<String> frontier = Queues.newPriorityQueue();
 			Set<String> frontierSet = Sets.newHashSet();
 			//cycle check
@@ -100,11 +98,34 @@ public class DependencyGraphGenerator {
 					}
 				}
 			}
+			calculateChangeImpact(graph);
 			graphs.add(graph);
 		}
 		return graphs;
 	}
 
+	private void calculateChangeImpact(ChangeImpactGraph graph) {
+		boolean statusChanged = true;
+		while(statusChanged) {
+			statusChanged = false;
+			Collection<CommitMethod> nodes = graph.getNodes();
+			for(CommitMethod node : nodes) {
+				if(node.getStatus() == ChangeStatus.UNAFFECTED) {
+					Set<String> adjacentIDs = graph.getAdjacentNodes(node);
+					for(String adjacentID : adjacentIDs) {
+						CommitMethod adjacentMethod = graph.getCommitMethod(adjacentID);
+						ChangeStatus status = adjacentMethod.getStatus();
+						if(status == ChangeStatus.AFFECTED || status == ChangeStatus.CHANGED) {
+							node.setStatus(ChangeStatus.AFFECTED);
+							statusChanged = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	//store method ids only
 	private Set<String> filterID(Set<Method> methods) {
 		Set<String> ids = Sets.newHashSet();
@@ -176,42 +197,5 @@ public class DependencyGraphGenerator {
 				currentMethods.put(adjacentNode.getId(), adjacentNode);
 			}
 		}
-	}
-
-	//removes all adjacent methods which are not part of the project
-	private void filterProjectMethods(Map<Method, Set<Method>> methodMap) {
-		for(Method root : methodMap.keySet()) {
-			Set<Method> adjacentNodes = methodMap.get(root);
-			for(Method adjacentNode : adjacentNodes) {
-				if(!isProjectMethod(adjacentNode.getId())) {
-					adjacentNodes.remove(adjacentNode);
-				}
-			}
-		}
-	}
-
-	private boolean isExistingMethod(String id) {
-		return currentMethods.containsKey(id);
-	}
-
-	private boolean isProjectMethod(String id) {
-		return getASTforMethod(id) != null;
-	}
-	/**
-	 * returns null if method is not part of project
-	 * @param method
-	 * @return
-	 */
-	private ASTWrapper getASTforMethod(String id) {
-		return null;
-	}
-
-	private void addAdjacentNode(String node, String adjacent) {
-		Set<String> adjacentNodes = currentAdjacencyList.get(node);
-		if(node == null) {
-			adjacentNodes = Sets.newHashSet();
-			currentAdjacencyList.put(node, adjacentNodes);
-		}
-		adjacentNodes.add(adjacent);
 	}
 }
