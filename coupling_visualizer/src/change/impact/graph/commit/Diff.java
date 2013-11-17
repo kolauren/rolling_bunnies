@@ -5,12 +5,14 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 public class Diff {
+	//not provided in github diffs
 	private String oldPath;
 	private String newPath;
 	private String oldTime;
 	private String newTime;
-	private String oldCode;
-	private String newCode;
+
+	//stuff needed for change impact graph generation
+	private String rawCodeURL;
 	private Map<Integer, String> addedLines;
 	private Map<Integer, String> removedLines;
 	
@@ -59,17 +61,11 @@ public class Diff {
 	public void setNewPath(String newPath) {
 		this.newPath = newPath;
 	}
-	public String getOldCode() {
-		return oldCode;
+	public String getRawCodeURL() {
+		return rawCodeURL;
 	}
-	public void setOldCode(String oldCode) {
-		this.oldCode = oldCode;
-	}
-	public String getNewCode() {
-		return newCode;
-	}
-	public void setNewCode(String newCode) {
-		this.newCode = newCode;
+	public void setRawCodeURL(String newCode) {
+		this.rawCodeURL = newCode;
 	}
 	public Map<Integer, String> getAddedLines() {
 		return addedLines;

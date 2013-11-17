@@ -163,7 +163,7 @@ public class ChangeImpactGraphGenerator {
 			ASTWrapper previousAST = currentASTs.get(clazz);
 			previousASTs.put(clazz, previousAST);
 			//update current AST
-			String url = commit.getDiff(clazz).getNewCode();
+			String url = commit.getDiff(clazz).getRawCodeURL();
 			ASTWrapper currentAST = ASTExplorer.generateAST(url);
 			currentASTs.put(clazz, currentAST);
 		}

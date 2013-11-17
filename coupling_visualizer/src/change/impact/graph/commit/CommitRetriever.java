@@ -82,37 +82,19 @@ public class CommitRetriever {
 
 	private void retrieveDiffs(RepositoryCommit githubCommit, Commit commit) throws IOException {
 		for(CommitFile file : githubCommit.getFiles()) { 
-			if(file.getFilename().endsWith(".java")) {
+			String filename = file.getFilename();
+			if(filename.endsWith(".java")) {
 				String patch = file.getPatch();
 				//status is added or renamed or removed(?)
-				if(patch == null)
-					continue;
-				Diff diff = UnifiedDiffParser.parse(file.getPatch());
-				//get new code url
-				diff.setNewCode(file.getRawUrl());
-				//get old code url
-				String filename = file.getFilename();
-				String commitSHA = githubCommit.getSha();
-				RepositoryCommit prevCommit = githubDao.getPreviousCommit(owner, repo, commitSHA, filename);
-				//this file was new or renamed
-				if(prevCommit != null) {
-					//find target file
-					boolean found = false;
-					for(CommitFile oldFile : prevCommit.getFiles()) {
-						if(oldFile.getFilename().equals(filename)) {
-							diff.setOldCode(oldFile.getRawUrl());
-							commit.addDiff(filename, diff);
-							found = true;
-							break;
-						}
-					}
-					if(!found)
-						throw new IOException("Couldn't find file :" + filename + " in commit: "+prevCommit.getSha());
-				} else {
-					//TODO: file was merged in the commit with no changes; need appropriate action
-					//current behavior: remove this file
+				//i assume there are no code changes if the diff is null; therefore
+				//just remove it from the commit
+				if(patch == null) {
 					commit.removeJavaFile(filename);
+					continue;
 				}
+				Diff diff = UnifiedDiffParser.parse(file.getPatch());
+				diff.setRawCodeURL(file.getRawUrl());
+				commit.addDiff(filename, diff);
 			}
 		}
 	}
