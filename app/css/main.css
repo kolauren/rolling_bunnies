@@ -1,10 +1,10 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300);
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300);
 
 body {
-  font-family: "Open Sans", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 16px;
   font-weight: 300;
-  background-color:#252929;
+  background-color:#333333;
 }
 
 #main {
@@ -13,10 +13,10 @@ body {
 }
 
 #graph_title {
-color: white;
-opacity: 0.5;  
-font-size: 50px;
-font-weight: 500;
+  color: white;
+  opacity: 0.5;  
+  font-size: 40px;
+  font-weight: 300;
 }
 
 .info {
@@ -26,20 +26,34 @@ font-weight: 500;
 }
 
 #buttons {
-  margin: 10px;
+  display: inline-block;
+  float: right;
+  margin: 10px 0;
 }
 
-.controls {
-  text-align: center;
+button {
+  border: 0;
+}
+
+button:hover, button.active {
+  background-color: #5CC3B6;
+}
+
+#pause {
+  margin: 0;
+  padding: 1px 0 0 3px;
 }
 
 #slider {
- width: 50%;
- margin: 0 auto;   
+  float: right;
+  display: inline-block;
+  width: 30%;
+  margin: 15px 20px;
 }
 
 .wheel {
-  fill: #F7F7F7;
+  opacity: 0.5;
+  fill: black;
 }
 
 .impact_edge, .edge, .animate {

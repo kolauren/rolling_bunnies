@@ -81,7 +81,7 @@ DependencyWheel.prototype = {
       //     .style("top", (d3.event.pageY - 50) + "px");
       
       // Search for dependencies connected to this node and thicken dependencies
-      d3.select("g").selectAll("path").filter(".source-" + t.method_id)
+      d3.select("g").selectAll("path").filter(".edge.source-" + t.method_id)
         .style('opacity', 1);
       
   },
@@ -94,7 +94,7 @@ DependencyWheel.prototype = {
       //this.tooltip.transition().duration(500).style("opacity", 0); 
       
       // de-highlight dependencies
-      d3.select("g").selectAll("path").filter(".source-" + t.method_id)
+      d3.select("g").selectAll("path").filter(".edge.source-" + t.method_id)
         .style('opacity', self.opacity);
       
       // de-highlight node labels
@@ -123,7 +123,7 @@ DependencyWheel.prototype = {
       // Add a second layer of paths for animation purposes
       self.svg.selectAll(self.options.selector)
         .data(d3data.edges).enter().append("svg:path")
-        .attr("class", function(d) { return "animate " + d.class; })
+        .attr("class", function(d) { return "edge animate " + d.class; })
         .style("stroke", function(d) { 
           return self.utils.getColour(d.source.hue, 70, 60); })
         .style('opacity', 0)
@@ -132,7 +132,7 @@ DependencyWheel.prototype = {
       var impact_paths = self.svg.selectAll(self.options.selector)
         .data(d3data.impact_edges).enter().append("svg:path")
         .attr("class", function(d) { return "impact_edge " + d.class; })
-        .style("stroke", "#000000")
+        .style("stroke", "#DDDDDD")
         .style("opacity", 0)
         .attr("d", function(d, i) { return self.options.impact_line(impact_splines[i]); });
 

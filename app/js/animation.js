@@ -25,7 +25,7 @@ Animation.prototype = {
     frame: 0,
     sliderPosition: 0,
     paused: false,
-    opacity: 0.1,
+    opacity: 0.4,
 
     init: function() {
         this.dependencyWheel = new DependencyWheel({ selector: this.options.selector});
@@ -41,6 +41,7 @@ Animation.prototype = {
 
         // click event for start button
         $(this.options.startButton).click(function(){
+             $(self.options.startButton).addClass("active");
             // clear wheel (assume start at beginning)
             if(self.paused) {
                 self.paused = false;
@@ -59,6 +60,7 @@ Animation.prototype = {
             console.log("paused");
             self.paused = true;
             $(self.options.startButton).attr("disabled", false);
+            $(self.options.startButton).removeClass("active");
             $(self.options.pauseButton).attr("disabled", true);
         });
         
@@ -99,6 +101,7 @@ Animation.prototype = {
                 self.clearWheel();
             }, 1500);
             $(self.options.startButton).attr("disabled", false);
+            $(self.options.startButton).removeClass("active");
             $(self.options.pauseButton).attr("disabled", true);
         }
     },
@@ -120,6 +123,8 @@ Animation.prototype = {
         d3.selectAll(".edge")
             .style('opacity', self.opacity); 
         d3.selectAll("path.animate")
+            .style('opacity', self.opacity);
+        d3.selectAll("path.impact_edge")
             .style('opacity', self.opacity);
     },
 
