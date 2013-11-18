@@ -123,7 +123,7 @@ DependencyWheel.prototype = {
       // Add a second layer of paths for animation purposes
       self.svg.selectAll(self.options.selector)
         .data(d3data.edges).enter().append("svg:path")
-        .attr("class", function(d) { return "edge animate " + d.class; })
+        .attr("class", function(d) { return "animate " + d.class; })
         .style("stroke", function(d) { 
           return self.utils.getColour(d.source.hue, 70, 60); })
         .style('opacity', 0)

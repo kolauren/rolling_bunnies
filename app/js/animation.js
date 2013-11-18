@@ -97,7 +97,7 @@ Animation.prototype = {
                 self.animationCallback();
             }, self.interval);
         else {
-            window.setInterval(function() {
+            window.setTimeout(function() {
                 self.clearWheel();
             }, 1500);
             $(self.options.startButton).attr("disabled", false);
@@ -122,10 +122,11 @@ Animation.prototype = {
             .style('opacity', self.opacity); 
         d3.selectAll(".edge")
             .style('opacity', self.opacity); 
-        d3.selectAll("path.animate")
-            .style('opacity', self.opacity);
+        d3.selectAll(".animate")
+            .style('opacity', 0); 
         d3.selectAll("path.impact_edge")
             .style('opacity', self.opacity);
+        console.log("hello");
     },
 
     animateCommits: function () {
