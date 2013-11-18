@@ -21,8 +21,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
-import ca.mcgill.cs.swevo.ppa.util.PPACoreUtil;
 import change.impact.graph.ast.parser.MethodDeclarationVisitor;
 import change.impact.graph.ast.parser.TypeDeclarationVisitor;
 
@@ -116,7 +114,10 @@ public class JavaParserTest {
 			block.accept(new ASTVisitor() {
 				public boolean visit(MethodInvocation node) {
 					System.out.println("Name: " + node.getName());
-					System.out.println("Expression: " + node.getExpression());
+					
+					if (node.getExpression() != null) {
+						System.out.println("Expression: " + node.getExpression().resolveTypeBinding());
+					}
 					System.out.println();
 
 					return true;
@@ -134,15 +135,9 @@ public class JavaParserTest {
 			System.out.println("---------------------");
 		}
 	}
-	
-	private static void testPPA() {
-		File file = new File("src/change/impact/graph/ast/parser/ASTExplorer.java");
-		CompilationUnit cu = PPACoreUtil.getCU(file, new PPAOptions());
-	}
 
 	private static void testBindings(CompilationUnit cUnit) {
-		TypeDeclaration typeDeclaration = (TypeDeclaration) cUnit.types()
-				.get(0);
+		TypeDeclaration typeDeclaration = (TypeDeclaration) cUnit.types().get(0);
 		ITypeBinding typeBinding = typeDeclaration.resolveBinding();
 		System.out.println("TypeDeclaration : " + typeBinding);
 		System.out.println("----------------------------");
