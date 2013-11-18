@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,12 +14,9 @@ import java.util.Set;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
 import change.impact.graph.Method;
@@ -141,8 +136,10 @@ public class ASTExplorer {
 				bodyMethodsInvoked = new HashSet<Method>();
 				
 				if (lineNumber > startLine && lineNumber < endLine) {
+					// Get the similar methods between the two ASTWrappers.
 					MethodDeclaration mapMethod = getSameMethodDeclaration(currMethods, method);
 					
+					// If the map is null, then just skip this iteration.
 					if (mapMethod == null) {
 						break;
 					}
@@ -164,6 +161,7 @@ public class ASTExplorer {
 					variableTriplets.addAll(variableDeclarationTriplets);
 					variableTriplets.addAll(singleVariableDeclarationTriplets);
 					
+					// For each of the MethodInvocation, add in the methods that are part of the workspace into bodyMethodsInvoked.
 					for (Triplet<String, String, Integer> triplet : methodInvocationTriplets) {
 						String methodName = triplet.getValue0();
 						String objectName = triplet.getValue1();
@@ -174,8 +172,10 @@ public class ASTExplorer {
 							String packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
 							bodyMethodsInvoked.add(generateMethod(packageName, wrapper.getClassName(), methodName, position));
 						} else {
+							// Find all the variables that the MethodInvocation uses.
 							Triplet<String, String, Integer> varTriplet = findRelatedVariable(objectName, variableTriplets);
 							
+							// If the className from the triplet is in the list of classes, add it in to the list too.
 							if (allClasses.contains(varTriplet.getValue0())) {
 								bodyMethodsInvoked.add(generateMethod(null, varTriplet.getValue0(), methodName, position));
 							}
@@ -197,6 +197,12 @@ public class ASTExplorer {
 		return foundMethods;
 	}
 
+	/**
+	 * Generate a list of all the classes in the Map of ASTWrappers.
+	 * 
+	 * @param wrapperMap
+	 * @return
+	 */
 	private static List<String> generateClasses(Map<String, ASTWrapper> wrapperMap) {
 		List<String> classes = new ArrayList<String>();
 		
@@ -208,6 +214,13 @@ public class ASTExplorer {
 		return classes;
 	}
 
+	/**
+	 * Get all the matching MethodDeclaration from the list of MethodDeclarations.
+	 * 
+	 * @param currMethods
+	 * @param method
+	 * @return
+	 */
 	private static MethodDeclaration getSameMethodDeclaration(List<MethodDeclaration> currMethods, MethodDeclaration method) {
 		for (MethodDeclaration m : currMethods) {
 			if (method.equals(m)) {
@@ -232,6 +245,13 @@ public class ASTExplorer {
 		return methodVisitor.getMethods();
 	}
 	
+	/**
+	 * Get the actual positions of the method.
+	 * 
+	 * @param triplets
+	 * @param wrapper
+	 * @return
+	 */
 	private static List<Triplet<String, String, Integer>> getActualPositions(List<Triplet<String, String, Integer>> triplets, ASTWrapper wrapper) {
 		List<Triplet<String, String, Integer>> newTriplets = new ArrayList<Triplet<String, String, Integer>>();
 		
@@ -243,6 +263,13 @@ public class ASTExplorer {
 		return newTriplets;
 	}
 	
+	/**
+	 * Find the variable relation between the String and a Triplet.
+	 * 
+	 * @param objectName
+	 * @param variableTriplets
+	 * @return
+	 */
 	private static Triplet<String, String, Integer> findRelatedVariable(String objectName, List<Triplet<String, String, Integer>> variableTriplets) {
 		for (Triplet<String, String, Integer> triplet : variableTriplets) {
 			if (objectName.equals(triplet.getValue1())) {
