@@ -25,6 +25,8 @@ DependencyWheel.prototype = {
   opacity: 0.4,
   tooltip: null,
   opacity_increment: 0.1,
+  impact_mode: "multiline", // either "thickness" or "multiline"
+  d3data: null,
 
   init: function(options) {
 
@@ -129,12 +131,14 @@ DependencyWheel.prototype = {
         .style('opacity', 0)
         .attr("d", function(d, i) { return self.options.line(splines[i]); });
 
-      var impact_paths = self.svg.selectAll(self.options.selector)
-        .data(d3data.impact_edges).enter().append("svg:path")
-        .attr("class", function(d) { return "impact_edge " + d.class; })
-        .style("stroke", "#DDDDDD")
-        .style("opacity", 0)
-        .attr("d", function(d, i) { return self.options.impact_line(impact_splines[i]); });
+      if(self.impact_mode === "thickness"){
+        var impact_paths = self.svg.selectAll(self.options.selector)
+          .data(d3data.impact_edges).enter().append("svg:path")
+          .attr("class", function(d) { return "impact_edge " + d.class; })
+          .style("stroke", "#DDDDDD")
+          .style("opacity", 0)
+          .attr("d", function(d, i) { return self.options.impact_line(impact_splines[i]); });
+      }
 
       // this.svg.selectAll(".arrow")
       //   .data(d3data.edges).enter().append("svg:path")
@@ -203,92 +207,39 @@ DependencyWheel.prototype = {
     commit.edges.forEach(function(e, i) {
       self.animatePath(".source-" + e.source + ".target-" + e.target);
     });
-
-    commit.impact_edges.forEach(function(e, i) {
-      self.svg.selectAll(".impact_edge.source-" + e.source + ".target-" + e.target)
-        .transition()
-        .delay(function(d,i) { return i * 10; })
-        .duration(1200)
-        .style('stroke-width', function(d) { return e.count * 2; })
-        .style('opacity', 0.5);
-    });
+    if(self.impact_mode === "thickness") {
+      commit.impact_edges.forEach(function(e, i) {
+          self.svg.selectAll(".impact_edge.source-" + e.source + ".target-" + e.target)
+            .transition()
+            .delay(function(d,i) { return i * 10; })
+            .duration(1200)
+            .style('stroke-width', function(d) { return e.count * 4; })
+            .style('opacity', 0.5);
+      });
+    } else {
+        commit.impact_edges.forEach(function(e, i) {
+          var current_paths = $(".impact_edge.source-" + e.source + ".target-" + e.target).length;
+          if(current_paths < e.count) {
+            var num_paths_to_add = e.count - current_paths;
+            for(var j = 1; j <= num_paths_to_add; j++) {
+              var data = [{ source: self.d3data.cluster_map[e.source], target: self.d3data.cluster_map[e.target] }];
+              var splines = self.options.bundle(data);
+              var line = d3.svg.line.radial()
+                .radius(function(d){ return d.y - 10; })
+                .angle(function(d){ return d.x / 180 * Math.PI })
+                .tension(0.1 * (j + current_paths))
+                .interpolate("bundle");
+              self.svg.selectAll(self.options.selector)
+                .data(data).enter().append("svg:path")
+                .attr("class", function(d) { return "impact_edge source-" + e.source + " target-" + e.target; })
+                .style("stroke", "#DDDDDD")
+                .style("opacity", 0.8)
+                .attr("d", function(d, i) { return line(splines[i]); });
+            }
+          }
+        });
+    }
   },
-    
-  // clean up later
-  //   drawExistingNodesAndEdges: function(commit) {
-  //     var self = this;
-        
-  //     // existing current nodes that should be present for this frame
-  //     var existingNodes = commit.currentNodes;
-  //     existingNodes.forEach(function(n) {
-  //        d3.selectAll("g").selectAll("[data-name=" + n.name + "]")
-  //           .style('opacity', 0.2);     
-  //     });
-      
-  //     // existing current edges that should be present for this frame
-  //     var existingEdges = commit.currentEdges;
-  //     existingEdges.forEach(function(n) {
-  //       self.svg.select(".edge.source-" + n.source + ".target-" + n.target)
-  //           .style('opacity', 0.2);     
-  //     });
-        
-  //   },
-    
-    
-  // lightUp: function(commit) {
-  //     var self = this;
-      
-  //     self.drawExistingNodesAndEdges(commit);
-      
-  //     //make added files opacity 1
-  //     var addedFiles = commit.addedJavaFiles;
-  //     addedFiles.forEach(function(n){
-  //     var selector = ".node." + n;
-  //     self.svg.select(selector)
-  //       .style('opacity', 1);
-  //     });
-      
-  //     // make dependencies opacity 1
-  //     var dependencies = commit.dependencies;
-  //     dependencies.forEach(function(n) {
-  //     self.svg.select(".edge.source-" + n.source + ".target-" + n.target)
-  //       .transition()
-  //       .delay(function(d,i) { return i * 10; })
-  //       .duration(1250)
-  //       .style('opacity', 1);
-  //     });
-      
-  //     // make deleted files and dependencies grey
-  //     var removedFiles = commit.removedJavaFiles; 
-  //     removedFiles.forEach(function(n) {
-  //     d3.selectAll("g").selectAll("[data-name=" + n + "]")
-  //       .style("fill", "grey")
-  //       .style('opacity', 1);
-          
-  //     d3.select("g").selectAll(".edge").filter(".source-" + n)
-  //       .style("stroke", "grey")  
-  //       .transition()
-  //       .delay(function(d,i) { return i * 10; })
-  //       .duration(1250)
-  //       .style('opacity', 1);
-          
-  //     d3.select("g").selectAll(".edge").filter(".target-" + n)
-  //       .style("stroke", "grey")  
-  //       .transition()
-  //       .delay(function(d,i) { return i * 10; })
-  //       .duration(1250)
-  //       .style('opacity', 1); 
-  //     });
-      
-  //     // make modified dependencies opacity 1
-  //     var modified = commit.modifiedJavaFiles;
-  //     modified.forEach(function(n){
-  //     var selector = ".node." + n;
-  //     self.svg.select(selector)
-  //       .style('opacity', 1);
-  //     });
-      
-  //   },
 
   // parses the data so it will be appropriate to pass to D3
   parseDataToD3:  function(state, impact_edges) {
@@ -335,11 +286,14 @@ DependencyWheel.prototype = {
         d3_impact_edges.push({ source: cluster_map[source], target: cluster_map[target], "class": css_class });
       }
 
-      return {
+      self.d3data = {
         nodes: nodes,
         edges: edges,
-        impact_edges: d3_impact_edges
+        impact_edges: d3_impact_edges,
+        cluster_map: cluster_map
       };
+
+      return self.d3data;
   },
 
   // returns a list of dependencies of given class

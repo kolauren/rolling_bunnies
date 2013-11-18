@@ -4,7 +4,7 @@ body {
   font-family: "Roboto", sans-serif;
   font-size: 16px;
   font-weight: 300;
-  background-color:#333333;
+  background-color: #000000;
 }
 
 #main {
@@ -41,7 +41,7 @@ button:hover, button.active {
 
 #pause {
   margin: 0;
-  padding: 1px 0 0 3px;
+  padding: 1px 0 0 4px;
 }
 
 #slider {
@@ -53,12 +53,29 @@ button:hover, button.active {
 
 .wheel {
   opacity: 0.5;
-  fill: black;
+  fill: #000000;
+  stroke-width: 2px;
+  stroke: #FFFFFF;
+  stroke-opacity:0.4;
 }
 
-.impact_edge, .edge, .animate {
+.edge, .animate {
   stroke-width: 2px;
   fill:  none;
+}
+
+.edge {
+  z-index: 1000;
+}
+
+.animate {
+  z-index: 1001;
+}
+
+.impact_edge {
+  z-index: 1;
+  stroke-width: 1px;
+  fill: none;
 }
 
 .node {

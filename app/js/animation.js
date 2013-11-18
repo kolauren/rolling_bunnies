@@ -67,6 +67,7 @@ Animation.prototype = {
         // event for slider
         d3.select(this.options.slider).call(d3.slider().on("slide", function(evt, value) {
             self.clearWheel();
+            self.clearImpactEdges();
             var commitToStartAt = value * 0.01 * (self.commits.length - 1);
             commitToStartAt = Math.round(commitToStartAt);
             var commit = self.commits[commitToStartAt];
@@ -124,9 +125,15 @@ Animation.prototype = {
             .style('opacity', self.opacity); 
         d3.selectAll(".animate")
             .style('opacity', 0); 
-        d3.selectAll("path.impact_edge")
-            .style('opacity', self.opacity);
-        console.log("hello");
+    },
+
+    clearImpactEdges: function() {
+        if(this.dependencyWheel.impact_mode === "thickness") {
+            d3.selectAll("path.impact_edge")
+                .style('opacity', 0);
+        } else {
+            d3.selectAll("path.impact_edge").remove();
+        }
     },
 
     animateCommits: function () {
