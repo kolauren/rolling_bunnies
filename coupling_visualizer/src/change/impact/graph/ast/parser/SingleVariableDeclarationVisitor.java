@@ -6,20 +6,22 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.javatuples.Pair;
+import org.javatuples.Triplet;
 
 public class SingleVariableDeclarationVisitor extends ASTVisitor {
-	private List<Pair<String, String>> variableDeclarationPair = new ArrayList<Pair<String, String>>();
+	private List<Triplet<String, String, Integer>> variableDeclarationTriplet = new ArrayList<Triplet<String, String, Integer>>();
 	
 	public boolean visit(SingleVariableDeclaration node) {
 		String varType = node.getType().toString();
 		String varName = node.getName().toString();
+		int position = node.getStartPosition();
 
-		variableDeclarationPair.add(new Pair<String, String>(varType, varName));
+		variableDeclarationTriplet.add(new Triplet<String, String, Integer>(varType, varName, position));
 		
 		return super.visit(node);
 	}
 	
-	public List<Pair<String, String>> getVariablePairs() {
-		return variableDeclarationPair;
+	public List<Triplet<String, String, Integer>> getVariableTriplets() {
+		return variableDeclarationTriplet;
 	}
 }

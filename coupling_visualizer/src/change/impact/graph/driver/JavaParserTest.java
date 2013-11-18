@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -28,9 +30,12 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.javatuples.Triplet;
 
+import change.impact.graph.ast.parser.ASTWrapper;
 import change.impact.graph.ast.parser.MethodDeclarationVisitor;
 import change.impact.graph.ast.parser.MethodInvocationVisitor;
+import change.impact.graph.ast.parser.SingleVariableDeclarationVisitor;
 import change.impact.graph.ast.parser.TypeDeclarationVisitor;
+import change.impact.graph.ast.parser.VariableDeclarationStatementVisitor;
 
 public class JavaParserTest {
 	public static void main(String[] args) throws ExecutionException, IOException {
@@ -133,7 +138,26 @@ public class JavaParserTest {
 			Block block = method.getBody();
 			MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
 			block.accept(methodInvocationVisitor);
+			List<Triplet<String, String, Integer>> methodInvocationTriplets = getActualPositions(methodInvocationVisitor.getMethodInvocations(), cUnit);
 			
+			// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
+			VariableDeclarationStatementVisitor variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor();
+			block.accept(variableDeclarationStatementVisitor);
+			SingleVariableDeclarationVisitor singleVariableDeclarationVisitor = new SingleVariableDeclarationVisitor();
+			block.accept(singleVariableDeclarationVisitor);
+			
+			List<Triplet<String, String, Integer>> variableDeclarationTriplet = getActualPositions(variableDeclarationStatementVisitor.getVariableTriplets(), cUnit);
+			List<Triplet<String, String, Integer>> singleVariableDeclarationTriplet = getActualPositions(singleVariableDeclarationVisitor.getVariableTriplets(), cUnit);
+			
+			for (Triplet<String, String, Integer> triplet : methodInvocationTriplets) {
+				System.out.println("Method: " + triplet.getValue0() + " Object: " + triplet.getValue1() + " Position: " + triplet.getValue2());
+			}
+			for (Triplet<String, String, Integer> triplet : variableDeclarationTriplet) {
+				System.out.println("Type: " + triplet.getValue0() + " Name: " + triplet.getValue1() + " Position: " + triplet.getValue2());
+			}
+			for (Triplet<String, String, Integer> triplet : singleVariableDeclarationTriplet) {
+				System.out.println("Type: " + triplet.getValue0() + " Name: " + triplet.getValue1() + " Position: " + triplet.getValue2());
+			}
 			
 			for (Triplet<String, String, Integer> triplet : methodInvocationVisitor.getMethodInvocations()) {
 				// System.out.println("Triplets: ---------------------------------------------------------------");
@@ -153,6 +177,17 @@ public class JavaParserTest {
 			System.out.println("---------------------");
 			System.out.println();
 		}
+	}
+	
+	private static List<Triplet<String, String, Integer>> getActualPositions(List<Triplet<String, String, Integer>> triplets, CompilationUnit wrapper) {
+		List<Triplet<String, String, Integer>> newTriplets = new ArrayList<Triplet<String, String, Integer>>();
+		
+		for (Triplet<String, String, Integer> triplet : triplets) {
+			int actual = wrapper.getLineNumber(triplet.getValue2());
+			newTriplets.add(new Triplet<String, String, Integer>(triplet.getValue0(), triplet.getValue1(), actual));
+		}
+		
+		return newTriplets;
 	}
 
 	private static void testBindings(CompilationUnit cUnit) {

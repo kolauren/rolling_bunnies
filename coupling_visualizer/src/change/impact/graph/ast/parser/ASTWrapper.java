@@ -1,17 +1,21 @@
 package change.impact.graph.ast.parser;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+
+import change.impact.graph.Method;
 
 public class ASTWrapper {
 	//this class is a wrapper for Eclipse AST objects
 	private ASTParser parser;
 	private CompilationUnit cUnit;
 	private String className;
+	private String sourceLoc;
 	
-	public ASTWrapper(ASTParser parser, CompilationUnit cUnit) throws IOException {
+	public ASTWrapper(ASTParser parser, CompilationUnit cUnit, String sourceLoc) throws IOException {
 		this.parser = parser;
 		this.cUnit = cUnit;
 		
@@ -19,6 +23,7 @@ public class ASTWrapper {
 		typeVisitor.visit(cUnit);
 		
 		this.className = typeVisitor.getClassName();
+		this.setSourceLoc(sourceLoc);
 	}
 	
 	public ASTParser getParser() {
@@ -43,5 +48,13 @@ public class ASTWrapper {
 
 	public void setClassName(String className) {
 		this.className = className;
+	}
+
+	public String getSourceLoc() {
+		return sourceLoc;
+	}
+
+	public void setSourceLoc(String sourceLoc) {
+		this.sourceLoc = sourceLoc;
 	}
 }
