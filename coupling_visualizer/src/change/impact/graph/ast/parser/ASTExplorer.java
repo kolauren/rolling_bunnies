@@ -18,8 +18,9 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.javatuples.Pair;
+import org.javatuples.Triplet;
 
-import change.impact.graph.ChangeStatus;
 import change.impact.graph.Method;
 
 public class ASTExplorer {	  
@@ -135,17 +136,22 @@ public class ASTExplorer {
 				Set<Method> bodyMethodsInvoked = new HashSet<Method>();
 				
 				if (lineNumber > startLine && lineNumber < endLine) {
-					// With the MethodDeclaration, visit every MethodInvocation node and extract the information.
+					// Grab every MethodInvocation node and extract information.
 					Block block = method.getBody();
 					MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
 					block.accept(methodInvocationVisitor);
+					List<Triplet<String, String, Integer>> methodInvocationTriplets = methodInvocationVisitor.getMethodInvocations();
 					
-					List<MethodInvocation> methodsInvoked = methodInvocationVisitor.getMethods();
+					// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
+					VariableDeclarationStatementVisitor variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor();
+					block.accept(variableDeclarationStatementVisitor);
+					SingleVariableDeclarationVisitor singleVariableDeclarationVisitor = new SingleVariableDeclarationVisitor();
+					block.accept(singleVariableDeclarationVisitor);
 					
-					// Add all the MethodInvocation to the HashSet.
-					for (MethodInvocation methodInvoked : methodsInvoked) {
-						bodyMethodsInvoked.add(generateMethod(methodInvoked, wrapper));
-					}
+					List<Pair<String, String>> variableDeclarationPair = variableDeclarationStatementVisitor.getVariablePairs();
+					List<Pair<String, String>> singleVariableDeclarationPair = singleVariableDeclarationVisitor.getVariablePairs();
+					
+					
 					
 					// Stop iterating once MethodDeclaration found.
 					break;
