@@ -27,16 +27,20 @@ DependencyWheel.prototype = {
   opacity_increment: 0.1,
   impact_mode: "multiline", // either "thickness" or "multiline"
   d3data: null,
+  nodeGlow: null,
 
   init: function(options) {
 
+      this.nodeGlow = glow("nodeGlow").rgb("#7f7f7f").stdDeviation(3);
+      
     // create the main svg
     this.svg = d3.select(this.options.selector)
       .append("svg:svg")
       .attr("width", (this.options.radius * 2.5))
       .attr("height", (this.options.radius * 2.1))
       .append("svg:g")
-      .attr("transform", "translate(" + (this.options.radius * 1.25) + "," + (this.options.radius) + ")");
+      .attr("transform", "translate(" + (this.options.radius * 1.25) + "," + (this.options.radius) + ")")
+      .call(this.nodeGlow);
 
     // create the wheel
     this.svg.append("svg:path")
@@ -64,6 +68,8 @@ DependencyWheel.prototype = {
     this.tooltip = d3.select("body").append("div")   
     .attr("class", "tooltip")               
     .style("opacity", 0);
+      
+    
 
   },
     
@@ -165,7 +171,8 @@ DependencyWheel.prototype = {
         .data(d3data.nodes.filter(function(n) { return !n.children; }))
         .enter().append("svg:g")
         .attr("class", "node")
-        .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; });
+        .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+        .style("filter", "url(#nodeGlow)");
 
       node.append("svg:circle")
         .attr("class", function(d) { return d.class })
@@ -246,7 +253,8 @@ DependencyWheel.prototype = {
                 .data(data).enter().append("svg:path")
                 .attr("class", function(d) { return "impact_edge source-" + e.source + " target-" + e.target; })
                 .style("stroke", "#DDDDDD")
-                .style("opacity", 0.8)
+                .style("filter", "url(#nodeGlow)")
+                .style("opacity", 0.9)
                 .attr("d", function(d, i) { return line(splines[i]); });
             }
           }
