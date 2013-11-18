@@ -4,7 +4,9 @@ body {
   font-family: "Roboto", sans-serif;
   font-size: 16px;
   font-weight: 300;
-  background-color: #000000;
+  background-image: url("../spacebg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 #main {
@@ -53,8 +55,8 @@ button:hover, button.active {
 
 .wheel {
   opacity: 0.5;
-  fill: #000000;
-  stroke-width: 2px;
+  fill: #333333;
+  stroke-width: 1px;
   stroke: #FFFFFF;
   stroke-opacity:0.4;
 }
@@ -107,4 +109,13 @@ div.tooltip {
 
 .clear {
   clear: both;
+}
+
+.d3-slider-handle {
+  background-image: url("../nyancat.png") !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  width: 50px !important; 
+  height: 30px !important;
+  border: none !important;
 }
