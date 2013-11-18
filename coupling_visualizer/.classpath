@@ -18,5 +18,6 @@
 	<classpathentry kind="lib" path="libs/eclipseAST/org.eclipse.osgi_3.5.2.R35x_v20100126.jar"/>
 	<classpathentry kind="lib" path="libs/eclipseAST/org.eclipse.jdt.core-3.8.2.v20120814-155456.jar"/>
 	<classpathentry kind="lib" path="libs/eclipseAST/org.eclipse.jdt.core_3.5.2.v_981_R35x.jar"/>
+	<classpathentry kind="lib" path="libs/eclipseAST/org.eclipse.core.resources_3.5.2.R35x_v20091203-1235.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

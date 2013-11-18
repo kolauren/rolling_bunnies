@@ -21,12 +21,13 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
+import ca.mcgill.cs.swevo.ppa.util.PPACoreUtil;
 import change.impact.graph.ast.parser.MethodDeclarationVisitor;
 import change.impact.graph.ast.parser.TypeDeclarationVisitor;
 
 public class JavaParserTest {
-	public static void main(String[] args) throws ExecutionException,
-			IOException {
+	public static void main(String[] args) throws ExecutionException, IOException {
 
 		astExplorerTest();
 
@@ -49,8 +50,7 @@ public class JavaParserTest {
 	}
 
 	private static void astExplorerTest() throws IOException {
-		File file = new File(
-				"src/change/impact/graph/ast/parser/ASTExplorer.java");
+		File file = new File("src/change/impact/graph/ast/parser/ASTExplorer.java");
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 
 		FileInputStream inputStream = new FileInputStream(file);
@@ -66,9 +66,7 @@ public class JavaParserTest {
 		// System.out.println(code);
 
 		parser.setSource(code.toCharArray());
-		String[] sourcePathEntries = { "src/change/impact/graph/ast/parser/ASTExplorer.java" };
-		String[] encoding = { "UTF-8" };
-		parser.setEnvironment(null, sourcePathEntries, encoding, true);
+		parser.setEnvironment(null, null, null, true);
 		parser.setResolveBindings(true);
 		//parser.setStatementsRecovery(true);
 		//parser.setBindingsRecovery(true);
@@ -78,7 +76,7 @@ public class JavaParserTest {
 		parser.setUnitName(unitName);
 
 		final CompilationUnit cUnit = (CompilationUnit) parser.createAST(null);
-
+		//final CompilationUnit cUnit = PPACoreUtil.getCU(file, new PPAOptions());
 		// testBindings(cUnit);
 
 		MethodDeclarationVisitor visitor = new MethodDeclarationVisitor();
@@ -117,16 +115,8 @@ public class JavaParserTest {
 			Block block = method.getBody();
 			block.accept(new ASTVisitor() {
 				public boolean visit(MethodInvocation node) {
-					// System.out.println("Expression Binding: " +
-					// node.resolveTypeBinding());
-					// System.out.println("Expression: " +
-					// node.getExpression());
-					// System.out.println(node.getExpression());
 					System.out.println("Name: " + node.getName());
-					
-					if (node.getName().resolveBinding() != null) {
-						System.out.println(node.resolveMethodBinding());
-					}
+					System.out.println("Expression: " + node.getExpression());
 					System.out.println();
 
 					return true;
@@ -143,6 +133,11 @@ public class JavaParserTest {
 			});
 			System.out.println("---------------------");
 		}
+	}
+	
+	private static void testPPA() {
+		File file = new File("src/change/impact/graph/ast/parser/ASTExplorer.java");
+		CompilationUnit cu = PPACoreUtil.getCU(file, new PPAOptions());
 	}
 
 	private static void testBindings(CompilationUnit cUnit) {
