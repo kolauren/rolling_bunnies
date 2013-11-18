@@ -140,11 +140,11 @@ public class ASTExplorer {
 					MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
 					block.accept(methodInvocationVisitor);
 					
-					List<String> methodsInvoked = methodInvocationVisitor.getMethods();
+					List<MethodInvocation> methodsInvoked = methodInvocationVisitor.getMethods();
 					
 					// Add all the MethodInvocation to the HashSet.
-					for (String methodInvoked : methodsInvoked) {
-						bodyMethodsInvoked.add(new Method("", "", "", methodInvoked, null, 0, 0));
+					for (MethodInvocation methodInvoked : methodsInvoked) {
+						bodyMethodsInvoked.add(generateMethod(methodInvoked, wrapper));
 					}
 					
 					// Stop iterating once MethodDeclaration found.
@@ -196,6 +196,17 @@ public class ASTExplorer {
 	}
 	
 	/**
+	 * TODO: Need to figure out where to get the various information from the MethodInvocation.
+	 * 
+	 * @param method
+	 * @param wrapper
+	 * @return
+	 */
+	private static Method generateMethod(MethodInvocation method, ASTWrapper wrapper) {
+		return new Method("", "", "", "", null, 0, 0);
+	}
+	
+	/**
 	 * Get all the parameters given a MethodDeclaration.
 	 * 
 	 * @param method
@@ -213,17 +224,6 @@ public class ASTExplorer {
 		}
 		
 		return params;
-	}
-	
-	/**
-	 * TODO: Need to figure out where to get the various information from the MethodInvocation.
-	 * 
-	 * @param method
-	 * @param wrapper
-	 * @return
-	 */
-	private static Method generateMethod(MethodInvocation method, ASTWrapper wrapper) {
-		return null;
 	}
 	
 	/**

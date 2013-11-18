@@ -8,8 +8,7 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 public class MethodDeclarationVisitor extends ASTVisitor {
-	List<MethodDeclaration> methods = new ArrayList<MethodDeclaration>();
-	List<String> parameters = new ArrayList<String>();
+	private List<MethodDeclaration> methods = new ArrayList<MethodDeclaration>();
 
 	public boolean visit(MethodDeclaration node) {
 		methods.add(node);
@@ -19,9 +18,5 @@ public class MethodDeclarationVisitor extends ASTVisitor {
 
 	public List<MethodDeclaration> getMethods() {
 		return methods;
-	}
-
-	public List<String> getParameters() {
-		return parameters;
 	}
 }

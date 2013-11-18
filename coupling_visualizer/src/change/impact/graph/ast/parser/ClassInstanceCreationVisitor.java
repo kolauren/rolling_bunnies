@@ -8,8 +8,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 public class ClassInstanceCreationVisitor extends ASTVisitor {
 	
 	public boolean visit(ClassInstanceCreation node) {
-		
-
 		return super.visit(node);
 	}
 }

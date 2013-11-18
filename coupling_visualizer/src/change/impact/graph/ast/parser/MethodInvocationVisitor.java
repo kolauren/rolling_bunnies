@@ -9,15 +9,15 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 
 public class MethodInvocationVisitor extends ASTVisitor {
-	List<String> methods = new ArrayList<String>();
+	private List<MethodInvocation> methods = new ArrayList<MethodInvocation>();
 	
 	public boolean visit(MethodInvocation node) {
-		methods.add(node.getName().toString());
+		methods.add(node);
 		
 		return super.visit(node);
 	}
 	
-	public List<String> getMethods() {
+	public List<MethodInvocation> getMethods() {
 		return methods;
 	}
 }
