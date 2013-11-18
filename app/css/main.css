@@ -4,6 +4,7 @@ body {
   font-family: "Open Sans", sans-serif;
   font-size: 16px;
   font-weight: 300;
+  background-color:#252929;
 }
 
 #main {
@@ -11,9 +12,17 @@ body {
   text-align: center;
 }
 
+#graph_title {
+color: white;
+opacity: 0.5;  
+font-size: 50px;
+font-weight: 500;
+}
+
 .info {
   padding: 5px 40px;
   font-size: 22px;
+  color: white;
 }
 
 #buttons {
@@ -48,7 +57,7 @@ body {
 }
 
 .node-label {
-  font-size: 24;
+  font-size: 24; 
 }
 
 div.tooltip {   

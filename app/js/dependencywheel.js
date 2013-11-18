@@ -22,7 +22,7 @@ DependencyWheel.prototype = {
     impact_line: null
   },
     
-  opacity: 0.1,
+  opacity: 0.4,
   tooltip: null,
   opacity_increment: 0.1,
 
@@ -163,7 +163,8 @@ DependencyWheel.prototype = {
           .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
           .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
           .text(function(d) { return d.method_name; })
-          .style("opacity", 0.5);
+          .attr("fill","white")
+          .style("opacity", 0.7);
 
       
       //event handlers for nodes on mouse over
