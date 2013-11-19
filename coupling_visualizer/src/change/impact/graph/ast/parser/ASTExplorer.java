@@ -124,76 +124,85 @@ public class ASTExplorer {
 	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper) {
 		// Get all the MethodDeclarations from the AST.
 		List<MethodDeclaration> prevMethods = getMethodDeclarations(wrapper);
-		List<MethodDeclaration> currMethods = getMethodDeclarations(wrapperMap.get(wrapper.getSourceLoc()));
+		List<MethodDeclaration> currMethods = new ArrayList<MethodDeclaration>();
 		Map<Method, Set<Method>> foundMethods = new HashMap<Method, Set<Method>>();
 		
-		// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is.
-		for (int lineNumber : lineNumbers) {
-			for (MethodDeclaration method : prevMethods) {
-				int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
-				int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
-				Set<Method> bodyMethodsInvoked = null;
-				
-				if (lineNumber > startLine && lineNumber < endLine) {
-					bodyMethodsInvoked = new HashSet<Method>();
+		if (wrapperMap.get(wrapper.getSourceLoc()) != null ) {
+			currMethods = getMethodDeclarations(wrapperMap.get(wrapper.getSourceLoc()));
+			
+			// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is.
+			for (int lineNumber : lineNumbers) {
+				for (MethodDeclaration method : prevMethods) {
+					int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
+					int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
+					Set<Method> bodyMethodsInvoked = null;
 					
-					// Get the similar methods between the two ASTWrappers.
-					MethodDeclaration mapMethod = getSameMethodDeclaration(currMethods, method);
-					
-					// If the map is null, then just skip this iteration.
-					if (mapMethod == null) {
-						break;
-					}
-					
-					// Grab every MethodInvocation node and extract information.
-					Block block = mapMethod.getBody();
-					MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
-					block.accept(methodInvocationVisitor);
-					List<Triplet<String, String, Integer>> methodInvocationTriplets = getActualPositions(methodInvocationVisitor.getMethodInvocations(), wrapper);
-					
-					// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
-					VariableDeclarationStatementVisitor variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor();
-					block.accept(variableDeclarationStatementVisitor);
-					SingleVariableDeclarationVisitor singleVariableDeclarationVisitor = new SingleVariableDeclarationVisitor();
-					block.accept(singleVariableDeclarationVisitor);
-					List<Triplet<String, String, Integer>> variableDeclarationTriplets = getActualPositions(variableDeclarationStatementVisitor.getVariableTriplets(), wrapper);
-					List<Triplet<String, String, Integer>> singleVariableDeclarationTriplets = getActualPositions(singleVariableDeclarationVisitor.getVariableTriplets(), wrapper);
-					
-					// Combine both types of variables into one list.
-					List<Triplet<String, String, Integer>> variableTriplets = new ArrayList<Triplet<String, String, Integer>>();
-					variableTriplets.addAll(variableDeclarationTriplets);
-					variableTriplets.addAll(singleVariableDeclarationTriplets);
-					
-					// For each of the MethodInvocation, add in the methods that are part of the workspace into bodyMethodsInvoked.
-					for (Triplet<String, String, Integer> triplet : methodInvocationTriplets) {
-						String methodName = triplet.getValue0();
-						String objectName = triplet.getValue1();
-						int position = triplet.getValue2();
-						List<String> allClasses = generateClasses(wrapperMap);
+					if (lineNumber > startLine && lineNumber < endLine) {
+						bodyMethodsInvoked = new HashSet<Method>();
 						
-						if (objectName == null) {
-							String packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
-							bodyMethodsInvoked.add(generateMethod(packageName, wrapper.getClassName(), methodName, position));
-						} else {
-							// Find all the variables that the MethodInvocation uses.
-							Triplet<String, String, Integer> varTriplet = findRelatedVariable(objectName, variableTriplets);
+						// Get the similar methods between the two ASTWrappers.
+						MethodDeclaration mapMethod = getSameMethodDeclaration(currMethods, method);
+						
+						// If the map is null, then just skip this iteration.
+						if (mapMethod == null) {
+							break;
+						}
+						
+						// Grab every MethodInvocation node and extract information.
+						Block block = mapMethod.getBody();
+						MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
+						block.accept(methodInvocationVisitor);
+						List<Triplet<String, String, Integer>> methodInvocationTriplets = getActualPositions(methodInvocationVisitor.getMethodInvocations(), wrapper);
+						
+						// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
+						VariableDeclarationStatementVisitor variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor();
+						block.accept(variableDeclarationStatementVisitor);
+						SingleVariableDeclarationVisitor singleVariableDeclarationVisitor = new SingleVariableDeclarationVisitor();
+						block.accept(singleVariableDeclarationVisitor);
+						List<Triplet<String, String, Integer>> variableDeclarationTriplets = getActualPositions(variableDeclarationStatementVisitor.getVariableTriplets(), wrapper);
+						List<Triplet<String, String, Integer>> singleVariableDeclarationTriplets = getActualPositions(singleVariableDeclarationVisitor.getVariableTriplets(), wrapper);
+						
+						// Combine both types of variables into one list.
+						List<Triplet<String, String, Integer>> variableTriplets = new ArrayList<Triplet<String, String, Integer>>();
+						variableTriplets.addAll(variableDeclarationTriplets);
+						variableTriplets.addAll(singleVariableDeclarationTriplets);
+						
+						// For each of the MethodInvocation, add in the methods that are part of the workspace into bodyMethodsInvoked.
+						for (Triplet<String, String, Integer> triplet : methodInvocationTriplets) {
+							String methodName = triplet.getValue0();
+							String objectName = triplet.getValue1();
+							int position = triplet.getValue2();
+							List<String> allClasses = generateClasses(wrapperMap);
 							
-							// If the className from the triplet is in the list of classes, add it in to the list too.
-							if (allClasses.contains(varTriplet.getValue0())) {
-								bodyMethodsInvoked.add(generateMethod(null, varTriplet.getValue0(), methodName, position));
+							if (objectName == null) {
+								String packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
+								bodyMethodsInvoked.add(generateMethod(packageName, wrapper.getClassName(), methodName, position));
+							} else {
+								// Find all the variables that the MethodInvocation uses.
+								Triplet<String, String, Integer> varTriplet = findRelatedVariable(objectName, variableTriplets);
+								
+								// If the className from the triplet is in the list of classes, add it in to the list too.
+								if (allClasses.contains(varTriplet.getValue0())) {
+									bodyMethodsInvoked.add(generateMethod(null, varTriplet.getValue0(), methodName, position));
+								}
 							}
 						}
+						
+						// Stop iterating once MethodDeclaration found.
+						break;
 					}
+	
+					// For the MethodDeclaration found, transfer the information into a Method object.
+					Method currentMethodDeclaration = generateMethod(method, wrapper);
 					
-					// Stop iterating once MethodDeclaration found.
-					break;
+					// Store the <Method, HashSet<Method>>
+					foundMethods.put(currentMethodDeclaration, bodyMethodsInvoked);
 				}
-
-				// For the MethodDeclaration found, transfer the information into a Method object.
-				Method currentMethodDeclaration = generateMethod(method, wrapper);
-				
-				// Store the <Method, HashSet<Method>>
-				foundMethods.put(currentMethodDeclaration, bodyMethodsInvoked);
+			}
+		} else {
+			for (MethodDeclaration method : prevMethods) {
+				Method m = generateMethod(method, wrapper);
+				foundMethods.put(m, null);
 			}
 		}
 		
