@@ -4,18 +4,14 @@ package change.impact.graph.driver;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
 import change.impact.graph.ChangeImpactGraphGenerator;
-import change.impact.graph.CommitCouplingAnalyzer;
 import change.impact.graph.CommitGraph;
 import change.impact.graph.commit.Commit;
 import change.impact.graph.commit.CommitRetriever;
-import change.impact.graph.commit.Diff;
-import change.impact.graph.commit.UnifiedDiffParser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,15 +30,15 @@ public class Main {
 		CommitRetriever p = new CommitRetriever(owner, repo, branch);
 		
 		//print compact and pretty json
-		File json = new File("output/"+owner+"_"+repo+"_commits.json");
-		File jsonPretty = new File("output/"+owner+"_"+repo+"_pretty_commits.json");
-		File jsonGraphs = new File("output/"+owner+"_"+repo+"_graph.json");
+		File json = new File("output/"+owner+"_"+repo+"_commits_"+System.currentTimeMillis()+".json");
+		File jsonPretty = new File("output/"+owner+"_"+repo+"_pretty_commits_"+System.currentTimeMillis()+".json");
+		File jsonGraphs = new File("output/"+owner+"_"+repo+"_graph_"+System.currentTimeMillis()+".json");
 		
 		//clear old file
-		FileUtils.writeStringToFile(json, "", "utf-8", false);
-		FileUtils.writeStringToFile(jsonPretty, "", "utf-8", false);
-		FileUtils.writeStringToFile(jsonGraphs, "", "utf-8", false);
-		
+//		FileUtils.writeStringToFile(json, "", "utf-8", false);
+//		FileUtils.writeStringToFile(jsonPretty, "", "utf-8", false);
+//		FileUtils.writeStringToFile(jsonGraphs, "", "utf-8", false);
+//		
 		Gson gson = new Gson();
 		Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
 		

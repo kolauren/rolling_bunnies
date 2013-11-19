@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -27,12 +26,17 @@ public class ChangeImpactGraphGenerator {
 	//method id -> Method
 	//never removes a method once its added
 	private Map<String,Method> currentMethods;
+	
+	private Map<String,ASTWrapper> backupASTs;
+	private Map<String,ASTWrapper> backupBackupASTs;
 
 	public ChangeImpactGraphGenerator() {
 		currentASTs = Maps.newHashMap();
 		previousASTs = Maps.newHashMap();
 		currentAdjacencyList = Maps.newHashMap();
 		currentMethods = Maps.newHashMap();
+		backupASTs = Maps.newHashMap();
+		backupBackupASTs = Maps.newHashMap();
 	}
 
 	public List<CommitGraph> generate(List<Commit> commits, int numCommits) throws MalformedURLException, IOException {
@@ -165,21 +169,53 @@ public class ChangeImpactGraphGenerator {
 		addedModifiedRenamed.addAll(commit.getAddedJavaFiles());
 		addedModifiedRenamed.addAll(commit.getModifiedJavaFiles());
 		addedModifiedRenamed.addAll(commit.getRenamedJavaFiles().keySet());
-		
+
 		for(String clazz : addedModifiedRenamed) {
 			String oldName = commit.getOldFileName(clazz);
 			String previousName = oldName == null ? clazz : oldName;
 			//update previous AST
 			ASTWrapper previousAST = currentASTs.get(previousName);
+			//TODO: this is a hack to deal with branch merging
+			if(oldName != null && previousAST == null) {
+				previousAST = backupASTs.get(oldName);
+				if(previousAST == null) {
+					previousAST = backupBackupASTs.get(oldName);
+					//probably regex'd some comment that had class definition in it
+					if(previousAST == null && commit.getModifiedJavaFiles().contains(clazz)) {
+						previousAST = currentASTs.get(clazz);
+						oldName = clazz;
+						commit.getRenamedJavaFiles().put(clazz, null);
+						previousName = clazz;
+					}
+				}
+			}
+			
+			
+
 			previousASTs.put(previousName, previousAST);
 			//update current AST
-			String url = commit.getDiff(clazz).getRawCodeURL();
-			ASTWrapper currentAST = ASTExplorer.generateAST(url, clazz);
-			currentASTs.put(clazz, currentAST);
+			//project rename only; code is the same
+			if(commit.getDiff(clazz).isProjectRename()) {
+				currentASTs.put(clazz, previousAST);
+			} else {
+				String url = commit.getDiff(clazz).getRawCodeURL();
+				ASTWrapper currentAST = ASTExplorer.generateAST(url, clazz);
+				currentASTs.put(clazz, currentAST);
+			}
+			//TODO: clean up old ASTs
+			if(oldName != null && !oldName.equals(clazz)) {
+				backupBackupASTs.put(oldName, backupASTs.get(oldName));
+				backupASTs.put(oldName, currentASTs.get(oldName));
+				currentASTs.remove(oldName);
+			}
 		}
 
 		for(String clazz : commit.getRemovedJavaFiles()) {
-			previousASTs.put(clazz, currentASTs.get(clazz));
+			ASTWrapper previousAST = currentASTs.get(clazz);
+			//TODO: this is a hack to deal with removed, branch merging
+			if(previousAST == null)
+				previousAST = ASTExplorer.generateAST(commit.getDiff(clazz).getRawCodeURL(), clazz);
+			previousASTs.put(clazz, previousAST);
 			currentASTs.remove(clazz);
 		}
 	}

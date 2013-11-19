@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 public class Diff {
+	private boolean isProjectRename;
 	//not provided in github diffs
 	private String oldPath;
 	private String newPath;
@@ -21,6 +22,14 @@ public class Diff {
 		removedLines = Maps.newLinkedHashMap();
 	}
 	
+	public boolean isProjectRename() {
+		return isProjectRename;
+	}
+
+	public void setProjectRename(boolean isProjectRename) {
+		this.isProjectRename = isProjectRename;
+	}
+
 	public void putAddedLine(int number, String line) {
 		addedLines.put(number, line);
 	}

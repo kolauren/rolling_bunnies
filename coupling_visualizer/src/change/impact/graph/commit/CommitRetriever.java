@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,8 +12,9 @@ import java.util.regex.Pattern;
 import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.RepositoryCommit;
 
+import change.impact.graph.utils.Utils;
+
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 
@@ -58,8 +58,10 @@ public class CommitRetriever {
 			//retrieve relevant commit data
 			retrieveFiles(githubCommit, commit);
 			retrieveDiffs(githubCommit, commit);
-			//TODO: find renamed
+			//find all old file paths
 			findOldFileName(commit);
+			findOldFileNameNoDiff(commit);
+
 			if(!commit.isEmpty()) {
 				commits.push(commit);
 			}
@@ -95,14 +97,13 @@ public class CommitRetriever {
 
 			if(filename.endsWith(".java")) {
 				String patch = file.getPatch();
-				//status is added or renamed or removed(?)
-				//i assume there are no code changes if the diff is null; therefore
-				//just remove it from the commit
+				//if the patch is null, that means the project directory was moved
+				Diff diff;
 				if(patch == null) {
-					commit.removeJavaFile(filename);
-					continue;
+					diff = new Diff();
+				} else {
+					diff = UnifiedDiffParser.parse(file.getPatch());
 				}
-				Diff diff = UnifiedDiffParser.parse(file.getPatch());
 				diff.setRawCodeURL(file.getRawUrl());
 				commit.addDiff(filename, diff);
 			}
@@ -116,6 +117,8 @@ public class CommitRetriever {
 		renamedFiles.addAll(commit.getModifiedJavaFiles());
 		for(String newFileName : renamedFiles) {
 			Diff diff = commit.getDiff(newFileName);
+			if(diff.isProjectRename())
+				continue;
 			Collection<String> removedLines = diff.getRemovedLines().values();
 
 			//removed lines are ordered by line number
@@ -144,14 +147,14 @@ public class CommitRetriever {
 					m = p.matcher(newFileName);
 					m.find();
 					String projectPath = m.group("projectPath");
-					
+
 					String oldPath = projectPath+"src/"+oldPackageName.replaceAll("\\.", "/")+"/"+className;
 					commit.getRenamedJavaFiles().put(newFileName, oldPath);
 					continue;
 				}
 
 				//now find old class name
-				regex = " (class|interface) (?<oldClassName>\\w*)";
+				regex = " (class|interface) (?<oldClassName>\\w*)[^\\n]*?\\{";
 				p = Pattern.compile(regex);
 				m = p.matcher(removedLine);
 
@@ -172,6 +175,29 @@ public class CommitRetriever {
 					commit.getRenamedJavaFiles().put(newFileName, oldClassName);
 					break;
 				}
+			}
+		}
+	}
+
+	//renamed files with no diffs; renamed with no change
+	//ex. bessie's commit on githubdao.java
+	//why do these files exist?
+	//probably  moved project directory which code cannot see
+	//hack to parse the github html for old file name
+	public void findOldFileNameNoDiff(Commit commit) throws IOException {
+		String html = null;
+		for(String renamedFile : commit.getRenamedJavaFiles().keySet()) {
+			if(commit.getDiff(renamedFile).isProjectRename()) {
+				if(html == null)
+					html = Utils.getHtml("https://github.com/"+owner+"/"+repo+"/commit/"+commit.getSha());
+				String regex = "\\{(?<oldProjectPath>.*?) &rarr; (?<newProjectPath>.*?)\\}";
+				Pattern p = Pattern.compile(regex);
+				Matcher m = p.matcher(html);
+				m.find();
+				String oldProjectPath = m.group("oldProjectPath");
+				String newProjectPath = m.group("newProjectPath");
+				String oldFile = renamedFile.replaceAll(oldProjectPath, newProjectPath);
+				commit.getRenamedJavaFiles().put(renamedFile, oldFile);
 			}
 		}
 	}
