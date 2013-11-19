@@ -129,13 +129,14 @@ public class ASTExplorer {
 		
 		// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is.
 		for (int lineNumber : lineNumbers) {
-			Set<Method> bodyMethodsInvoked = null;
 			for (MethodDeclaration method : prevMethods) {
 				int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
 				int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
-				bodyMethodsInvoked = new HashSet<Method>();
+				Set<Method> bodyMethodsInvoked = null;
 				
 				if (lineNumber > startLine && lineNumber < endLine) {
+					bodyMethodsInvoked = new HashSet<Method>();
+					
 					// Get the similar methods between the two ASTWrappers.
 					MethodDeclaration mapMethod = getSameMethodDeclaration(currMethods, method);
 					
@@ -157,6 +158,8 @@ public class ASTExplorer {
 					block.accept(singleVariableDeclarationVisitor);
 					List<Triplet<String, String, Integer>> variableDeclarationTriplets = getActualPositions(variableDeclarationStatementVisitor.getVariableTriplets(), wrapper);
 					List<Triplet<String, String, Integer>> singleVariableDeclarationTriplets = getActualPositions(singleVariableDeclarationVisitor.getVariableTriplets(), wrapper);
+					
+					// Combine both types of variables into one list.
 					List<Triplet<String, String, Integer>> variableTriplets = new ArrayList<Triplet<String, String, Integer>>();
 					variableTriplets.addAll(variableDeclarationTriplets);
 					variableTriplets.addAll(singleVariableDeclarationTriplets);
