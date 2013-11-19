@@ -5,9 +5,6 @@
 # Files for the dex VM #
 *.dex
 
-# Java Class Files #
-*.class
-
 # Generated Files #
 bin/
 gen/
@@ -49,4 +46,4 @@ local.properties
 *.ear
 
 # 410 output #
-*_commits.json
+output/
