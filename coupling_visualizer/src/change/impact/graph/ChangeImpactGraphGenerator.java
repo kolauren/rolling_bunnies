@@ -167,9 +167,11 @@ public class ChangeImpactGraphGenerator {
 		addedModifiedRenamed.addAll(commit.getRenamedJavaFiles().keySet());
 		
 		for(String clazz : addedModifiedRenamed) {
+			String oldName = commit.getOldFileName(clazz);
+			String previousName = oldName == null ? clazz : oldName;
 			//update previous AST
-			ASTWrapper previousAST = currentASTs.get(clazz);
-			previousASTs.put(clazz, previousAST);
+			ASTWrapper previousAST = currentASTs.get(previousName);
+			previousASTs.put(previousName, previousAST);
 			//update current AST
 			String url = commit.getDiff(clazz).getRawCodeURL();
 			ASTWrapper currentAST = ASTExplorer.generateAST(url, clazz);
@@ -224,6 +226,8 @@ public class ChangeImpactGraphGenerator {
 					currentAdjacencyList.put(node, strAdjacentNodesSet);
 
 			}
+			//clean up removed methods
+			//TODO: remove methods from removed files
 			removeNodesFromAdjacencyList(removedNodes);
 
 			//deleted methods do not get a graph

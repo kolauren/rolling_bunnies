@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,9 @@ import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.RepositoryCommit;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
 
 //gets commit info from somewhere (github) and outputs Commit objects
 public class CommitRetriever {
@@ -78,9 +81,7 @@ public class CommitRetriever {
 			if(filename.endsWith(".java")) {
 				CommitFileStatus status = CommitFileStatus.fromString(file.getStatus());
 				if(status == CommitFileStatus.RENAMED) {
-					//TODO:find old name
-					String oldName = "";
-					commit.addJavaFile(status, file.getFilename(), oldName);
+					commit.addJavaFile(status, file.getFilename(), null);
 				} else {
 					commit.addJavaFile(status, file.getFilename());
 				}
@@ -91,6 +92,7 @@ public class CommitRetriever {
 	private void retrieveDiffs(RepositoryCommit githubCommit, Commit commit) throws IOException {
 		for(CommitFile file : githubCommit.getFiles()) { 
 			String filename = file.getFilename();
+
 			if(filename.endsWith(".java")) {
 				String patch = file.getPatch();
 				//status is added or renamed or removed(?)
@@ -108,24 +110,66 @@ public class CommitRetriever {
 	}
 
 	private void findOldFileName(Commit commit) {
-		Map<String, String> renamedFiles = commit.getRenamedJavaFiles();
-		for(String newFileName : renamedFiles.keySet()) {
+		//MODIFIED CAN BE RENAMED
+		Set<String> renamedFiles = Sets.newHashSet(); 
+		renamedFiles.addAll(commit.getRenamedJavaFiles().keySet());
+		renamedFiles.addAll(commit.getModifiedJavaFiles());
+		for(String newFileName : renamedFiles) {
 			Diff diff = commit.getDiff(newFileName);
 			Collection<String> removedLines = diff.getRemovedLines().values();
 
+			//removed lines are ordered by line number
 			for(String removedLine : removedLines) {
 				// check if removedLine contains class declaration
 				// "class" " interface "
-				String regex = " (class|interface) (?<oldClassName>\\w*)";
+
+
+				//find old package location
+				String regex = "package (?<packageName>.*);";
 				Pattern p = Pattern.compile(regex);
 				Matcher m = p.matcher(removedLine);
-				if(m.lookingAt()) {
+
+				if(m.find()) {
+					String oldPackageName = m.group("packageName");
+
+					regex = "(?<className>\\w*\\.java)";
+					p = Pattern.compile(regex);
+					m = p.matcher(newFileName);
+					m.find();
+					String className = m.group("className");
+
+					//project path
+					regex = "(?<projectPath>.*/)src/";
+					p = Pattern.compile(regex);
+					m = p.matcher(newFileName);
+					m.find();
+					String projectPath = m.group("projectPath");
+					
+					String oldPath = projectPath+"src/"+oldPackageName.replaceAll("\\.", "/")+"/"+className;
+					commit.getRenamedJavaFiles().put(newFileName, oldPath);
+					continue;
+				}
+
+				//now find old class name
+				regex = " (class|interface) (?<oldClassName>\\w*)";
+				p = Pattern.compile(regex);
+				m = p.matcher(removedLine);
+
+				if(m.find()) {
 					String oldClassName = m.group("oldClassName");
 					String filePathRegex = "(?<filePath>.*/)";
+
 					p = Pattern.compile(filePathRegex);
-					m = p.matcher(newFileName);
-					oldClassName = m.group("filePath") + oldClassName;
-					renamedFiles.put(newFileName, oldClassName);
+					String partialOldPath = commit.getRenamedJavaFiles().get(newFileName);
+
+					//could have package name modified
+					String fileName = partialOldPath == null ? newFileName : partialOldPath;
+
+					m = p.matcher(fileName);
+					m.find();
+					oldClassName = m.group("filePath") + oldClassName+".java";
+
+					commit.getRenamedJavaFiles().put(newFileName, oldClassName);
 					break;
 				}
 			}
