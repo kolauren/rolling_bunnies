@@ -113,4 +113,9 @@ public class Commit {
 	public Collection<String> getChangedClasses() {
 		return diffs.keySet();
 	}
+	
+	//returns null if the file was not renamed
+	public String getOldFileName(String newFileName) {
+		return renamedJavaFiles.get(newFileName);
+	}
 }

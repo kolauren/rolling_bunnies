@@ -5,10 +5,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.RepositoryCommit;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
 //gets commit info from somewhere (github) and outputs Commit objects
@@ -21,7 +25,7 @@ public class CommitRetriever {
 	public CommitRetriever(String owner, String repo, String branch) {
 		//TODO: move args to properties file
 		String user = "pammil";
-		String password = "5cd8f20e47dfc2ffc846e82c652450c61f0a41a9";
+		String password = "610fe6b39158d3ec2699cdb0bbd52bf24b9f3913";
 
 		this.owner = owner;
 		this.repo = repo;
@@ -32,7 +36,7 @@ public class CommitRetriever {
 	}
 
 	//returns numCommits newest commits ordered from oldest -> recent
-	public Collection<Commit> getCommits(int numCommits) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public List<Commit> getCommits(int numCommits) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Deque<Commit> commits = Queues.newArrayDeque();
 		List<RepositoryCommit> githubCommits = githubDao.queryCommits(owner, repo, branch);
 
@@ -51,15 +55,19 @@ public class CommitRetriever {
 			//retrieve relevant commit data
 			retrieveFiles(githubCommit, commit);
 			retrieveDiffs(githubCommit, commit);
+			//TODO: find renamed
+			findOldFileName(commit);
 			if(!commit.isEmpty()) {
 				commits.push(commit);
 			}
 		}
-		return commits;
+		List<Commit> commitList = Lists.newArrayList();
+		commitList.addAll(commits);
+		return commitList;
 	}
 
 	//get all commits
-	public Collection<Commit> getCommits() throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public List<Commit> getCommits() throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		return getCommits(-1);
 	}
 
@@ -95,6 +103,31 @@ public class CommitRetriever {
 				Diff diff = UnifiedDiffParser.parse(file.getPatch());
 				diff.setRawCodeURL(file.getRawUrl());
 				commit.addDiff(filename, diff);
+			}
+		}
+	}
+
+	private void findOldFileName(Commit commit) {
+		Map<String, String> renamedFiles = commit.getRenamedJavaFiles();
+		for(String newFileName : renamedFiles.keySet()) {
+			Diff diff = commit.getDiff(newFileName);
+			Collection<String> removedLines = diff.getRemovedLines().values();
+
+			for(String removedLine : removedLines) {
+				// check if removedLine contains class declaration
+				// "class" " interface "
+				String regex = " (class|interface) (?<oldClassName>\\w*)";
+				Pattern p = Pattern.compile(regex);
+				Matcher m = p.matcher(removedLine);
+				if(m.lookingAt()) {
+					String oldClassName = m.group("oldClassName");
+					String filePathRegex = "(?<filePath>.*/)";
+					p = Pattern.compile(filePathRegex);
+					m = p.matcher(newFileName);
+					oldClassName = m.group("filePath") + oldClassName;
+					renamedFiles.put(newFileName, oldClassName);
+					break;
+				}
 			}
 		}
 	}

@@ -48,7 +48,7 @@ public class ChangeImpactGraphGenerator {
 					commitGraph.setCommit_SHA(commit.getSha());
 				else
 					commitGraph.setCommit_SHA(commitGraph.getCommit_SHA()+"_"+commit.getSha());
-				
+
 				changedMethods.addAll(updateState(commit));
 			}
 			commitGraph.setGraphs(generateGraphsForChangedMethods(changedMethods));
@@ -56,7 +56,7 @@ public class ChangeImpactGraphGenerator {
 		}
 		return commitGraphs;
 	}
-	
+
 	Set<String> updateState(Commit commit) throws MalformedURLException, IOException {
 		updateASTs(commit);
 		Set<String> changedMethods = updateCurrentAdjacencyListAndMethods(commit);
@@ -134,9 +134,13 @@ public class ChangeImpactGraphGenerator {
 			}
 		}
 	}
-	
+
 	//store method ids only
 	private Set<String> filterID(Set<Method> methods) {
+		//the method was removed so it has a null method invocation set
+		if(methods == null)
+			return null;
+
 		Set<String> ids = Sets.newHashSet();
 		for(Method method : methods) {
 			boolean unique = ids.add(method.getId());
@@ -157,14 +161,18 @@ public class ChangeImpactGraphGenerator {
 
 	private void updateASTs(Commit commit) throws MalformedURLException, IOException {
 		//add new and modified ASTs
-		Iterable<String> addedOrModified = Iterables.concat(commit.getAddedJavaFiles(), commit.getModifiedJavaFiles());
-		for(String clazz : addedOrModified) {
+		Set<String> addedModifiedRenamed = Sets.newHashSet();
+		addedModifiedRenamed.addAll(commit.getAddedJavaFiles());
+		addedModifiedRenamed.addAll(commit.getModifiedJavaFiles());
+		addedModifiedRenamed.addAll(commit.getRenamedJavaFiles().keySet());
+		
+		for(String clazz : addedModifiedRenamed) {
 			//update previous AST
 			ASTWrapper previousAST = currentASTs.get(clazz);
 			previousASTs.put(clazz, previousAST);
 			//update current AST
 			String url = commit.getDiff(clazz).getRawCodeURL();
-			ASTWrapper currentAST = ASTExplorer.generateAST(url);
+			ASTWrapper currentAST = ASTExplorer.generateAST(url, clazz);
 			currentASTs.put(clazz, currentAST);
 		}
 
@@ -178,21 +186,52 @@ public class ChangeImpactGraphGenerator {
 		Set<String> changedMethods = Sets.newHashSet();
 		for(String clazz : commit.getDiffs().keySet()) {
 			//generate dependency graph for method with added lines
-			ASTWrapper currentAST = currentASTs.get(clazz);
+			Map<Method, Set<Method>> adjacentNodes = Maps.newHashMap();
 
+			//do added lines
 			Map<Integer,String> addedLines = commit.getDiff(clazz).getAddedLines();
-			Map<Method, Set<Method>> adjacentNodes = ASTExplorer.getMethodsCalledByMethodsInLines(addedLines.keySet(), clazz);
+			List<Integer> addedLineNumbers = Lists.newArrayList();
+			addedLineNumbers.addAll(addedLines.keySet());
+			ASTWrapper currentAST = currentASTs.get(clazz);
+			if(!addedLineNumbers.isEmpty())
+				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(addedLineNumbers, currentASTs, currentAST));
 
+			//do removed lines
 			Map<Integer,String> removedLines = commit.getDiff(clazz).getRemovedLines();
-			Map<Method, Set<Method>> adjacentNodesFromRemovedLines = ASTExplorer.getMethodsCalledByMethodsInRemovedLines(removedLines.keySet(), clazz);
+			List<Integer> removedLineNumbers = Lists.newArrayList();
+			removedLineNumbers.addAll(removedLines.keySet());
+			String fileName = clazz;
+			//check if file was renamed
+			String oldFilePath = commit.getOldFileName(clazz);
+			if(oldFilePath != null)
+				fileName = oldFilePath;
+			//refer to the previousAST using the old filename
+			ASTWrapper previousAST = previousASTs.get(fileName);
+			if(!removedLines.isEmpty())
+				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(removedLineNumbers, currentASTs, previousAST)); 
 
-			adjacentNodes.putAll(adjacentNodesFromRemovedLines);
+			//TODO: do we want to remove deleted methods?
 			updateCurrentMethods(adjacentNodes);
 
 			Map<String, Set<String>> strAdjacentNodes = filterID(adjacentNodes);
-			currentAdjacencyList.putAll(strAdjacentNodes);
+			//update the adjacency list
+			Set<String> removedNodes = Sets.newHashSet();
+			for(String node : strAdjacentNodes.keySet()) {
+				Set<String> strAdjacentNodesSet = strAdjacentNodes.get(node);
+				if(strAdjacentNodesSet == null) 
+					removedNodes.add(node);
+				else 
+					currentAdjacencyList.put(node, strAdjacentNodesSet);
 
-			changedMethods.addAll(strAdjacentNodes.keySet());
+			}
+			removeNodesFromAdjacencyList(removedNodes);
+
+			//deleted methods do not get a graph
+			for(String methodID : strAdjacentNodes.keySet()) {
+				if(strAdjacentNodes.get(methodID) != null) {
+					changedMethods.add(methodID);
+				}
+			}
 		}
 
 		return changedMethods;
@@ -204,6 +243,19 @@ public class ChangeImpactGraphGenerator {
 			currentMethods.put(node.getId(), node);
 			for(Method adjacentNode : methodMap.get(node)) {
 				currentMethods.put(adjacentNode.getId(), adjacentNode);
+			}
+		}
+	}
+
+	//removes the node from the adjacency list
+	private void removeNodesFromAdjacencyList(Set<String> removedNodes) {
+		for(String removedNode : removedNodes) {
+			for(String node : currentAdjacencyList.keySet()) {
+				Set<String> adjacentNodes = currentAdjacencyList.get(node);
+				if(node == removedNode)
+					currentAdjacencyList.remove(removedNode);
+				else
+					adjacentNodes.remove(removedNode);
 			}
 		}
 	}
