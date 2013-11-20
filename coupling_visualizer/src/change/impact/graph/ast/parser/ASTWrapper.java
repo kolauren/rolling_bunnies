@@ -47,14 +47,6 @@ public class ASTWrapper {
 		this.className = className;
 	}
 
-	public String getPreviousSourceLoc() {
-		return previousSourceLoc;
-	}
-
-	public void setPreviousSourceLoc(String previousSourceLoc) {
-		this.previousSourceLoc = previousSourceLoc;
-	}
-
 	public String getSourceLoc() {
 		return sourceLoc;
 	}
