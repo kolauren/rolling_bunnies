@@ -126,13 +126,11 @@ public class ASTExplorer {
 		List<MethodDeclaration> currMethods = new ArrayList<MethodDeclaration>();
 		Map<Method, Set<Method>> foundMethods = new HashMap<Method, Set<Method>>();
 		
-		if (wrapperMap.get(wrapper.getSourceLoc()) != null ) {
-			ASTWrapper wrapperToUse = null;
+		if (wrapperMap.get(wrapper.getSourceLoc()) != null || currSourceLoc != null) {
+			ASTWrapper wrapperToUse = wrapperMap.get(wrapper.getSourceLoc());
 			
-			if (currSourceLoc != null) {
+			if (wrapperMap.get(wrapper.getSourceLoc()) == null) {
 				wrapperToUse = wrapperMap.get(currSourceLoc);
-			} else {
-				wrapperToUse = wrapperMap.get(wrapper.getSourceLoc());
 			}
 			
 			currMethods = getMethodDeclarations(wrapperToUse);
@@ -206,7 +204,7 @@ public class ASTExplorer {
 				}
 			}
 		} else {
-			for (MethodDeclaration method : prevMethods) {
+			for (MethodDeclaration method : currMethods) {
 				Method m = generateMethod(method, wrapper);
 				foundMethods.put(m, null);
 			}
