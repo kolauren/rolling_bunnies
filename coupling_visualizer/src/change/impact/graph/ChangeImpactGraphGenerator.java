@@ -43,7 +43,7 @@ public class ChangeImpactGraphGenerator {
 		List<CommitGraph> commitGraphs = Lists.newArrayList();
 
 		for(int i=0; i<commits.size(); i+=numCommits) {
-			System.out.println(commits.get(i));
+			System.out.println(commits.get(i).getSha());
 			CommitGraph commitGraph = new CommitGraph();
 			Set<String> changedMethods = Sets.newHashSet();
 			for(int j=0; j<numCommits && i+j < commits.size(); j++) {
