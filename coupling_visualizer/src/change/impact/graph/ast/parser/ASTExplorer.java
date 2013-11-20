@@ -145,7 +145,7 @@ public class ASTExplorer {
 					int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
 					Set<Method> bodyMethodsInvoked = null;
 					
-					if (lineNumber > startLine && lineNumber < endLine) {
+					if (lineNumber >= startLine && lineNumber < endLine) {
 						bodyMethodsInvoked = new HashSet<Method>();
 						
 						// Get the similar methods between the two ASTWrappers.
@@ -177,15 +177,19 @@ public class ASTExplorer {
 							String objectName = methodInvocation.getObjectName();
 							List<String> allClasses = generateClassNames(wrapperMap);
 							
+							String objectClassName = null;
 							if (objectName == null) {
-								objectName = wrapperToUse.getClassName();
+								// if null then we are calling a method in the same class
+								objectClassName = wrapperToUse.getClassName();
+							} else {
+								VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
+								objectClassName = variableDetail.getVariableType();
 							}
-								
-								// Find all the variables that the MethodInvocation uses.
-							VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
 							
-							if (variableDetail != null) {
-								ASTWrapper wrapperMethodIsIn = getRelatedWrapper(allClasses, wrapperMap, variableDetail.getVariableType());
+							
+							if (objectClassName != null) {
+								
+								ASTWrapper wrapperMethodIsIn = getRelatedWrapper(allClasses, wrapperMap, objectClassName);
 
 								if (wrapperMethodIsIn != null) {
 									List<MethodDeclaration> methodDeclarations = getMethodDeclarations(wrapperMethodIsIn);
@@ -267,15 +271,17 @@ public class ASTExplorer {
 			List<String> currMethodParams = getParameterTypes(m);
 			
 			if (methodName.equals(currMethodName) && methodParams.size() == currMethodParams.size()) {
-				for (int i = 0; i < methodParams.size(); i++) {
-					if (!methodParams.get(i).equals(currMethodParams.get(i))) {
-						break;
-					}
-					
-					if (i == methodParams.size() - 1) {
-						return m;
-					}
-				}
+				return m;
+				// refactor this later to account for parameter types
+//				for (int i = 0; i < methodParams.size(); i++) {
+//					if (!methodParams.get(i).equals(currMethodParams.get(i))) {
+//						break;
+//					}
+//					
+//					if (i == methodParams.size() - 1) {
+//						return m;
+//					}
+//				}
 			}
 		}
 		
