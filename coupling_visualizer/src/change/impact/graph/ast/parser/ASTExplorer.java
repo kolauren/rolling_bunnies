@@ -177,21 +177,23 @@ public class ASTExplorer {
 							String objectName = methodInvocation.getObjectName();
 							List<String> allClasses = generateClassNames(wrapperMap);
 							
-							if (objectName != null) {
-								// Find all the variables that the MethodInvocation uses.
-								VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
+							if (objectName == null) {
+								objectName = wrapperToUse.getClassName();
+							}
 								
-								if (variableDetail != null) {
-									ASTWrapper wrapperMethodIsIn = getRelatedWrapper(allClasses, wrapperMap, variableDetail.getVariableType());
+								// Find all the variables that the MethodInvocation uses.
+							VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
+							
+							if (variableDetail != null) {
+								ASTWrapper wrapperMethodIsIn = getRelatedWrapper(allClasses, wrapperMap, variableDetail.getVariableType());
 
-									if (wrapperMethodIsIn != null) {
-										List<MethodDeclaration> methodDeclarations = getMethodDeclarations(wrapperMethodIsIn);
-										
-										if (methodDeclarations != null) {
-											for (MethodDeclaration methodDeclaration : methodDeclarations) {
-												if (methodDeclaration.getName().toString().equals(methodName)) {
-													bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapperMethodIsIn));
-												}
+								if (wrapperMethodIsIn != null) {
+									List<MethodDeclaration> methodDeclarations = getMethodDeclarations(wrapperMethodIsIn);
+									
+									if (methodDeclarations != null) {
+										for (MethodDeclaration methodDeclaration : methodDeclarations) {
+											if (methodDeclaration.getName().toString().equals(methodName)) {
+												bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapperMethodIsIn));
 											}
 										}
 									}
@@ -257,9 +259,23 @@ public class ASTExplorer {
 	 * @return
 	 */
 	private static MethodDeclaration getSameMethodDeclaration(List<MethodDeclaration> currMethods, MethodDeclaration method) {
+		String methodName = method.getName().toString();
+		List<String> methodParams = getParameterTypes(method);
+		
 		for (MethodDeclaration m : currMethods) {
-			if (method.getName().toString().equals(m.getName().toString())) {
-				return m;
+			String currMethodName = m.getName().toString();
+			List<String> currMethodParams = getParameterTypes(m);
+			
+			if (methodName.equals(currMethodName) && methodParams.size() == currMethodParams.size()) {
+				for (int i = 0; i < methodParams.size(); i++) {
+					if (!methodParams.get(i).equals(currMethodParams.get(i))) {
+						break;
+					}
+					
+					if (i == methodParams.size() - 1) {
+						return m;
+					}
+				}
 			}
 		}
 		
@@ -391,6 +407,8 @@ public class ASTExplorer {
 		
 		if (packageName != null) {
 			id = id + packageName + " ";
+		} else {
+			System.out.println("");
 		}
 		
 		if (className != null) {
