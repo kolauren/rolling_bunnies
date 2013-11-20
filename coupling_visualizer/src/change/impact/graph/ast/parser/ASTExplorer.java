@@ -300,7 +300,12 @@ public class ASTExplorer {
 	 * @return
 	 */
 	private static Method generateMethod(MethodDeclaration method, ASTWrapper wrapper) {
-		String packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
+		String packageName = null;
+		
+		if (wrapper.getCompilationUnit().getPackage() != null) {
+			packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
+		}
+		
 		String className = wrapper.getClassName();
 		String methodName = method.getName().toString();
 		List<String> parameters = getParameterTypes(method);
