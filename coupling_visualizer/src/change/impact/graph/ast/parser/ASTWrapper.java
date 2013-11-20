@@ -19,10 +19,10 @@ public class ASTWrapper {
 		this.parser = parser;
 		this.cUnit = cUnit;
 		
-		TypeDeclarationVisitor typeVisitor = new TypeDeclarationVisitor();
-		cUnit.accept(typeVisitor);
+		ASTExplorerVisitor visitor = new ASTExplorerVisitor();
+		cUnit.accept(visitor);
 		
-		this.className = typeVisitor.getClassName();
+		this.className = visitor.getClassName();
 		this.setSourceLoc(sourceLoc);
 	}
 	

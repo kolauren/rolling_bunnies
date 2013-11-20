@@ -2,8 +2,6 @@ package change.impact.graph.driver;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,29 +14,19 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.internal.core.search.matching.SuperTypeNamesCollector.TypeDeclarationVisitor;
 import org.javatuples.Triplet;
 
-import change.impact.graph.ast.parser.ASTExplorer;
 import change.impact.graph.ast.parser.ASTExplorerVisitor;
-import change.impact.graph.ast.parser.ASTWrapper;
-import change.impact.graph.ast.parser.MethodDeclarationVisitor;
-import change.impact.graph.ast.parser.MethodInvocationVisitor;
-import change.impact.graph.ast.parser.SingleVariableDeclarationVisitor;
-import change.impact.graph.ast.parser.TypeDeclarationVisitor;
-import change.impact.graph.ast.parser.VariableDeclarationStatementVisitor;
+import change.impact.graph.ast.parser.MethodInvocationDetails;
 import change.impact.graph.ast.parser.VariableDetails;
 
 public class JavaParserTest {
@@ -80,13 +68,34 @@ public class JavaParserTest {
 	private static void testASTExplorer(CompilationUnit cUnit) {
 		ASTExplorerVisitor visitor = new ASTExplorerVisitor();
 		cUnit.accept(visitor);
-		List<MethodDeclaration> methods = visitor.getMethodDeclarations();
 		
-		for (MethodDeclaration method : methods) {
+		System.out.println("MethodDeclarations in " + visitor.getClassName() + ":");
+		for (MethodDeclaration method : visitor.getMethodDeclarations()) {
 			System.out.println(method.getName());
-		}
+			
+			visitor = new ASTExplorerVisitor();
+			method.accept(visitor);
+			
+			System.out.println("\tMethodInvocations:");
+			for (MethodInvocationDetails methodInvocation : visitor.getMethodInvocations()) {
+				System.out.println("\t\t" + methodInvocation.getObjectName() + " " + methodInvocation.getMethodName() + " " + methodInvocation.getStartLine());
+			}
 
-		List<VariableDetails> variableDetails = visitor.getSingleVariableDeclarations();
+			System.out.println();
+			System.out.println("\tSingleVariableDeclarations:");
+			for (VariableDetails variableDetail : visitor.getSingleVariableDeclarations()) {
+				System.out.println("\t\t" + variableDetail.getVariableType() + " " + variableDetail.getVariableName() + " " + variableDetail.getStartLine());
+			}
+
+			System.out.println();
+			System.out.println("\tVariableDeclarations:");
+			for (VariableDetails variableDetail : visitor.getVariableDeclarations()) {
+				System.out.println("\t\t" + variableDetail.getVariableType() + " " + variableDetail.getVariableName() + " " + variableDetail.getStartLine());
+			}
+			System.out.println();
+			System.out.println("-----------------------------------------------------------------");
+			System.out.println();
+		}
 	}
 
 	private static String parseJavaFile() throws IOException {
@@ -180,82 +189,5 @@ public class JavaParserTest {
 		System.out.println("Expression : " + e1.resolveTypeBinding());
 		System.out.println("----------------------------");
 		System.out.println();
-	}
-	
-	private static void runTrialErrorTest(CompilationUnit cUnit) {
-		MethodDeclarationVisitor visitor = new MethodDeclarationVisitor();
-		TypeDeclarationVisitor visiter = new TypeDeclarationVisitor();
-
-		cUnit.accept(visiter);
-		System.out.println("Class Name : " + visiter.getClassName());
-		System.out.println();
-
-		cUnit.accept(visitor);
-
-		for (MethodDeclaration method : visitor.getMethods()) {
-			System.out.println("Method Name: " + method.getName().toString());
-			if (method.getReturnType2() != null) {
-				System.out.println("Return Type: " + method.getReturnType2().toString());
-			}
-			System.out.print("Parameter  : ");
-
-			for (Object param : method.parameters()) {
-				String p = param.toString();
-				String[] splitString = p.split("\\s+");
-				// System.out.print(splitString[0] + " ");
-			}
-			// System.out.println();
-
-			int start = cUnit.getLineNumber(method.getStartPosition());
-			int end = cUnit.getLineNumber(method.getStartPosition()
-					+ method.getLength());
-
-			// System.out.println("Starting   : " + start);
-			// System.out.println("End        : " + end);
-			// System.out.println();
-
-			System.out.println("--- Inner Methods ---");
-			Block block = method.getBody();
-			MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
-			block.accept(methodInvocationVisitor);
-			List<Triplet<String, String, Integer>> methodInvocationTriplets = getActualPositions(methodInvocationVisitor.getMethodInvocations(), cUnit);
-			
-			// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
-			VariableDeclarationStatementVisitor variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor();
-			block.accept(variableDeclarationStatementVisitor);
-			SingleVariableDeclarationVisitor singleVariableDeclarationVisitor = new SingleVariableDeclarationVisitor();
-			block.accept(singleVariableDeclarationVisitor);
-			
-			List<Triplet<String, String, Integer>> variableDeclarationTriplet = getActualPositions(variableDeclarationStatementVisitor.getVariableTriplets(), cUnit);
-			List<Triplet<String, String, Integer>> singleVariableDeclarationTriplet = getActualPositions(singleVariableDeclarationVisitor.getVariableTriplets(), cUnit);
-			
-			for (Triplet<String, String, Integer> triplet : methodInvocationTriplets) {
-				System.out.println("Method: " + triplet.getValue0() + " Object: " + triplet.getValue1() + " Position: " + triplet.getValue2());
-			}
-			for (Triplet<String, String, Integer> triplet : variableDeclarationTriplet) {
-				System.out.println("Type: " + triplet.getValue0() + " Name: " + triplet.getValue1() + " Position: " + triplet.getValue2());
-			}
-			for (Triplet<String, String, Integer> triplet : singleVariableDeclarationTriplet) {
-				System.out.println("Type: " + triplet.getValue0() + " Name: " + triplet.getValue1() + " Position: " + triplet.getValue2());
-			}
-			
-			for (Triplet<String, String, Integer> triplet : methodInvocationVisitor.getMethodInvocations()) {
-				// System.out.println("Triplets: ---------------------------------------------------------------");
-				// System.out.println("Method: " + triplet.getValue0());
-				// System.out.println("Object: " + triplet.getValue1());
-				// System.out.println("Start : " + triplet.getValue2());
-				// System.out.println("-------------------------------------------------------------------------");
-			}
-			
-			block.accept(new ASTVisitor() {
-				public boolean visit(SingleVariableDeclaration node) {
-					System.out.println("Name: " + node.getType());
-					return true;
-				}
-			});
-			
-			System.out.println("---------------------");
-			System.out.println();
-		}
 	}
 }

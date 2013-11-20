@@ -150,28 +150,24 @@ public class ASTExplorer {
 						
 						// Grab every MethodInvocation node and extract information.
 						Block block = mapMethod.getBody();
-						MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
-						block.accept(methodInvocationVisitor);
-						List<Triplet<String, String, Integer>> methodInvocationTriplets = getActualPositions(methodInvocationVisitor.getMethodInvocations(), wrapper);
+						ASTExplorerVisitor visitor = new ASTExplorerVisitor();
+						block.accept(visitor);
+						List<MethodInvocationDetails> methodInvocations = getActualMethodPositions(visitor.getMethodInvocations(), wrapper);
 						
 						// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
-						VariableDeclarationStatementVisitor variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor();
-						block.accept(variableDeclarationStatementVisitor);
-						SingleVariableDeclarationVisitor singleVariableDeclarationVisitor = new SingleVariableDeclarationVisitor();
-						block.accept(singleVariableDeclarationVisitor);
-						List<Triplet<String, String, Integer>> variableDeclarationTriplets = getActualPositions(variableDeclarationStatementVisitor.getVariableTriplets(), wrapper);
-						List<Triplet<String, String, Integer>> singleVariableDeclarationTriplets = getActualPositions(singleVariableDeclarationVisitor.getVariableTriplets(), wrapper);
+						List<VariableDetails> variableDeclarations = getActualVariablePositions(visitor.getVariableDeclarations(), wrapper);
+						List<VariableDetails> singleVariableDeclarations = getActualVariablePositions(visitor.getSingleVariableDeclarations(), wrapper);
 						
 						// Combine both types of variables into one list.
-						List<Triplet<String, String, Integer>> variableTriplets = new ArrayList<Triplet<String, String, Integer>>();
-						variableTriplets.addAll(variableDeclarationTriplets);
-						variableTriplets.addAll(singleVariableDeclarationTriplets);
+						List<VariableDetails> variableDetails = new ArrayList<VariableDetails>();
+						variableDetails.addAll(variableDeclarations);
+						variableDetails.addAll(singleVariableDeclarations);
 						
 						// For each of the MethodInvocation, add in the methods that are part of the workspace into bodyMethodsInvoked.
-						for (Triplet<String, String, Integer> triplet : methodInvocationTriplets) {
-							String methodName = triplet.getValue0();
-							String objectName = triplet.getValue1();
-							int position = triplet.getValue2();
+						for (MethodInvocationDetails methodInvocation : methodInvocations) {
+							String methodName = methodInvocation.getMethodName();
+							String objectName = methodInvocation.getObjectName();
+							int position = methodInvocation.getStartLine();
 							List<String> allClasses = generateClasses(wrapperMap);
 							
 							if (objectName == null) {
@@ -179,11 +175,11 @@ public class ASTExplorer {
 								bodyMethodsInvoked.add(generateMethod(packageName, wrapper.getClassName(), methodName, position));
 							} else {
 								// Find all the variables that the MethodInvocation uses.
-								Triplet<String, String, Integer> varTriplet = findRelatedVariable(objectName, variableTriplets);
+								VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
 								
 								// If the className from the triplet is in the list of classes, add it in to the list too.
-								if (varTriplet != null && allClasses.contains(varTriplet.getValue0())) {
-									bodyMethodsInvoked.add(generateMethod(null, varTriplet.getValue0(), methodName, position));
+								if (variableDetail != null && allClasses.contains(variableDetail.getVariableType())) {
+									bodyMethodsInvoked.add(generateMethod(null, variableDetail.getVariableType(), methodName, position));
 								}
 							}
 						}
@@ -251,29 +247,47 @@ public class ASTExplorer {
 	 */
 	private static List<MethodDeclaration> getMethodDeclarations(ASTWrapper wrapper) {
 		// Using the MethodDeclarationVisitor, visit all the MethodDeclaration nodes.
-		MethodDeclarationVisitor methodVisitor = new MethodDeclarationVisitor();
+		ASTExplorerVisitor visitor = new ASTExplorerVisitor();
 		//methodVisitor.visit(wrapper.getCompilationUnit());
-		wrapper.getCompilationUnit().accept(methodVisitor);
+		wrapper.getCompilationUnit().accept(visitor);
 		
-		return methodVisitor.getMethods();
+		return visitor.getMethodDeclarations();
 	}
 	
 	/**
 	 * Get the actual positions of the method.
 	 * 
-	 * @param triplets
+	 * @param list
 	 * @param wrapper
 	 * @return
 	 */
-	private static List<Triplet<String, String, Integer>> getActualPositions(List<Triplet<String, String, Integer>> triplets, ASTWrapper wrapper) {
-		List<Triplet<String, String, Integer>> newTriplets = new ArrayList<Triplet<String, String, Integer>>();
+	private static List<MethodInvocationDetails> getActualMethodPositions(List<MethodInvocationDetails> details, ASTWrapper wrapper) {
+		List<MethodInvocationDetails> newDetails = new ArrayList<MethodInvocationDetails>();
 		
-		for (Triplet<String, String, Integer> triplet : triplets) {
-			int actual = wrapper.getCompilationUnit().getLineNumber(triplet.getValue2());
-			newTriplets.add(new Triplet<String, String, Integer>(triplet.getValue0(), triplet.getValue1(), actual));
+		for (MethodInvocationDetails detail : details) {
+			int actual = wrapper.getCompilationUnit().getLineNumber(detail.getStartLine());
+			newDetails.add(new MethodInvocationDetails(detail.getMethodInvocation(), detail.getMethodName(), detail.getObjectName(), actual));
 		}
 		
-		return newTriplets;
+		return newDetails;
+	}
+	
+	/**
+	 * Get the actual positions of the variables.
+	 * 
+	 * @param list
+	 * @param wrapper
+	 * @return
+	 */
+	private static List<VariableDetails> getActualVariablePositions(List<VariableDetails> details, ASTWrapper wrapper) {
+		List<VariableDetails> newDetails = new ArrayList<VariableDetails>();
+		
+		for (VariableDetails detail : details) {
+			int actual = wrapper.getCompilationUnit().getLineNumber(detail.getStartLine());
+			newDetails.add(new VariableDetails(detail.getVariableType(), detail.getVariableName(), actual));
+		}
+		
+		return newDetails;
 	}
 	
 	/**
@@ -283,10 +297,10 @@ public class ASTExplorer {
 	 * @param variableTriplets
 	 * @return
 	 */
-	private static Triplet<String, String, Integer> findRelatedVariable(String objectName, List<Triplet<String, String, Integer>> variableTriplets) {
-		for (Triplet<String, String, Integer> triplet : variableTriplets) {
-			if (objectName.equals(triplet.getValue1())) {
-				return triplet; 
+	private static VariableDetails findRelatedVariable(String objectName, List<VariableDetails> variableDetails) {
+		for (VariableDetails variableDetail : variableDetails) {
+			if (objectName.equals(variableDetail.getVariableName())) {
+				return variableDetail; 
 			}
 		}
 		return null;
