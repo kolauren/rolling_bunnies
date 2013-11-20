@@ -319,7 +319,8 @@ public class ASTExplorer {
 	 * @return
 	 */
 	private static Method generateMethod(String packageName, String className, String methodName, int startLine) {
-		String id = generateMethodID(packageName, className, methodName, null);
+		List<String> parameters = new ArrayList<String>();
+		String id = generateMethodID(packageName, className, methodName, parameters);
 		
 		return new Method(id, packageName, className, methodName, null, startLine, 0);
 	}
