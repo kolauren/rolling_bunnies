@@ -182,12 +182,16 @@ public class ASTExplorer {
 								VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
 								
 								if (variableDetail != null) {
-									List<MethodDeclaration> methodDeclarations = getRelatedMethodDeclarations(allClasses, wrapperMap, variableDetail.getVariableType());
-									
-									if (methodDeclarations != null) {
-										for (MethodDeclaration methodDeclaration : methodDeclarations) {
-											if (methodDeclaration.getName().toString().equals(methodName)) {
-												bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapperToUse));
+									ASTWrapper wrapperMethodIsIn = getRelatedWrapper(allClasses, wrapperMap, variableDetail.getVariableType());
+
+									if (wrapperMethodIsIn != null) {
+										List<MethodDeclaration> methodDeclarations = getMethodDeclarations(wrapperMethodIsIn);
+										
+										if (methodDeclarations != null) {
+											for (MethodDeclaration methodDeclaration : methodDeclarations) {
+												if (methodDeclaration.getName().toString().equals(methodName)) {
+													bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapperMethodIsIn));
+												}
 											}
 										}
 									}
@@ -233,14 +237,12 @@ public class ASTExplorer {
 		return classes;
 	}
 	
-	private static List<MethodDeclaration> getRelatedMethodDeclarations(List<String> allClasses, Map<String, ASTWrapper> wrapperMap, String classToSearch) {
+	private static ASTWrapper getRelatedWrapper(List<String> allClasses, Map<String, ASTWrapper> wrapperMap, String classToSearch) {
 		for (String key : wrapperMap.keySet()) {
 			ASTWrapper wrapper = wrapperMap.get(key);
 			
 			if (classToSearch.equals(wrapper.getClassName())) {
-				List<MethodDeclaration> methods = getMethodDeclarations(wrapper);
-				
-				return methods;
+				return wrapper;
 			}
 		}
 		
@@ -256,7 +258,7 @@ public class ASTExplorer {
 	 */
 	private static MethodDeclaration getSameMethodDeclaration(List<MethodDeclaration> currMethods, MethodDeclaration method) {
 		for (MethodDeclaration m : currMethods) {
-			if (method.equals(m)) {
+			if (method.getName().toString().equals(m.getName().toString())) {
 				return m;
 			}
 		}
@@ -388,11 +390,11 @@ public class ASTExplorer {
 		String id = "";
 		
 		if (packageName != null) {
-			id = packageName + " ";
+			id = id + packageName + " ";
 		}
 		
 		if (className != null) {
-			id = className + " ";
+			id = id + className + " ";
 		}
 		
 		id = id + methodName;
