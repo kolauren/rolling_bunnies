@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.javatuples.Triplet;
 
 import change.impact.graph.Method;
 
@@ -167,7 +166,6 @@ public class ASTExplorer {
 						for (MethodInvocationDetails methodInvocation : methodInvocations) {
 							String methodName = methodInvocation.getMethodName();
 							String objectName = methodInvocation.getObjectName();
-							int position = methodInvocation.getStartLine();
 							List<String> allClasses = generateClassNames(wrapperMap);
 							
 							if (objectName != null) {

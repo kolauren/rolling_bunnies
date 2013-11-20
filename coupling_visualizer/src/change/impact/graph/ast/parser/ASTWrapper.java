@@ -1,12 +1,9 @@
 package change.impact.graph.ast.parser;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-
-import change.impact.graph.Method;
 
 public class ASTWrapper {
 	//this class is a wrapper for Eclipse AST objects
