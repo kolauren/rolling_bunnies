@@ -206,12 +206,6 @@ public class ASTExplorer {
 			}
 		}
 		
-		System.out.println(foundMethods.toString());
-		for (Method s : foundMethods.keySet()) {
-			System.out.println("HURR " + s.getClassName());
-			System.out.println("DURR " + foundMethods.get(s));
-		}
-		
 		return foundMethods;
 	}
 
