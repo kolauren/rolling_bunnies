@@ -27,16 +27,20 @@ DependencyWheel.prototype = {
   opacity_increment: 0.1,
   impact_mode: "multiline", // either "thickness" or "multiline"
   d3data: null,
+  nodeGlow: null,
 
   init: function(options) {
 
+      this.nodeGlow = glow("nodeGlow").rgb("#7f7f7f").stdDeviation(3);
+      
     // create the main svg
     this.svg = d3.select(this.options.selector)
       .append("svg:svg")
       .attr("width", (this.options.radius * 2.5))
       .attr("height", (this.options.radius * 2.1))
       .append("svg:g")
-      .attr("transform", "translate(" + (this.options.radius * 1.25) + "," + (this.options.radius) + ")");
+      .attr("transform", "translate(" + (this.options.radius * 1.25) + "," + (this.options.radius) + ")")
+      .call(this.nodeGlow);
 
     // create the wheel
     this.svg.append("svg:path")
@@ -64,13 +68,17 @@ DependencyWheel.prototype = {
     this.tooltip = d3.select("body").append("div")   
     .attr("class", "tooltip")               
     .style("opacity", 0);
+      
+    
 
   },
     
   classOver: function(t) {
       // highlight nodes
         d3.selectAll("g").selectAll("." + t.class)
-            .style('opacity', 1);
+            .style('opacity', 1)
+            .style('stroke', 'white')
+            .style('stroke-width', 2);
       
       // highlight node labels
         $("." + t.class).siblings()
@@ -83,7 +91,12 @@ DependencyWheel.prototype = {
       //     .style("top", (d3.event.pageY - 50) + "px");
       
       // Search for dependencies connected to this node and thicken dependencies
-      d3.select("g").selectAll("path").filter(".edge.source-" + t.method_id)
+      d3.select("g").selectAll("path")
+        .filter(".edge.source-" + t.method_id)
+        .style('opacity', 1);
+      
+      d3.select("g").selectAll("path")
+        .filter(".edge.target-" + t.method_id)
         .style('opacity', 1);
       
   },
@@ -92,12 +105,18 @@ DependencyWheel.prototype = {
       var self = this;
       // de-stroke node
       d3.selectAll("g").selectAll("." + t.class)
-        .style('opacity', self.opacity);
+        .style('opacity', self.opacity)
+        .style('stroke-width', 0);
       //this.tooltip.transition().duration(500).style("opacity", 0); 
       
       // de-highlight dependencies
-      d3.select("g").selectAll("path").filter(".edge.source-" + t.method_id)
+      d3.select("g").selectAll("path")
+        .filter(".edge.source-" + t.method_id)
         .style('opacity', self.opacity);
+      
+      d3.select("g").selectAll("path")
+        .filter(".edge.target-" + t.method_id)
+        .style('opacity', 0.5);
       
       // de-highlight node labels
         $("." + t.class).siblings()
@@ -117,7 +136,7 @@ DependencyWheel.prototype = {
         .data(d3data.edges).enter().append("svg:path")
         .attr("class", function(d) { return "edge " + d.class; })
         .style("stroke", function(d) { 
-          return self.utils.getColour(d.source.hue, 70, 60); })
+          return self.utils.getColour(d.source.hue, 70, 70); })
         .style("opacity", self.opacity)
         .style("stroke-dasharray", ("3, 3"))
         .attr("d", function(d, i) { return self.options.line(splines[i]); });
@@ -127,7 +146,7 @@ DependencyWheel.prototype = {
         .data(d3data.edges).enter().append("svg:path")
         .attr("class", function(d) { return "animate " + d.class; })
         .style("stroke", function(d) { 
-          return self.utils.getColour(d.source.hue, 70, 60); })
+          return self.utils.getColour(d.source.hue, 70, 70); })
         .style('opacity', 0)
         .attr("d", function(d, i) { return self.options.line(splines[i]); });
 
@@ -152,7 +171,8 @@ DependencyWheel.prototype = {
         .data(d3data.nodes.filter(function(n) { return !n.children; }))
         .enter().append("svg:g")
         .attr("class", "node")
-        .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; });
+        .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+        .style("filter", "url(#nodeGlow)");
 
       node.append("svg:circle")
         .attr("class", function(d) { return d.class })
@@ -232,7 +252,8 @@ DependencyWheel.prototype = {
                 .data(data).enter().append("svg:path")
                 .attr("class", function(d) { return "impact_edge source-" + e.source + " target-" + e.target; })
                 .style("stroke", "#DDDDDD")
-                .style("opacity", 0.8)
+                .style("filter", "url(#nodeGlow)")
+                .style("opacity", 0.9)
                 .attr("d", function(d, i) { 
                   var prev_spline = {};
                   var difference = 0;

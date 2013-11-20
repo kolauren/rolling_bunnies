@@ -9,6 +9,10 @@ import com.google.common.collect.Sets;
 public class ChangeImpactGraph implements AdjacencyList<CommitMethod, String> {
 	private Map<CommitMethod,Set<String>> adjacencyList;
 	private CommitMethod root;
+	
+	public ChangeImpactGraph() {
+		adjacencyList = Maps.newHashMap();
+	}
 
 	public CommitMethod getCommitMethod(String id) {
 		Set<CommitMethod> methods = adjacencyList.keySet();

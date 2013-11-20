@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -28,17 +27,23 @@ public class ChangeImpactGraphGenerator {
 	//never removes a method once its added
 	private Map<String,Method> currentMethods;
 
+	private Map<String,ASTWrapper> backupASTs;
+	private Map<String,ASTWrapper> backupBackupASTs;
+
 	public ChangeImpactGraphGenerator() {
 		currentASTs = Maps.newHashMap();
 		previousASTs = Maps.newHashMap();
 		currentAdjacencyList = Maps.newHashMap();
 		currentMethods = Maps.newHashMap();
+		backupASTs = Maps.newHashMap();
+		backupBackupASTs = Maps.newHashMap();
 	}
 
 	public List<CommitGraph> generate(List<Commit> commits, int numCommits) throws MalformedURLException, IOException {
 		List<CommitGraph> commitGraphs = Lists.newArrayList();
 
 		for(int i=0; i<commits.size(); i+=numCommits) {
+			System.out.println(commits.get(i).getSha());
 			CommitGraph commitGraph = new CommitGraph();
 			Set<String> changedMethods = Sets.newHashSet();
 			for(int j=0; j<numCommits && i+j < commits.size(); j++) {
@@ -48,7 +53,7 @@ public class ChangeImpactGraphGenerator {
 					commitGraph.setCommit_SHA(commit.getSha());
 				else
 					commitGraph.setCommit_SHA(commitGraph.getCommit_SHA()+"_"+commit.getSha());
-				
+
 				changedMethods.addAll(updateState(commit));
 			}
 			commitGraph.setGraphs(generateGraphsForChangedMethods(changedMethods));
@@ -56,7 +61,7 @@ public class ChangeImpactGraphGenerator {
 		}
 		return commitGraphs;
 	}
-	
+
 	Set<String> updateState(Commit commit) throws MalformedURLException, IOException {
 		updateASTs(commit);
 		Set<String> changedMethods = updateCurrentAdjacencyListAndMethods(commit);
@@ -134,9 +139,13 @@ public class ChangeImpactGraphGenerator {
 			}
 		}
 	}
-	
+
 	//store method ids only
 	private Set<String> filterID(Set<Method> methods) {
+		//the method was removed so it has a null method invocation set
+		if(methods == null)
+			return null;
+
 		Set<String> ids = Sets.newHashSet();
 		for(Method method : methods) {
 			boolean unique = ids.add(method.getId());
@@ -157,19 +166,57 @@ public class ChangeImpactGraphGenerator {
 
 	private void updateASTs(Commit commit) throws MalformedURLException, IOException {
 		//add new and modified ASTs
-		Iterable<String> addedOrModified = Iterables.concat(commit.getAddedJavaFiles(), commit.getModifiedJavaFiles());
-		for(String clazz : addedOrModified) {
+		Set<String> addedModifiedRenamed = Sets.newHashSet();
+		addedModifiedRenamed.addAll(commit.getAddedJavaFiles());
+		addedModifiedRenamed.addAll(commit.getModifiedJavaFiles());
+		addedModifiedRenamed.addAll(commit.getRenamedJavaFiles().keySet());
+
+		for(String clazz : addedModifiedRenamed) {
+			String oldName = commit.getOldFileName(clazz);
+			String previousName = oldName == null ? clazz : oldName;
 			//update previous AST
-			ASTWrapper previousAST = currentASTs.get(clazz);
-			previousASTs.put(clazz, previousAST);
+			ASTWrapper previousAST = currentASTs.get(previousName);
+			//TODO: this is a hack to deal with branch merging
+			if(oldName != null && previousAST == null) {
+				previousAST = backupASTs.get(oldName);
+				if(previousAST == null) {
+					previousAST = backupBackupASTs.get(oldName);
+					//probably regex'd some comment that had class definition in it
+					if(previousAST == null && commit.getModifiedJavaFiles().contains(clazz)) {
+						previousAST = currentASTs.get(clazz);
+						oldName = clazz;
+						commit.getRenamedJavaFiles().put(clazz, null);
+						previousName = clazz;
+					}
+				}
+			}
+
+
+
+			previousASTs.put(previousName, previousAST);
 			//update current AST
-			String url = commit.getDiff(clazz).getRawCodeURL();
-			ASTWrapper currentAST = ASTExplorer.generateAST(url);
-			currentASTs.put(clazz, currentAST);
+			//project rename only; code is the same
+			if(commit.getDiff(clazz).isProjectRename()) {
+				currentASTs.put(clazz, previousAST);
+			} else {
+				String url = commit.getDiff(clazz).getRawCodeURL();
+				ASTWrapper currentAST = ASTExplorer.generateAST(url, clazz);
+				currentASTs.put(clazz, currentAST);
+			}
+			//TODO: clean up old ASTs
+			if(oldName != null && !oldName.equals(clazz)) {
+				backupBackupASTs.put(oldName, backupASTs.get(oldName));
+				backupASTs.put(oldName, currentASTs.get(oldName));
+				currentASTs.remove(oldName);
+			}
 		}
 
 		for(String clazz : commit.getRemovedJavaFiles()) {
-			previousASTs.put(clazz, currentASTs.get(clazz));
+			ASTWrapper previousAST = currentASTs.get(clazz);
+			//TODO: this is a hack to deal with removed, branch merging
+			if(previousAST == null)
+				previousAST = ASTExplorer.generateAST(commit.getDiff(clazz).getRawCodeURL(), clazz);
+			previousASTs.put(clazz, previousAST);
 			currentASTs.remove(clazz);
 		}
 	}
@@ -178,21 +225,57 @@ public class ChangeImpactGraphGenerator {
 		Set<String> changedMethods = Sets.newHashSet();
 		for(String clazz : commit.getDiffs().keySet()) {
 			//generate dependency graph for method with added lines
-			ASTWrapper currentAST = currentASTs.get(clazz);
+			Map<Method, Set<Method>> adjacentNodes = Maps.newHashMap();
 
+			//do added lines
 			Map<Integer,String> addedLines = commit.getDiff(clazz).getAddedLines();
-			Map<Method, Set<Method>> adjacentNodes = ASTExplorer.getMethodsCalledByMethodsInLines(addedLines.keySet(), clazz);
+			List<Integer> addedLineNumbers = Lists.newArrayList();
+			addedLineNumbers.addAll(addedLines.keySet());
+			ASTWrapper currentAST = currentASTs.get(clazz);
+			if(!addedLineNumbers.isEmpty())
+				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(addedLineNumbers, currentASTs, currentAST, null));
 
+			//do removed lines
 			Map<Integer,String> removedLines = commit.getDiff(clazz).getRemovedLines();
-			Map<Method, Set<Method>> adjacentNodesFromRemovedLines = ASTExplorer.getMethodsCalledByMethodsInRemovedLines(removedLines.keySet(), clazz);
+			List<Integer> removedLineNumbers = Lists.newArrayList();
+			removedLineNumbers.addAll(removedLines.keySet());
+			String fileName = clazz;
+			//check if file was renamed
+			String oldFilePath = commit.getOldFileName(clazz);
+			String currFilePath = null;
+			if(oldFilePath != null) {
+				fileName = oldFilePath;
+				currFilePath = clazz;
+			}
+			//refer to the previousAST using the old filename
+			ASTWrapper previousAST = previousASTs.get(fileName);
+			if(!removedLines.isEmpty())
+				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(removedLineNumbers, currentASTs, previousAST, currFilePath)); 
 
-			adjacentNodes.putAll(adjacentNodesFromRemovedLines);
+			//TODO: do we want to remove deleted methods?
 			updateCurrentMethods(adjacentNodes);
 
 			Map<String, Set<String>> strAdjacentNodes = filterID(adjacentNodes);
-			currentAdjacencyList.putAll(strAdjacentNodes);
+			//update the adjacency list
+			Set<String> removedNodes = Sets.newHashSet();
+			for(String node : strAdjacentNodes.keySet()) {
+				Set<String> strAdjacentNodesSet = strAdjacentNodes.get(node);
+				if(strAdjacentNodesSet == null) 
+					removedNodes.add(node);
+				else 
+					currentAdjacencyList.put(node, strAdjacentNodesSet);
 
-			changedMethods.addAll(strAdjacentNodes.keySet());
+			}
+			//clean up removed methods
+			//TODO: remove methods from removed files
+			removeNodesFromAdjacencyList(removedNodes);
+
+			//deleted methods do not get a graph
+			for(String methodID : strAdjacentNodes.keySet()) {
+				if(strAdjacentNodes.get(methodID) != null) {
+					changedMethods.add(methodID);
+				}
+			}
 		}
 
 		return changedMethods;
@@ -202,8 +285,27 @@ public class ChangeImpactGraphGenerator {
 	private void updateCurrentMethods(Map<Method, Set<Method>> methodMap) {
 		for(Method node : methodMap.keySet()) {
 			currentMethods.put(node.getId(), node);
-			for(Method adjacentNode : methodMap.get(node)) {
-				currentMethods.put(adjacentNode.getId(), adjacentNode);
+			Set<Method> adjacentNodes = methodMap.get(node);
+			//method was deleted
+			if(adjacentNodes == null) {
+				currentMethods.remove(node.getId());
+			} else {
+				for(Method adjacentNode : methodMap.get(node)) {
+					currentMethods.put(adjacentNode.getId(), adjacentNode);
+				}
+			}
+		}
+	}
+
+	//removes the node from the adjacency list
+	private void removeNodesFromAdjacencyList(Set<String> removedNodes) {
+		for(String removedNode : removedNodes) {
+			for(String node : currentAdjacencyList.keySet()) {
+				Set<String> adjacentNodes = currentAdjacencyList.get(node);
+				if(node == removedNode)
+					currentAdjacencyList.remove(removedNode);
+				else
+					adjacentNodes.remove(removedNode);
 			}
 		}
 	}

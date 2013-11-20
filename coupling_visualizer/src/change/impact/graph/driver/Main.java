@@ -4,63 +4,44 @@ package change.impact.graph.driver;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
-import change.impact.graph.CommitCouplingAnalyzer;
+import change.impact.graph.ChangeImpactGraphGenerator;
+import change.impact.graph.CommitGraph;
 import change.impact.graph.commit.Commit;
 import change.impact.graph.commit.CommitRetriever;
-import change.impact.graph.commit.Diff;
-import change.impact.graph.commit.UnifiedDiffParser;
+import change.impact.graph.json.JsonBuilder;
+import change.impact.graph.json.JsonCommitGraph;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Main {
 	public static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		
-		/*
-		//testing commit parser
-		//TODO: move args
+		//fill in this info
 		String owner = "kolauren";
 		String repo = "rolling_bunnies";
-		//master
 		String branch = "master";
 		
+		//run the analysis
+		//it will save json to the output folder
+		
+		long time = System.currentTimeMillis();
+		File jsonPretty = new File("output/"+owner+"_"+repo+"/"+time+"/commits.json");
+		File jsonGraphs = new File("output/"+owner+"_"+repo+"/"+time+"/graphs.json");
+		
 		CommitRetriever p = new CommitRetriever(owner, repo, branch);
+		List<Commit> commits = p.getCommits();
 		
-		//print compact and pretty json
-		File json = new File("output/"+owner+"_"+repo+"_commits.json");
-		File jsonPretty = new File("output/"+owner+"_"+repo+"_pretty_commits.json");
+		ChangeImpactGraphGenerator graphGenerator = new ChangeImpactGraphGenerator();
+		List<CommitGraph> commitGraphs = graphGenerator.generate(commits, 1);
 		
-		//clear old file
-		FileUtils.writeStringToFile(json, "", "utf-8", false);
-		FileUtils.writeStringToFile(jsonPretty, "", "utf-8", false);
+		List<JsonCommitGraph> jsonCommitGraphs = JsonBuilder.build(commitGraphs);
 		
-		Gson gson = new Gson();
 		Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
-		
-		Collection<Commit> commits = p.getCommits();
-		
-		FileUtils.writeStringToFile(json, gson.toJson(commits), true);
 		FileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true); 
-		*/
-		
-		/**
-		 * Testing diff parser
-		 */
-		
-		String unifiedDiff="@@ -9,21 +9,19 @@\n \n import com.google.gson.Gson;\n import com.google.gson.GsonBuilder;\n+\n import commit.parser.Commit;\n+import commit.parser.CommitParser;\n import commit.parser.GitHubDao;\n \n public class Main {\n \tpublic static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {\n \t\t//testing commit parser\n-\t\t/**\n \t\t//TODO: move args\n \t\tString owner = \"kolauren\";\n \t\tString repo = \"rolling_bunnies\";\n-\t\tString user = \"pammil\";\n-\t\tString password = \"5cd8f20e47dfc2ffc846e82c652450c61f0a41a9\";\n \t\t\n-\t\t//basic authentication\n-\t\tGitHubDao githubDao = new GitHubDao(user, password);\n+\t\tCommitParser p = new CommitParser();\n \t\t\n \t\t//print compact and pretty json\n \t\tFile json = new File(\"output/\"+owner+\"_\"+repo+\"_commits.json\");\n@@ -36,10 +34,9 @@ public static void main(String[] args) throws IOException, IllegalAccessExceptio\n \t\tGson gson = new Gson();\n \t\tGson gsonPretty = new GsonBuilder().setPrettyPrinting().create();\n \t\t\n-\t\tCollection<Commit> commits = githubDao.getCommits(owner, repo);\n+\t\tCollection<Commit> commits = p.getCommits(owner, repo);\n \t\t\n \t\tFileUtils.writeStringToFile(json, gson.toJson(commits), true);\n \t\tFileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true);\n-\t\t**/\n \t}\n }\n\\ No newline at end of file";
-	
-		Diff difff = UnifiedDiffParser.parse(unifiedDiff);
-		System.out.println("Added+++++++++++++");
-		for(int number : difff.getAddedLines().keySet()) {
-			System.out.println(number+" : "+difff.getAddedLine(number));
-		}
-		System.out.println("Removed-------------");
-		for(int number :difff.getRemovedLines().keySet()) {
-			System.out.println(number+" : "+difff.getRemovedLine(number));
-		}
+		FileUtils.writeStringToFile(jsonGraphs, gsonPretty.toJson(jsonCommitGraphs), true);
 	}
 }

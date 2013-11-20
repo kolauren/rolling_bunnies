@@ -10,15 +10,17 @@ public class ASTWrapper {
 	private ASTParser parser;
 	private CompilationUnit cUnit;
 	private String className;
+	private String sourceLoc;
 	
-	public ASTWrapper(ASTParser parser, CompilationUnit cUnit) throws IOException {
+	public ASTWrapper(ASTParser parser, CompilationUnit cUnit, String sourceLoc) throws IOException {
 		this.parser = parser;
 		this.cUnit = cUnit;
 		
-		TypeDeclarationVisitor typeVisitor = new TypeDeclarationVisitor();
-		typeVisitor.visit(cUnit);
+		ASTExplorerVisitor visitor = new ASTExplorerVisitor();
+		cUnit.accept(visitor);
 		
-		this.className = typeVisitor.getClassName();
+		this.className = visitor.getClassName();
+		this.sourceLoc = sourceLoc;
 	}
 	
 	public ASTParser getParser() {
@@ -43,5 +45,24 @@ public class ASTWrapper {
 
 	public void setClassName(String className) {
 		this.className = className;
+	}
+
+	public String getSourceLoc() {
+		return sourceLoc;
+	}
+
+	public void setSourceLoc(String sourceLoc) {
+		this.sourceLoc = sourceLoc;
+	}
+	
+	public ASTWrapper clone() {
+		ASTWrapper ast = null;
+		try {
+			ast = new ASTWrapper(parser, cUnit, sourceLoc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ast;
 	}
 }

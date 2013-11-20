@@ -17,13 +17,10 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
 
 import change.impact.graph.Method;
 
-public class ASTExplorer {	  
+public class ASTExplorer {
 	/**
 	 * Wrap Eclipse AST objects into our AST class.
 	 * 
@@ -31,7 +28,7 @@ public class ASTExplorer {
 	 * @return a new ASTWrapper
 	 * @throws IOException
 	 */
-	public static ASTWrapper generateAST(String urlString) throws IOException {
+	public static ASTWrapper generateAST(String urlString, String sourceLoc) throws IOException {
 		// Get the code from the URL provided and parse it into a String.
 		String code = parseURLContents(urlString);
 		
@@ -49,7 +46,7 @@ public class ASTExplorer {
 		// Create a CompilationUnit from the ASTParser.
 		CompilationUnit cUnit = (CompilationUnit) parser.createAST(null);
 		
-		return new ASTWrapper(parser, cUnit);
+		return new ASTWrapper(parser, cUnit, sourceLoc);
 	}
 	
 	/**
@@ -118,56 +115,173 @@ public class ASTExplorer {
 	
 	/**
 	 * Given a list of line numbers, determine which MethodDeclaration it is and grab all the MethodInvocations.
+	 * If the Java file was removed, return a list of all the MethodDeclaration from the wrapper and map it all to null.
+	 * If the Java file was renamed, grab currSourceLoc and use that to get the wrapper from wrapperMap.
+	 * If the Java file did not change, use the wrapper's sourceLoc as the key to the wrapperMap.
 	 * 
 	 * @param lineNumbers
 	 * @param wrapper
 	 * @return
 	 */
-	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, ASTWrapper wrapper) {
+	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper, String currSourceLoc) {
 		// Get all the MethodDeclarations from the AST.
-		List<MethodDeclaration> methods = getMethodDeclarations(wrapper);
+		List<MethodDeclaration> prevMethods = getMethodDeclarations(wrapper);
+		List<MethodDeclaration> currMethods = new ArrayList<MethodDeclaration>();
 		Map<Method, Set<Method>> foundMethods = new HashMap<Method, Set<Method>>();
 		
-		// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is.
-		for (int lineNumber : lineNumbers) {
-			for (MethodDeclaration method : methods) {
-				int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
-				int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
-				Set<Method> bodyMethodsInvoked = new HashSet<Method>();
-				
-				if (lineNumber > startLine && lineNumber < endLine) {
-					// Grab every MethodInvocation node and extract information.
-					Block block = method.getBody();
-					MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
-					block.accept(methodInvocationVisitor);
-					List<Triplet<String, String, Integer>> methodInvocationTriplets = methodInvocationVisitor.getMethodInvocations();
+		if (wrapperMap.get(wrapper.getSourceLoc()) != null || currSourceLoc != null) {
+			ASTWrapper wrapperToUse = wrapperMap.get(wrapper.getSourceLoc());
+			
+			if (wrapperMap.get(wrapper.getSourceLoc()) == null) {
+				wrapperToUse = wrapperMap.get(currSourceLoc);
+			}
+			
+			currMethods = getMethodDeclarations(wrapperToUse);
+			
+			// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is under.
+			for (int lineNumber : lineNumbers) {
+				for (MethodDeclaration method : prevMethods) {
+					int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
+					int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
+					Set<Method> bodyMethodsInvoked = null;
 					
-					// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
-					VariableDeclarationStatementVisitor variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor();
-					block.accept(variableDeclarationStatementVisitor);
-					SingleVariableDeclarationVisitor singleVariableDeclarationVisitor = new SingleVariableDeclarationVisitor();
-					block.accept(singleVariableDeclarationVisitor);
-					
-					List<Pair<String, String>> variableDeclarationPair = variableDeclarationStatementVisitor.getVariablePairs();
-					List<Pair<String, String>> singleVariableDeclarationPair = singleVariableDeclarationVisitor.getVariablePairs();
-					
-					
-					
-					// Stop iterating once MethodDeclaration found.
-					break;
-				}
+					if (lineNumber > startLine && lineNumber < endLine) {
+						bodyMethodsInvoked = new HashSet<Method>();
+						
+						// Get the similar methods between the two ASTWrappers.
+						MethodDeclaration mapMethod = getSameMethodDeclaration(currMethods, method);
+						
+						// If the map is null, then just skip this iteration.
+						if (mapMethod == null) {
+							break;
+						}
+						
+						// Grab every MethodInvocation node and extract information.
+						Block block = mapMethod.getBody();
+						ASTExplorerVisitor visitor = new ASTExplorerVisitor();
+						block.accept(visitor);
+						List<MethodInvocationDetails> methodInvocations = getActualMethodPositions(visitor.getMethodInvocations(), wrapperToUse);
+						
+						// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
+						List<VariableDetails> variableDeclarations = getActualVariablePositions(visitor.getVariableDeclarations(), wrapperToUse);
+						List<VariableDetails> singleVariableDeclarations = getActualVariablePositions(visitor.getSingleVariableDeclarations(), wrapperToUse);
+						
+						// Combine both types of variables into one list.
+						List<VariableDetails> variableDetails = new ArrayList<VariableDetails>();
+						variableDetails.addAll(variableDeclarations);
+						variableDetails.addAll(singleVariableDeclarations);
+						
+						// For each of the MethodInvocation, add in the methods that are part of the workspace into bodyMethodsInvoked.
+						for (MethodInvocationDetails methodInvocation : methodInvocations) {
+							String methodName = methodInvocation.getMethodName();
+							String objectName = methodInvocation.getObjectName();
+							List<String> allClasses = generateClassNames(wrapperMap);
+							
+							if (objectName == null) {
+								objectName = wrapperToUse.getClassName();
+							}
+								
+								// Find all the variables that the MethodInvocation uses.
+							VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
+							
+							if (variableDetail != null) {
+								ASTWrapper wrapperMethodIsIn = getRelatedWrapper(allClasses, wrapperMap, variableDetail.getVariableType());
 
-				// For the MethodDeclaration found, transfer the information into a Method object.
-				Method currentMethodDeclaration = generateMethod(method, wrapper);
-				
-				// Store the <Method, HashSet<Method>>
-				foundMethods.put(currentMethodDeclaration, bodyMethodsInvoked);
+								if (wrapperMethodIsIn != null) {
+									List<MethodDeclaration> methodDeclarations = getMethodDeclarations(wrapperMethodIsIn);
+									
+									if (methodDeclarations != null) {
+										for (MethodDeclaration methodDeclaration : methodDeclarations) {
+											if (methodDeclaration.getName().toString().equals(methodName)) {
+												bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapperMethodIsIn));
+											}
+										}
+									}
+								}
+							}
+						}
+						
+						// For the MethodDeclaration found, transfer the information into a Method object.
+						Method currentMethodDeclaration = generateMethod(mapMethod, wrapperToUse);
+						
+						// Store the <Method, HashSet<Method>>
+						foundMethods.put(currentMethodDeclaration, bodyMethodsInvoked);
+						
+						// Stop iterating once MethodDeclaration found.
+						break;
+					}
+				}
+			}
+		} else {
+			for (MethodDeclaration method : currMethods) {
+				Method m = generateMethod(method, wrapper);
+				foundMethods.put(m, null);
 			}
 		}
 		
 		return foundMethods;
 	}
+
+	/**
+	 * Generate a list of all the classes in the Map of ASTWrappers.
+	 * 
+	 * @param wrapperMap
+	 * @return
+	 */
+	private static List<String> generateClassNames(Map<String, ASTWrapper> wrapperMap) {
+		List<String> classes = new ArrayList<String>();
+		
+		for (String key : wrapperMap.keySet()) {
+			ASTWrapper wrapper = wrapperMap.get(key);
+			classes.add(wrapper.getClassName());
+		}
+		
+		return classes;
+	}
 	
+	private static ASTWrapper getRelatedWrapper(List<String> allClasses, Map<String, ASTWrapper> wrapperMap, String classToSearch) {
+		for (String key : wrapperMap.keySet()) {
+			ASTWrapper wrapper = wrapperMap.get(key);
+			
+			if (classToSearch.equals(wrapper.getClassName())) {
+				return wrapper;
+			}
+		}
+		
+		return null;
+	}
+
+	/**
+	 * Get all the matching MethodDeclaration from the list of MethodDeclarations.
+	 * 
+	 * @param currMethods
+	 * @param method
+	 * @return
+	 */
+	private static MethodDeclaration getSameMethodDeclaration(List<MethodDeclaration> currMethods, MethodDeclaration method) {
+		String methodName = method.getName().toString();
+		List<String> methodParams = getParameterTypes(method);
+		
+		for (MethodDeclaration m : currMethods) {
+			String currMethodName = m.getName().toString();
+			List<String> currMethodParams = getParameterTypes(m);
+			
+			if (methodName.equals(currMethodName) && methodParams.size() == currMethodParams.size()) {
+				for (int i = 0; i < methodParams.size(); i++) {
+					if (!methodParams.get(i).equals(currMethodParams.get(i))) {
+						break;
+					}
+					
+					if (i == methodParams.size() - 1) {
+						return m;
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+
 	/**
 	 * Get all the MethodDeclarations given the ASTWrapper.
 	 * 
@@ -176,10 +290,63 @@ public class ASTExplorer {
 	 */
 	private static List<MethodDeclaration> getMethodDeclarations(ASTWrapper wrapper) {
 		// Using the MethodDeclarationVisitor, visit all the MethodDeclaration nodes.
-		MethodDeclarationVisitor methodVisitor = new MethodDeclarationVisitor();
-		methodVisitor.visit(wrapper.getCompilationUnit());
+		ASTExplorerVisitor visitor = new ASTExplorerVisitor();
+		//methodVisitor.visit(wrapper.getCompilationUnit());
+		wrapper.getCompilationUnit().accept(visitor);
 		
-		return methodVisitor.getMethods();
+		return visitor.getMethodDeclarations();
+	}
+	
+	/**
+	 * Get the actual positions of the method.
+	 * 
+	 * @param list
+	 * @param wrapper
+	 * @return
+	 */
+	private static List<MethodInvocationDetails> getActualMethodPositions(List<MethodInvocationDetails> details, ASTWrapper wrapper) {
+		List<MethodInvocationDetails> newDetails = new ArrayList<MethodInvocationDetails>();
+		
+		for (MethodInvocationDetails detail : details) {
+			int actual = wrapper.getCompilationUnit().getLineNumber(detail.getStartLine());
+			newDetails.add(new MethodInvocationDetails(detail.getMethodInvocation(), detail.getMethodName(), detail.getObjectName(), actual));
+		}
+		
+		return newDetails;
+	}
+	
+	/**
+	 * Get the actual positions of the variables.
+	 * 
+	 * @param list
+	 * @param wrapper
+	 * @return
+	 */
+	private static List<VariableDetails> getActualVariablePositions(List<VariableDetails> details, ASTWrapper wrapper) {
+		List<VariableDetails> newDetails = new ArrayList<VariableDetails>();
+		
+		for (VariableDetails detail : details) {
+			int actual = wrapper.getCompilationUnit().getLineNumber(detail.getStartLine());
+			newDetails.add(new VariableDetails(detail.getVariableType(), detail.getVariableName(), actual));
+		}
+		
+		return newDetails;
+	}
+	
+	/**
+	 * Find the variable relation between the String and a Triplet.
+	 * 
+	 * @param objectName
+	 * @param variableTriplets
+	 * @return
+	 */
+	private static VariableDetails findRelatedVariable(String objectName, List<VariableDetails> variableDetails) {
+		for (VariableDetails variableDetail : variableDetails) {
+			if (objectName.equals(variableDetail.getVariableName())) {
+				return variableDetail; 
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -190,7 +357,12 @@ public class ASTExplorer {
 	 * @return
 	 */
 	private static Method generateMethod(MethodDeclaration method, ASTWrapper wrapper) {
-		String packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
+		String packageName = null;
+		
+		if (wrapper.getCompilationUnit().getPackage() != null) {
+			packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
+		}
+		
 		String className = wrapper.getClassName();
 		String methodName = method.getName().toString();
 		List<String> parameters = getParameterTypes(method);
@@ -202,24 +374,13 @@ public class ASTExplorer {
 	}
 	
 	/**
-	 * TODO: Need to figure out where to get the various information from the MethodInvocation.
-	 * 
-	 * @param method
-	 * @param wrapper
-	 * @return
-	 */
-	private static Method generateMethod(MethodInvocation method, ASTWrapper wrapper) {
-		return new Method("", "", "", "", null, 0, 0);
-	}
-	
-	/**
 	 * Get all the parameters given a MethodDeclaration.
 	 * 
 	 * @param method
 	 * @return
 	 */
 	private static List<String> getParameterTypes(MethodDeclaration method) {
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "rawtypes" })
 		List parameters = method.parameters();
 		List<String> params = new ArrayList<String>();
 		
@@ -233,16 +394,6 @@ public class ASTExplorer {
 	}
 	
 	/**
-	 * TODO: Need to figure out how to get all the parameter types given a MethodInvocation.
-	 * 
-	 * @param method
-	 * @return
-	 */
-	private static List<String> getParameterTypes(MethodInvocation method) {
-		return null;
-	}
-	
-	/**
 	 * Given the various information for a method, generate the unique ID for a method.
 	 * 
 	 * @param packageName
@@ -252,8 +403,19 @@ public class ASTExplorer {
 	 * @return
 	 */
 	private static String generateMethodID(String packageName, String className, String methodName, List<String> parameters) {
-		String id = packageName + " " + className + " " + methodName;
-		//String id = className + " " + methodName;
+		String id = "";
+		
+		if (packageName != null) {
+			id = id + packageName + " ";
+		} else {
+			System.out.println("");
+		}
+		
+		if (className != null) {
+			id = id + className + " ";
+		}
+		
+		id = id + methodName;
 		
 		// String the various information into a String.
 		for (String parameter : parameters) {
