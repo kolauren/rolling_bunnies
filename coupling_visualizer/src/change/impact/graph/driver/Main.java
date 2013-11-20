@@ -12,6 +12,8 @@ import change.impact.graph.ChangeImpactGraphGenerator;
 import change.impact.graph.CommitGraph;
 import change.impact.graph.commit.Commit;
 import change.impact.graph.commit.CommitRetriever;
+import change.impact.graph.json.JsonBuilder;
+import change.impact.graph.json.JsonCommitGraph;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,23 +25,23 @@ public class Main {
 		String repo = "otters";
 		String branch = "master";
 		
-
 		//run the analysis
 		//it will save json to the output folder
-		CommitRetriever p = new CommitRetriever(owner, repo, branch);
 		
 		long time = System.currentTimeMillis();
 		File jsonPretty = new File("output/"+owner+"_"+repo+"/"+time+"/commits.json");
 		File jsonGraphs = new File("output/"+owner+"_"+repo+"/"+time+"/graphs.json");
 		
-		Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
-		
+		CommitRetriever p = new CommitRetriever(owner, repo, branch);
 		List<Commit> commits = p.getCommits();
 		
 		ChangeImpactGraphGenerator graphGenerator = new ChangeImpactGraphGenerator();
 		List<CommitGraph> commitGraphs = graphGenerator.generate(commits, 1);
 		
+		List<JsonCommitGraph> jsonCommitGraphs = JsonBuilder.build(commitGraphs);
+		
+		Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
 		FileUtils.writeStringToFile(jsonPretty, gsonPretty.toJson(commits), true); 
-		FileUtils.writeStringToFile(jsonGraphs, gsonPretty.toJson(commitGraphs), true);
+		FileUtils.writeStringToFile(jsonGraphs, gsonPretty.toJson(jsonCommitGraphs), true);
 	}
 }
