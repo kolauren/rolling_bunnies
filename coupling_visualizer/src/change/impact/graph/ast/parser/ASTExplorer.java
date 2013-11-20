@@ -120,14 +120,21 @@ public class ASTExplorer {
 	 * @param wrapper
 	 * @return
 	 */
-	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper) {
+	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper, String currSourceLoc) {
 		// Get all the MethodDeclarations from the AST.
 		List<MethodDeclaration> prevMethods = getMethodDeclarations(wrapper);
 		List<MethodDeclaration> currMethods = new ArrayList<MethodDeclaration>();
 		Map<Method, Set<Method>> foundMethods = new HashMap<Method, Set<Method>>();
 		
 		if (wrapperMap.get(wrapper.getSourceLoc()) != null ) {
-			ASTWrapper wrapperToUse = wrapperMap.get(wrapper.getSourceLoc());
+			ASTWrapper wrapperToUse = null;
+			
+			if (currSourceLoc != null) {
+				wrapperToUse = wrapperMap.get(currSourceLoc);
+			} else {
+				wrapperToUse = wrapperMap.get(wrapper.getSourceLoc());
+			}
+			
 			currMethods = getMethodDeclarations(wrapperToUse);
 			
 			// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is under.

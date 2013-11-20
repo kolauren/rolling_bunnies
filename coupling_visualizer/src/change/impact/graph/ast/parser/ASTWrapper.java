@@ -10,6 +10,7 @@ public class ASTWrapper {
 	private ASTParser parser;
 	private CompilationUnit cUnit;
 	private String className;
+	private String previousSourceLoc;
 	private String sourceLoc;
 	
 	public ASTWrapper(ASTParser parser, CompilationUnit cUnit, String sourceLoc) throws IOException {
@@ -20,7 +21,8 @@ public class ASTWrapper {
 		cUnit.accept(visitor);
 		
 		this.className = visitor.getClassName();
-		this.setSourceLoc(sourceLoc);
+		this.previousSourceLoc = sourceLoc;
+		this.sourceLoc = sourceLoc;
 	}
 	
 	public ASTParser getParser() {
@@ -45,6 +47,14 @@ public class ASTWrapper {
 
 	public void setClassName(String className) {
 		this.className = className;
+	}
+
+	public String getPreviousSourceLoc() {
+		return previousSourceLoc;
+	}
+
+	public void setPreviousSourceLoc(String previousSourceLoc) {
+		this.previousSourceLoc = previousSourceLoc;
 	}
 
 	public String getSourceLoc() {
