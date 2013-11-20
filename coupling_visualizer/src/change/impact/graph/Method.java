@@ -77,11 +77,8 @@ public class Method {
 		this.endLine = endLine;
 	}
 	
-	public boolean equals(Method method) {
-		if (this.id.equals(method.getId())) {
-			return true;
-		}
-		
-		return false;
+	@Override
+	public boolean equals(Object method) {
+		return method instanceof Method && ((Method) method).getId().equals(id);
 	}
 }
