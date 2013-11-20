@@ -127,7 +127,8 @@ public class ASTExplorer {
 		Map<Method, Set<Method>> foundMethods = new HashMap<Method, Set<Method>>();
 		
 		if (wrapperMap.get(wrapper.getSourceLoc()) != null ) {
-			currMethods = getMethodDeclarations(wrapperMap.get(wrapper.getSourceLoc()));
+			ASTWrapper wrapperToUse = wrapperMap.get(wrapper.getSourceLoc());
+			currMethods = getMethodDeclarations(wrapperToUse);
 			
 			// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is under.
 			for (int lineNumber : lineNumbers) {
@@ -151,11 +152,11 @@ public class ASTExplorer {
 						Block block = mapMethod.getBody();
 						ASTExplorerVisitor visitor = new ASTExplorerVisitor();
 						block.accept(visitor);
-						List<MethodInvocationDetails> methodInvocations = getActualMethodPositions(visitor.getMethodInvocations(), wrapper);
+						List<MethodInvocationDetails> methodInvocations = getActualMethodPositions(visitor.getMethodInvocations(), wrapperToUse);
 						
 						// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
-						List<VariableDetails> variableDeclarations = getActualVariablePositions(visitor.getVariableDeclarations(), wrapper);
-						List<VariableDetails> singleVariableDeclarations = getActualVariablePositions(visitor.getSingleVariableDeclarations(), wrapper);
+						List<VariableDetails> variableDeclarations = getActualVariablePositions(visitor.getVariableDeclarations(), wrapperToUse);
+						List<VariableDetails> singleVariableDeclarations = getActualVariablePositions(visitor.getSingleVariableDeclarations(), wrapperToUse);
 						
 						// Combine both types of variables into one list.
 						List<VariableDetails> variableDetails = new ArrayList<VariableDetails>();
@@ -178,7 +179,7 @@ public class ASTExplorer {
 									if (methodDeclarations != null) {
 										for (MethodDeclaration methodDeclaration : methodDeclarations) {
 											if (methodDeclaration.getName().toString().equals(methodName)) {
-												bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapper));
+												bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapperToUse));
 											}
 										}
 									}
@@ -187,7 +188,7 @@ public class ASTExplorer {
 						}
 						
 						// For the MethodDeclaration found, transfer the information into a Method object.
-						Method currentMethodDeclaration = generateMethod(method, wrapper);
+						Method currentMethodDeclaration = generateMethod(method, wrapperToUse);
 						
 						// Store the <Method, HashSet<Method>>
 						foundMethods.put(currentMethodDeclaration, bodyMethodsInvoked);

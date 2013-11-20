@@ -4,26 +4,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ExpressionStatement;
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.internal.core.search.matching.SuperTypeNamesCollector.TypeDeclarationVisitor;
-import org.javatuples.Triplet;
 
 import change.impact.graph.ast.parser.ASTExplorerVisitor;
 import change.impact.graph.ast.parser.MethodInvocationDetails;
@@ -126,8 +114,8 @@ public class JavaParserTest {
 		parser.setUnitName(unitName);
 		
 		// String[] sources = {"E:\\Projects\\HelloWorld\\HelloWorld"};
-		String[] sources = {"E:\\Projects\\CPSC 410\\coupling_visualizer"};
-		String[] classPaths = {"E:\\Projects\\CPSC 410\\coupling_visualizer\\libs\\eclipseAST\\org.eclipse.jdt.core-3.8.2.v20120814-155456.jar", "C:\\Program Files\\Java\\jre7\\lib\\resources.jar", "C:\\Program Files\\Java\\jre7\\lib\\rt.jar", "C:\\Program Files\\Java\\jre7\\lib\\jsse.jar", "C:\\Program Files\\Java\\jre7\\lib\\jce.jar", "C:\\Program Files\\Java\\jre7\\lib\\charsets.jar", "C:\\Program Files\\Java\\jre7\\lib\\jfr.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\access-bridge-64.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\dnsns.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\jaccess.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\localedata.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\sunec.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\sunjce_provide.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\sunmscapi.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\zipfs.jar"};
+		// String[] sources = {"E:\\Projects\\CPSC 410\\coupling_visualizer"};
+		// String[] classPaths = {"E:\\Projects\\CPSC 410\\coupling_visualizer\\libs\\eclipseAST\\org.eclipse.jdt.core-3.8.2.v20120814-155456.jar", "C:\\Program Files\\Java\\jre7\\lib\\resources.jar", "C:\\Program Files\\Java\\jre7\\lib\\rt.jar", "C:\\Program Files\\Java\\jre7\\lib\\jsse.jar", "C:\\Program Files\\Java\\jre7\\lib\\jce.jar", "C:\\Program Files\\Java\\jre7\\lib\\charsets.jar", "C:\\Program Files\\Java\\jre7\\lib\\jfr.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\access-bridge-64.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\dnsns.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\jaccess.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\localedata.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\sunec.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\sunjce_provide.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\sunmscapi.jar", "C:\\Program Files\\Java\\jre7\\lib\\ext\\zipfs.jar"};
 		
 		parser.setSource(code.toCharArray());
 		// parser.setEnvironment(classPaths, sources, new String[] { "UTF-8" }, true);
@@ -140,54 +128,5 @@ public class JavaParserTest {
 
 
 		return (CompilationUnit) parser.createAST(null);
-	}
-	
-	private static List<Triplet<String, String, Integer>> getActualPositions(List<Triplet<String, String, Integer>> triplets, CompilationUnit wrapper) {
-		List<Triplet<String, String, Integer>> newTriplets = new ArrayList<Triplet<String, String, Integer>>();
-		
-		for (Triplet<String, String, Integer> triplet : triplets) {
-			int actual = wrapper.getLineNumber(triplet.getValue2());
-			newTriplets.add(new Triplet<String, String, Integer>(triplet.getValue0(), triplet.getValue1(), actual));
-		}
-		
-		return newTriplets;
-	}
-
-	private static void testBindings(CompilationUnit cUnit) {
-		TypeDeclaration typeDeclaration = (TypeDeclaration) cUnit.types().get(0);
-		ITypeBinding typeBinding = typeDeclaration.resolveBinding();
-		System.out.println("TypeDeclaration : " + typeBinding);
-		System.out.println("----------------------------");
-		System.out.println();
-		System.out.println("TypeDeclaration : " + typeBinding.getJavaElement());
-		System.out.println("----------------------------");
-		System.out.println();
-		System.out.println("TypeDeclaration : "
-				+ typeBinding.getQualifiedName());
-		System.out.println("----------------------------");
-		System.out.println();
-		System.out.println("TypeDeclaration : "
-				+ typeBinding.getQualifiedName());
-		System.out.println("----------------------------");
-		System.out.println();
-
-		MethodDeclaration methodDeclaration = (MethodDeclaration) typeDeclaration
-				.bodyDeclarations().get(1);
-		IMethodBinding methodBinding = methodDeclaration.resolveBinding();
-		System.out.println("MethodDeclaration : " + methodBinding);
-		System.out.println("----------------------------");
-		System.out.println();
-		System.out.println("MethodDeclaration : "
-				+ methodBinding.getJavaElement());
-		System.out.println("----------------------------");
-		System.out.println();
-
-		Block body = methodDeclaration.getBody();
-		ExpressionStatement expression = (ExpressionStatement) body
-				.statements().get(0);
-		Expression e1 = expression.getExpression();
-		System.out.println("Expression : " + e1.resolveTypeBinding());
-		System.out.println("----------------------------");
-		System.out.println();
 	}
 }
