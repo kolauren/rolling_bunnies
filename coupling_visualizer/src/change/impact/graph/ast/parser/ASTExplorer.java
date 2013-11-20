@@ -130,7 +130,7 @@ public class ASTExplorer {
 		if (wrapperMap.get(wrapper.getSourceLoc()) != null ) {
 			currMethods = getMethodDeclarations(wrapperMap.get(wrapper.getSourceLoc()));
 			
-			// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is.
+			// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is under.
 			for (int lineNumber : lineNumbers) {
 				for (MethodDeclaration method : prevMethods) {
 					int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
@@ -188,15 +188,15 @@ public class ASTExplorer {
 							}
 						}
 						
+						// For the MethodDeclaration found, transfer the information into a Method object.
+						Method currentMethodDeclaration = generateMethod(method, wrapper);
+						
+						// Store the <Method, HashSet<Method>>
+						foundMethods.put(currentMethodDeclaration, bodyMethodsInvoked);
+						
 						// Stop iterating once MethodDeclaration found.
 						break;
 					}
-	
-					// For the MethodDeclaration found, transfer the information into a Method object.
-					Method currentMethodDeclaration = generateMethod(method, wrapper);
-					
-					// Store the <Method, HashSet<Method>>
-					foundMethods.put(currentMethodDeclaration, bodyMethodsInvoked);
 				}
 			}
 		} else {
@@ -204,6 +204,12 @@ public class ASTExplorer {
 				Method m = generateMethod(method, wrapper);
 				foundMethods.put(m, null);
 			}
+		}
+		
+		System.out.println(foundMethods.toString());
+		for (Method s : foundMethods.keySet()) {
+			System.out.println("HURR " + s.getClassName());
+			System.out.println("DURR " + foundMethods.get(s));
 		}
 		
 		return foundMethods;
