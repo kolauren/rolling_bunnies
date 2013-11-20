@@ -1,24 +1,121 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300);
+
 body {
-  text-align: center;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  background-image: url("../spacebg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 #main {
-  margin: 5% 0;
+  margin-top: 2%;
+  text-align: center;
+}
+
+#graph_title {
+  color: white;
+  opacity: 0.5;  
+  font-size: 40px;
+  font-weight: 300;
+}
+
+.info {
+  padding: 5px 40px;
+  font-size: 22px;
+  color: white;
+}
+
+#buttons {
+  display: inline-block;
+  float: right;
+  margin: 10px 0;
+}
+
+button {
+  border: 0;
+}
+
+button:hover, button.active {
+  background-color: #5CC3B6;
+}
+
+#pause {
+  margin: 0;
+  padding: 1px 0 0 4px;
+}
+
+#slider {
+  float: right;
+  display: inline-block;
+  width: 30%;
+  margin: 15px 20px;
 }
 
 .wheel {
-  fill: #F7F7F7;
+  opacity: 0.5;
+  fill: #333333;
+  stroke-width: 1px;
+  stroke: #FFFFFF;
+  stroke-opacity:0.4;
+}
+
+.edge, .animate {
+  stroke-width: 2px;
+  fill:  none;
 }
 
 .edge {
-  stroke-width: 4px;
-  fill:  none;
+  z-index: 1000;
+}
+
+.animate {
+  z-index: 1001;
+}
+
+.impact_edge {
+  z-index: 1;
+  stroke-width: 1px;
+  fill: none;
 }
 
 .node {
   font-size: 10px;
 }
 
-.node:hover {
-  cursor: help;
+
+.node:hover, .edge:hover {
+  cursor: pointer;
+}
+
+.node-label {
+  font-size: 24; 
+}
+
+div.tooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 60px;                  
+  height: 25px;                 
+  padding: 2px;             
+  font: 16px sans-serif;
+  color: white;
+  background: black;   
+  border: 0px;      
+  border-radius: 5px;           
+  pointer-events: none;         
+}
+
+.clear {
+  clear: both;
+}
+
+.d3-slider-handle {
+  background-image: url("../nyancat.png") !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  width: 50px !important; 
+  height: 30px !important;
+  border: none !important;
 }
