@@ -213,28 +213,41 @@ DependencyWheel.prototype = {
             .transition()
             .delay(function(d,i) { return i * 10; })
             .duration(1200)
-            .style('stroke-width', function(d) { return e.count * 4; })
+            .style('stroke-width', function(d) { return Math.pow(3, e.count); })
             .style('opacity', 0.5);
       });
     } else {
+        var line = d3.svg.line.radial()
+          .radius(function(d){ return d.y - 10; })
+          .angle(function(d){ return d.x / 180 * Math.PI })
+          .interpolate("bundle");
         commit.impact_edges.forEach(function(e, i) {
           var current_paths = $(".impact_edge.source-" + e.source + ".target-" + e.target).length;
           if(current_paths < e.count) {
             var num_paths_to_add = e.count - current_paths;
-            for(var j = 1; j <= num_paths_to_add; j++) {
+            for(var j = 1; j <= num_paths_to_add + 4; j++) {
               var data = [{ source: self.d3data.cluster_map[e.source], target: self.d3data.cluster_map[e.target] }];
               var splines = self.options.bundle(data);
-              var line = d3.svg.line.radial()
-                .radius(function(d){ return d.y - 10; })
-                .angle(function(d){ return d.x / 180 * Math.PI })
-                .tension(0.1 * (j + current_paths))
-                .interpolate("bundle");
               self.svg.selectAll(self.options.selector)
                 .data(data).enter().append("svg:path")
                 .attr("class", function(d) { return "impact_edge source-" + e.source + " target-" + e.target; })
                 .style("stroke", "#DDDDDD")
                 .style("opacity", 0.8)
-                .attr("d", function(d, i) { return line(splines[i]); });
+                .attr("d", function(d, i) { 
+                  var prev_spline = {};
+                  var difference = 0;
+                  var tension_const = 0.1;
+                  for(var h = 0; h < splines[i].length; h++) {
+                    if(splines[i][h].name !== "root") {
+                      if(!$.isEmptyObject(prev_spline)) {
+                        difference = Math.abs(prev_spline.x - splines[i][h].x);
+                      }
+                      prev_spline = splines[i][h];
+                    }
+                  }
+                  if(difference === 180) tension_const = 0.8;
+                    return line.tension(-j * tension_const)(splines[i]);
+                });
             }
           }
         });
