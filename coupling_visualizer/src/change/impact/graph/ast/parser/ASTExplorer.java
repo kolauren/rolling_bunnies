@@ -115,6 +115,9 @@ public class ASTExplorer {
 	
 	/**
 	 * Given a list of line numbers, determine which MethodDeclaration it is and grab all the MethodInvocations.
+	 * If the Java file was removed, return a list of all the MethodDeclaration from the wrapper and map it all to null.
+	 * If the Java file was renamed, grab currSourceLoc and use that to get the wrapper from wrapperMap.
+	 * If the Java file did not change, use the wrapper's sourceLoc as the key to the wrapperMap.
 	 * 
 	 * @param lineNumbers
 	 * @param wrapper
