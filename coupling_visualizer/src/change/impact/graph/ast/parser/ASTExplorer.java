@@ -410,22 +410,15 @@ public class ASTExplorer {
 	 */
 	private static String generateMethodID(String packageName, String className, String methodName, List<String> parameters) {
 		String id = "";
+		String delimiter = "-";
 		
-		if (packageName != null) {
-			id = id + packageName + " ";
-		} else {
-			System.out.println("");
-		}
+		packageName = packageName == null ? "NOPACKAGENAME" : packageName;
+		className = className == null ? "NOCLASSNAME" : className;
 		
-		if (className != null) {
-			id = id + className + " ";
-		}
+		id = packageName + delimiter + className + delimiter + methodName;
 		
-		id = id + methodName;
-		
-		// String the various information into a String.
-		for (String parameter : parameters) {
-			id = id + " " + parameter;
+		for(String parameter : parameters) {
+			id += delimiter+parameter;
 		}
 		
 		return id;
