@@ -252,7 +252,8 @@ public class ASTExplorer {
 	private static List<MethodDeclaration> getMethodDeclarations(ASTWrapper wrapper) {
 		// Using the MethodDeclarationVisitor, visit all the MethodDeclaration nodes.
 		MethodDeclarationVisitor methodVisitor = new MethodDeclarationVisitor();
-		methodVisitor.visit(wrapper.getCompilationUnit());
+		//methodVisitor.visit(wrapper.getCompilationUnit());
+		wrapper.getCompilationUnit().accept(methodVisitor);
 		
 		return methodVisitor.getMethods();
 	}
