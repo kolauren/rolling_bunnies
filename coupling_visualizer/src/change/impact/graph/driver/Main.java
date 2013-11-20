@@ -21,8 +21,8 @@ import com.google.gson.GsonBuilder;
 public class Main {
 	public static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		//fill in this info
-		String owner = "pammil";
-		String repo = "otters";
+		String owner = "kolauren";
+		String repo = "rolling_bunnies";
 		String branch = "master";
 		
 		//run the analysis

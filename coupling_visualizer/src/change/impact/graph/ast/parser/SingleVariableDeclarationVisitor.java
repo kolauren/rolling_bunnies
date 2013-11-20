@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
 public class SingleVariableDeclarationVisitor extends ASTVisitor {

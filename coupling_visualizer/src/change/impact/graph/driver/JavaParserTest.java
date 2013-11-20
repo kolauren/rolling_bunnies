@@ -3,6 +3,7 @@ package change.impact.graph.driver;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,12 +31,15 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.javatuples.Triplet;
 
+import change.impact.graph.ast.parser.ASTExplorer;
+import change.impact.graph.ast.parser.ASTExplorerVisitor;
 import change.impact.graph.ast.parser.ASTWrapper;
 import change.impact.graph.ast.parser.MethodDeclarationVisitor;
 import change.impact.graph.ast.parser.MethodInvocationVisitor;
 import change.impact.graph.ast.parser.SingleVariableDeclarationVisitor;
 import change.impact.graph.ast.parser.TypeDeclarationVisitor;
 import change.impact.graph.ast.parser.VariableDeclarationStatementVisitor;
+import change.impact.graph.ast.parser.VariableDetails;
 
 public class JavaParserTest {
 	public static void main(String[] args) throws ExecutionException, IOException {
@@ -61,11 +65,34 @@ public class JavaParserTest {
 	}
 
 	private static void astExplorerTest() throws IOException {
+		// Convert the Java file to a String.
+		String code;
+		code = parseJavaFile();
+		// System.out.println(code);
+
+		// Setup the parser and get the CompilationUnit back.
+		final CompilationUnit cUnit = setupASTParser(code);
+		// testBindings(cUnit);
+		// runTrialErrorTest(cUnit);
+		testASTExplorer(cUnit);
+	}
+
+	private static void testASTExplorer(CompilationUnit cUnit) {
+		ASTExplorerVisitor visitor = new ASTExplorerVisitor();
+		cUnit.accept(visitor);
+		List<MethodDeclaration> methods = visitor.getMethodDeclarations();
+		
+		for (MethodDeclaration method : methods) {
+			System.out.println(method.getName());
+		}
+
+		List<VariableDetails> variableDetails = visitor.getSingleVariableDeclarations();
+	}
+
+	private static String parseJavaFile() throws IOException {
 		File file = new File("src/change/impact/graph/ast/parser/ASTExplorer.java");
 		// File file = new File("E:\\Projects\\HelloWorld\\HelloWorld\\src\\HelloWorld.java");
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
 
-		FileInputStream inputStream = new FileInputStream(file);
 		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
 		StringBuilder builder = new StringBuilder();
 		String code;
@@ -73,10 +100,14 @@ public class JavaParserTest {
 		while ((code = bufferedReader.readLine()) != null) {
 			builder.append(code + "\n ");
 		}
+		
+		bufferedReader.close();
 
-		code = builder.toString();
-		// System.out.println(code);
-
+		return builder.toString();
+	}
+	
+	private static CompilationUnit setupASTParser(String code) {
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		Map<String, String> options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_6);
 		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_6);
@@ -99,10 +130,59 @@ public class JavaParserTest {
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
 
-		final CompilationUnit cUnit = (CompilationUnit) parser.createAST(null);
-		//final CompilationUnit cUnit = PPACoreUtil.getCU(file, new PPAOptions());
-		// testBindings(cUnit);
+		return (CompilationUnit) parser.createAST(null);
+	}
+	
+	private static List<Triplet<String, String, Integer>> getActualPositions(List<Triplet<String, String, Integer>> triplets, CompilationUnit wrapper) {
+		List<Triplet<String, String, Integer>> newTriplets = new ArrayList<Triplet<String, String, Integer>>();
+		
+		for (Triplet<String, String, Integer> triplet : triplets) {
+			int actual = wrapper.getLineNumber(triplet.getValue2());
+			newTriplets.add(new Triplet<String, String, Integer>(triplet.getValue0(), triplet.getValue1(), actual));
+		}
+		
+		return newTriplets;
+	}
 
+	private static void testBindings(CompilationUnit cUnit) {
+		TypeDeclaration typeDeclaration = (TypeDeclaration) cUnit.types().get(0);
+		ITypeBinding typeBinding = typeDeclaration.resolveBinding();
+		System.out.println("TypeDeclaration : " + typeBinding);
+		System.out.println("----------------------------");
+		System.out.println();
+		System.out.println("TypeDeclaration : " + typeBinding.getJavaElement());
+		System.out.println("----------------------------");
+		System.out.println();
+		System.out.println("TypeDeclaration : "
+				+ typeBinding.getQualifiedName());
+		System.out.println("----------------------------");
+		System.out.println();
+		System.out.println("TypeDeclaration : "
+				+ typeBinding.getQualifiedName());
+		System.out.println("----------------------------");
+		System.out.println();
+
+		MethodDeclaration methodDeclaration = (MethodDeclaration) typeDeclaration
+				.bodyDeclarations().get(1);
+		IMethodBinding methodBinding = methodDeclaration.resolveBinding();
+		System.out.println("MethodDeclaration : " + methodBinding);
+		System.out.println("----------------------------");
+		System.out.println();
+		System.out.println("MethodDeclaration : "
+				+ methodBinding.getJavaElement());
+		System.out.println("----------------------------");
+		System.out.println();
+
+		Block body = methodDeclaration.getBody();
+		ExpressionStatement expression = (ExpressionStatement) body
+				.statements().get(0);
+		Expression e1 = expression.getExpression();
+		System.out.println("Expression : " + e1.resolveTypeBinding());
+		System.out.println("----------------------------");
+		System.out.println();
+	}
+	
+	private static void runTrialErrorTest(CompilationUnit cUnit) {
 		MethodDeclarationVisitor visitor = new MethodDeclarationVisitor();
 		TypeDeclarationVisitor visiter = new TypeDeclarationVisitor();
 
@@ -177,54 +257,5 @@ public class JavaParserTest {
 			System.out.println("---------------------");
 			System.out.println();
 		}
-	}
-	
-	private static List<Triplet<String, String, Integer>> getActualPositions(List<Triplet<String, String, Integer>> triplets, CompilationUnit wrapper) {
-		List<Triplet<String, String, Integer>> newTriplets = new ArrayList<Triplet<String, String, Integer>>();
-		
-		for (Triplet<String, String, Integer> triplet : triplets) {
-			int actual = wrapper.getLineNumber(triplet.getValue2());
-			newTriplets.add(new Triplet<String, String, Integer>(triplet.getValue0(), triplet.getValue1(), actual));
-		}
-		
-		return newTriplets;
-	}
-
-	private static void testBindings(CompilationUnit cUnit) {
-		TypeDeclaration typeDeclaration = (TypeDeclaration) cUnit.types().get(0);
-		ITypeBinding typeBinding = typeDeclaration.resolveBinding();
-		System.out.println("TypeDeclaration : " + typeBinding);
-		System.out.println("----------------------------");
-		System.out.println();
-		System.out.println("TypeDeclaration : " + typeBinding.getJavaElement());
-		System.out.println("----------------------------");
-		System.out.println();
-		System.out.println("TypeDeclaration : "
-				+ typeBinding.getQualifiedName());
-		System.out.println("----------------------------");
-		System.out.println();
-		System.out.println("TypeDeclaration : "
-				+ typeBinding.getQualifiedName());
-		System.out.println("----------------------------");
-		System.out.println();
-
-		MethodDeclaration methodDeclaration = (MethodDeclaration) typeDeclaration
-				.bodyDeclarations().get(1);
-		IMethodBinding methodBinding = methodDeclaration.resolveBinding();
-		System.out.println("MethodDeclaration : " + methodBinding);
-		System.out.println("----------------------------");
-		System.out.println();
-		System.out.println("MethodDeclaration : "
-				+ methodBinding.getJavaElement());
-		System.out.println("----------------------------");
-		System.out.println();
-
-		Block body = methodDeclaration.getBody();
-		ExpressionStatement expression = (ExpressionStatement) body
-				.statements().get(0);
-		Expression e1 = expression.getExpression();
-		System.out.println("Expression : " + e1.resolveTypeBinding());
-		System.out.println("----------------------------");
-		System.out.println();
 	}
 }

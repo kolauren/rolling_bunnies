@@ -182,7 +182,7 @@ public class ASTExplorer {
 								Triplet<String, String, Integer> varTriplet = findRelatedVariable(objectName, variableTriplets);
 								
 								// If the className from the triplet is in the list of classes, add it in to the list too.
-								if (allClasses.contains(varTriplet.getValue0())) {
+								if (varTriplet != null && allClasses.contains(varTriplet.getValue0())) {
 									bodyMethodsInvoked.add(generateMethod(null, varTriplet.getValue0(), methodName, position));
 								}
 							}
