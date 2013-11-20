@@ -168,18 +168,22 @@ public class ASTExplorer {
 							String methodName = methodInvocation.getMethodName();
 							String objectName = methodInvocation.getObjectName();
 							int position = methodInvocation.getStartLine();
-							List<String> allClasses = generateClasses(wrapperMap);
+							List<String> allClasses = generateClassNames(wrapperMap);
 							
-							if (objectName == null) {
-								String packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
-								bodyMethodsInvoked.add(generateMethod(packageName, wrapper.getClassName(), methodName, position));
-							} else {
+							if (objectName != null) {
 								// Find all the variables that the MethodInvocation uses.
 								VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
 								
-								// If the className from the triplet is in the list of classes, add it in to the list too.
-								if (variableDetail != null && allClasses.contains(variableDetail.getVariableType())) {
-									bodyMethodsInvoked.add(generateMethod(null, variableDetail.getVariableType(), methodName, position));
+								if (variableDetail != null) {
+									List<MethodDeclaration> methodDeclarations = getRelatedMethodDeclarations(allClasses, wrapperMap, variableDetail.getVariableType());
+									
+									if (methodDeclarations != null) {
+										for (MethodDeclaration methodDeclaration : methodDeclarations) {
+											if (methodDeclaration.getName().toString().equals(methodName)) {
+												bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapper));
+											}
+										}
+									}
 								}
 							}
 						}
@@ -211,7 +215,7 @@ public class ASTExplorer {
 	 * @param wrapperMap
 	 * @return
 	 */
-	private static List<String> generateClasses(Map<String, ASTWrapper> wrapperMap) {
+	private static List<String> generateClassNames(Map<String, ASTWrapper> wrapperMap) {
 		List<String> classes = new ArrayList<String>();
 		
 		for (String key : wrapperMap.keySet()) {
@@ -220,6 +224,20 @@ public class ASTExplorer {
 		}
 		
 		return classes;
+	}
+	
+	private static List<MethodDeclaration> getRelatedMethodDeclarations(List<String> allClasses, Map<String, ASTWrapper> wrapperMap, String classToSearch) {
+		for (String key : wrapperMap.keySet()) {
+			ASTWrapper wrapper = wrapperMap.get(key);
+			
+			if (classToSearch.equals(wrapper.getClassName())) {
+				List<MethodDeclaration> methods = getMethodDeclarations(wrapper);
+				
+				return methods;
+			}
+		}
+		
+		return null;
 	}
 
 	/**
@@ -328,20 +346,6 @@ public class ASTExplorer {
 		int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
 		
 		return new Method(id, packageName, className, methodName, parameters, startLine, endLine);
-	}
-	
-	/**
-	 * TODO: Need to figure out where to get the various information from the MethodInvocation.
-	 * 
-	 * @param method
-	 * @param wrapper
-	 * @return
-	 */
-	private static Method generateMethod(String packageName, String className, String methodName, int startLine) {
-		List<String> parameters = new ArrayList<String>();
-		String id = generateMethodID(packageName, className, methodName, parameters);
-		
-		return new Method(id, packageName, className, methodName, null, startLine, 0);
 	}
 	
 	/**
