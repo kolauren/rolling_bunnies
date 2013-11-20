@@ -51,7 +51,6 @@ public class CommitRetriever {
 
 		for(int i=0; i<max; i++) {
 			RepositoryCommit githubCommit = githubCommits.get(i);
-			System.out.println(githubCommit.getUrl());
 
 			Commit commit = new Commit();
 			commit.setSha(githubCommit.getSha());
