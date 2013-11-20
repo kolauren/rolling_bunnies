@@ -81,4 +81,9 @@ public class Method {
 	public boolean equals(Object method) {
 		return method instanceof Method && ((Method) method).getId().equals(id);
 	}
+	
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
 }
