@@ -196,7 +196,7 @@ public class ASTExplorer {
 						}
 						
 						// For the MethodDeclaration found, transfer the information into a Method object.
-						Method currentMethodDeclaration = generateMethod(method, wrapperToUse);
+						Method currentMethodDeclaration = generateMethod(mapMethod, wrapperToUse);
 						
 						// Store the <Method, HashSet<Method>>
 						foundMethods.put(currentMethodDeclaration, bodyMethodsInvoked);
