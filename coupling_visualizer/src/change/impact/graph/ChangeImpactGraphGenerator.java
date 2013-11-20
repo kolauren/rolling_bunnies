@@ -233,7 +233,7 @@ public class ChangeImpactGraphGenerator {
 			addedLineNumbers.addAll(addedLines.keySet());
 			ASTWrapper currentAST = currentASTs.get(clazz);
 			if(!addedLineNumbers.isEmpty())
-				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(addedLineNumbers, currentASTs, currentAST));
+				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(addedLineNumbers, currentASTs, currentAST, null));
 
 			//do removed lines
 			Map<Integer,String> removedLines = commit.getDiff(clazz).getRemovedLines();
@@ -242,12 +242,15 @@ public class ChangeImpactGraphGenerator {
 			String fileName = clazz;
 			//check if file was renamed
 			String oldFilePath = commit.getOldFileName(clazz);
-			if(oldFilePath != null)
+			String currFilePath = null;
+			if(oldFilePath != null) {
 				fileName = oldFilePath;
+				currFilePath = clazz;
+			}
 			//refer to the previousAST using the old filename
 			ASTWrapper previousAST = previousASTs.get(fileName);
 			if(!removedLines.isEmpty())
-				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(removedLineNumbers, currentASTs, previousAST)); 
+				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(removedLineNumbers, currentASTs, previousAST, currFilePath)); 
 
 			//TODO: do we want to remove deleted methods?
 			updateCurrentMethods(adjacentNodes);
