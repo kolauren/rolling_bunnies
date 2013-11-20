@@ -20,7 +20,7 @@ public class ASTWrapper {
 		this.cUnit = cUnit;
 		
 		TypeDeclarationVisitor typeVisitor = new TypeDeclarationVisitor();
-		typeVisitor.visit(cUnit);
+		cUnit.accept(typeVisitor);
 		
 		this.className = typeVisitor.getClassName();
 		this.setSourceLoc(sourceLoc);

@@ -26,7 +26,7 @@ public class ChangeImpactGraphGenerator {
 	//method id -> Method
 	//never removes a method once its added
 	private Map<String,Method> currentMethods;
-	
+
 	private Map<String,ASTWrapper> backupASTs;
 	private Map<String,ASTWrapper> backupBackupASTs;
 
@@ -189,8 +189,8 @@ public class ChangeImpactGraphGenerator {
 					}
 				}
 			}
-			
-			
+
+
 
 			previousASTs.put(previousName, previousAST);
 			//update current AST
@@ -281,8 +281,14 @@ public class ChangeImpactGraphGenerator {
 	private void updateCurrentMethods(Map<Method, Set<Method>> methodMap) {
 		for(Method node : methodMap.keySet()) {
 			currentMethods.put(node.getId(), node);
-			for(Method adjacentNode : methodMap.get(node)) {
-				currentMethods.put(adjacentNode.getId(), adjacentNode);
+			Set<Method> adjacentNodes = methodMap.get(node);
+			//method was deleted
+			if(adjacentNodes == null) {
+				currentMethods.remove(node.getId());
+			} else {
+				for(Method adjacentNode : methodMap.get(node)) {
+					currentMethods.put(adjacentNode.getId(), adjacentNode);
+				}
 			}
 		}
 	}
