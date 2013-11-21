@@ -56,11 +56,11 @@ button:hover, button.active {
 }
 
 .wheel {
-  opacity: 0.5;
-  fill: #333333;
+  opacity: 0.15;
+  fill: #FFFFFF;
   stroke-width: 1px;
-  stroke: #FFFFFF;
-  stroke-opacity:0.8;
+  /*stroke: #FFFFFF;
+  stroke-opacity:0.8;*/
 }
 
 .edge, .animate {
@@ -113,6 +113,11 @@ div.tooltip {
   clear: both;
 }
 
+.d3-slider {
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 5px;
+}
+
 .d3-slider-handle {
   background-image: url("../nyancat.png") !important;
   background-size: cover !important;
@@ -120,4 +125,15 @@ div.tooltip {
   width: 50px !important; 
   height: 30px !important;
   border: none !important;
+}
+
+#rainbow {
+  background-image: url("../rainbow.png");
+  background-repeat: repeat-x;
+  width: 0;
+  height: 105%;
+}
+
+header {
+  margin: 0 20px;
 }
