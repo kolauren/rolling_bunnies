@@ -28,10 +28,13 @@ DependencyWheel.prototype = {
   impact_mode: "multiline", // either "thickness" or "multiline"
   d3data: null,
   nodeGlow: null,
+  gradient: null,
 
   init: function(options) {
 
       this.nodeGlow = glow("nodeGlow").rgb("#7f7f7f").stdDeviation(3);
+      this.gradient = gradient("pathGradient");
+      
       
     // create the main svg
     this.svg = d3.select(this.options.selector)
@@ -40,7 +43,8 @@ DependencyWheel.prototype = {
       .attr("height", (this.options.radius * 2.2))
       .append("svg:g")
       .attr("transform", "translate(" + (this.options.radius * 1.25) + "," + (this.options.radius * 1.1) + ")")
-      .call(this.nodeGlow);
+      .call(this.nodeGlow)
+      .call(this.gradient);
 
     // create the wheel
     this.svg.append("svg:path")
@@ -68,8 +72,6 @@ DependencyWheel.prototype = {
     this.tooltip = d3.select("body").append("div")   
     .attr("class", "tooltip")               
     .style("opacity", 0);
-      
-    
 
   },
     
@@ -251,7 +253,9 @@ DependencyWheel.prototype = {
               self.svg.selectAll(self.options.selector)
                 .data(data).enter().append("svg:path")
                 .attr("class", function(d) { return "impact_edge source-" + e.source + " target-" + e.target; })
-                .style("stroke", "#DDDDDD")
+                //.style("stroke", "#DDDDDD")
+                .style("fill", "none")
+                .style("stroke", "url(#pathGradient)")
                 .style("filter", "url(#nodeGlow)")
                 .style("opacity", 0.9)
                 .attr("d", function(d, i) { 
