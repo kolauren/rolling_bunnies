@@ -18,6 +18,8 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
+import com.google.common.collect.Sets;
+
 import change.impact.graph.Method;
 
 public class ASTExplorer {
@@ -31,7 +33,7 @@ public class ASTExplorer {
 	public static ASTWrapper generateAST(String urlString, String sourceLoc) throws IOException {
 		// Get the code from the URL provided and parse it into a String.
 		String code = parseURLContents(urlString);
-		
+
 		// Initial parser setup.
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setSource(code.toCharArray());
@@ -42,13 +44,13 @@ public class ASTExplorer {
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		String unitName = "";
 		parser.setUnitName(unitName);
-		
+
 		// Create a CompilationUnit from the ASTParser.
 		CompilationUnit cUnit = (CompilationUnit) parser.createAST(null);
-		
+
 		return new ASTWrapper(parser, cUnit, sourceLoc);
 	}
-	
+
 	/**
 	 * Given the URL, access the raw code and build a String off of it.
 	 * 
@@ -59,21 +61,21 @@ public class ASTExplorer {
 	private static String parseURLContents(String urlString) throws IOException {
 		URL url = new URL(urlString);
 		InputStreamReader inputReader = new InputStreamReader(url.openStream());
-        BufferedReader bufferedReader = new BufferedReader(inputReader);
+		BufferedReader bufferedReader = new BufferedReader(inputReader);
 		StringBuilder builder = new StringBuilder();
-        String code;
-        
-        // Read each line of the raw code and put it into the StringBuilder.
+		String code;
+
+		// Read each line of the raw code and put it into the StringBuilder.
 		while ((code = bufferedReader.readLine()) != null) {
 			builder.append(code + " \n ");
 		}
-		
+
 		bufferedReader.close();
 		inputReader.close();
 
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Given a Method, check to see if the method exists in the source code.
 	 * 
@@ -85,14 +87,14 @@ public class ASTExplorer {
 	public static boolean methodExists(Method m, ASTWrapper wrapper) throws JavaModelException {
 		// Get a complete list of all the method declarations.
 		List<Method> methods = generateMethodsList(wrapper);
-		
+
 		// Check the method being requested against all the method declarations.
 		for (Method method : methods) {
 			if (method.equals(m)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -104,96 +106,101 @@ public class ASTExplorer {
 	 */
 	private static List<Method> generateMethodsList(ASTWrapper wrapper) {
 		List<Method> methods = new ArrayList<Method>();
-		
+
 		// For each of the MethodDeclarations found, generate a Method object and  put it into the Methods list.
 		for (MethodDeclaration method : getMethodDeclarations(wrapper)) {
 			methods.add(generateMethod(method, wrapper));
 		}
-		
+
 		return methods;
 	}
-	
+
 	/**
 	 * Given a list of line numbers, determine which MethodDeclaration it is and grab all the MethodInvocations.
 	 * If the Java file was removed, return a list of all the MethodDeclaration from the wrapper and map it all to null.
 	 * If the Java file was renamed, grab currSourceLoc and use that to get the wrapper from wrapperMap.
 	 * If the Java file did not change, use the wrapper's sourceLoc as the key to the wrapperMap.
 	 * 
+	 * 
+	 * Return Cases:
+	 * 
+	 * method -> null				method was removed or renamed
+	 * method -> {}					method was changed but contains no method invocations (perhaps removed in this commit)
+	 * method -> {... }		 		method was changed and contains some method invocations
+	 * 
 	 * @param lineNumbers
 	 * @param wrapper
 	 * @return
 	 */
-	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper, String currSourceLoc) {
+	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper) {
 		// Get all the MethodDeclarations from the AST.
 		List<MethodDeclaration> prevMethods = getMethodDeclarations(wrapper);
 		List<MethodDeclaration> currMethods = new ArrayList<MethodDeclaration>();
 		Map<Method, Set<Method>> foundMethods = new HashMap<Method, Set<Method>>();
-		
-		if (wrapperMap.get(wrapper.getSourceLoc()) != null || currSourceLoc != null) {
-			ASTWrapper wrapperToUse = wrapperMap.get(wrapper.getSourceLoc());
-			
-			if (wrapperMap.get(wrapper.getSourceLoc()) == null) {
-				wrapperToUse = wrapperMap.get(currSourceLoc);
-			}
-			
-			currMethods = getMethodDeclarations(wrapperToUse);
-			
+
+		// current AST that represents the same AST in the single wrapper
+		ASTWrapper currWrapper = wrapperMap.get(wrapper.getSourceLoc());
+		// class still exists in current state
+		if (currWrapper != null) {
+
+			currMethods = getMethodDeclarations(currWrapper);
+
 			// For each of the line number provided, cross reference with all the MethodDeclarations and determine which MethodDeclaration it is under.
 			for (int lineNumber : lineNumbers) {
 				for (MethodDeclaration method : prevMethods) {
 					int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
 					int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
-					Set<Method> bodyMethodsInvoked = null;
-					
+
+					Set<Method> bodyMethodsInvoked = Sets.newHashSet(); 
+
 					if (lineNumber >= startLine && lineNumber < endLine) {
-						bodyMethodsInvoked = new HashSet<Method>();
-						
 						// Get the similar methods between the two ASTWrappers.
 						MethodDeclaration mapMethod = getSameMethodDeclaration(currMethods, method);
-						
-						// If the map is null, then just skip this iteration.
+
+						// if the current method declaration is null, it was removed/renamed
 						if (mapMethod == null) {
+							foundMethods.put(generateMethod(method, wrapper), null);
 							break;
 						}
-						
+
 						// Grab every MethodInvocation node and extract information.
 						Block block = mapMethod.getBody();
 						ASTExplorerVisitor visitor = new ASTExplorerVisitor();
 						block.accept(visitor);
-						List<MethodInvocationDetails> methodInvocations = getActualMethodPositions(visitor.getMethodInvocations(), wrapperToUse);
-						
+						List<MethodInvocationDetails> methodInvocations = getActualMethodPositions(visitor.getMethodInvocations(), currWrapper);
+
 						// Grab every VariableDeclaration, SingleVariableDeclaration from the MethodDeclaration body.
-						List<VariableDetails> variableDeclarations = getActualVariablePositions(visitor.getVariableDeclarations(), wrapperToUse);
-						List<VariableDetails> singleVariableDeclarations = getActualVariablePositions(visitor.getSingleVariableDeclarations(), wrapperToUse);
-						
+						List<VariableDetails> variableDeclarations = getActualVariablePositions(visitor.getVariableDeclarations(), currWrapper);
+						List<VariableDetails> singleVariableDeclarations = getActualVariablePositions(visitor.getSingleVariableDeclarations(), currWrapper);
+
 						// Combine both types of variables into one list.
 						List<VariableDetails> variableDetails = new ArrayList<VariableDetails>();
 						variableDetails.addAll(variableDeclarations);
 						variableDetails.addAll(singleVariableDeclarations);
-						
+
 						// For each of the MethodInvocation, add in the methods that are part of the workspace into bodyMethodsInvoked.
 						for (MethodInvocationDetails methodInvocation : methodInvocations) {
 							String methodName = methodInvocation.getMethodName();
 							String objectName = methodInvocation.getObjectName();
 							List<String> allClasses = generateClassNames(wrapperMap);
-							
+
 							String objectClassName = null;
 							if (objectName == null) {
 								// if null then we are calling a method in the same class
-								objectClassName = wrapperToUse.getClassName();
+								objectClassName = currWrapper.getClassName();
 							} else {
 								VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
 								objectClassName = variableDetail.getVariableType();
 							}
-							
-							
+
+
 							if (objectClassName != null) {
-								
+
 								ASTWrapper wrapperMethodIsIn = getRelatedWrapper(allClasses, wrapperMap, objectClassName);
 
 								if (wrapperMethodIsIn != null) {
 									List<MethodDeclaration> methodDeclarations = getMethodDeclarations(wrapperMethodIsIn);
-									
+
 									if (methodDeclarations != null) {
 										for (MethodDeclaration methodDeclaration : methodDeclarations) {
 											if (methodDeclaration.getName().toString().equals(methodName)) {
@@ -204,25 +211,26 @@ public class ASTExplorer {
 								}
 							}
 						}
-						
+
 						// For the MethodDeclaration found, transfer the information into a Method object.
-						Method currentMethodDeclaration = generateMethod(mapMethod, wrapperToUse);
-						
+						Method currentMethodDeclaration = generateMethod(mapMethod, currWrapper);
+
 						// Store the <Method, HashSet<Method>>
 						foundMethods.put(currentMethodDeclaration, bodyMethodsInvoked);
-						
+
 						// Stop iterating once MethodDeclaration found.
 						break;
 					}
 				}
 			}
 		} else {
+			// class was removed; indicate that every method is removed too by mapping to null
 			for (MethodDeclaration method : currMethods) {
 				Method m = generateMethod(method, wrapper);
 				foundMethods.put(m, null);
 			}
 		}
-		
+
 		return foundMethods;
 	}
 
@@ -234,24 +242,24 @@ public class ASTExplorer {
 	 */
 	private static List<String> generateClassNames(Map<String, ASTWrapper> wrapperMap) {
 		List<String> classes = new ArrayList<String>();
-		
+
 		for (String key : wrapperMap.keySet()) {
 			ASTWrapper wrapper = wrapperMap.get(key);
 			classes.add(wrapper.getClassName());
 		}
-		
+
 		return classes;
 	}
-	
+
 	private static ASTWrapper getRelatedWrapper(List<String> allClasses, Map<String, ASTWrapper> wrapperMap, String classToSearch) {
 		for (String key : wrapperMap.keySet()) {
 			ASTWrapper wrapper = wrapperMap.get(key);
-			
+
 			if (classToSearch.equals(wrapper.getClassName())) {
 				return wrapper;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -265,26 +273,26 @@ public class ASTExplorer {
 	private static MethodDeclaration getSameMethodDeclaration(List<MethodDeclaration> currMethods, MethodDeclaration method) {
 		String methodName = method.getName().toString();
 		List<String> methodParams = getParameterTypes(method);
-		
+
 		for (MethodDeclaration m : currMethods) {
 			String currMethodName = m.getName().toString();
 			List<String> currMethodParams = getParameterTypes(m);
-			
+
 			if (methodName.equals(currMethodName) && methodParams.size() == currMethodParams.size()) {
 				return m;
 				// refactor this later to account for parameter types
-//				for (int i = 0; i < methodParams.size(); i++) {
-//					if (!methodParams.get(i).equals(currMethodParams.get(i))) {
-//						break;
-//					}
-//					
-//					if (i == methodParams.size() - 1) {
-//						return m;
-//					}
-//				}
+				//				for (int i = 0; i < methodParams.size(); i++) {
+				//					if (!methodParams.get(i).equals(currMethodParams.get(i))) {
+				//						break;
+				//					}
+				//					
+				//					if (i == methodParams.size() - 1) {
+				//						return m;
+				//					}
+				//				}
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -299,10 +307,10 @@ public class ASTExplorer {
 		ASTExplorerVisitor visitor = new ASTExplorerVisitor();
 		//methodVisitor.visit(wrapper.getCompilationUnit());
 		wrapper.getCompilationUnit().accept(visitor);
-		
+
 		return visitor.getMethodDeclarations();
 	}
-	
+
 	/**
 	 * Get the actual positions of the method.
 	 * 
@@ -312,15 +320,15 @@ public class ASTExplorer {
 	 */
 	private static List<MethodInvocationDetails> getActualMethodPositions(List<MethodInvocationDetails> details, ASTWrapper wrapper) {
 		List<MethodInvocationDetails> newDetails = new ArrayList<MethodInvocationDetails>();
-		
+
 		for (MethodInvocationDetails detail : details) {
 			int actual = wrapper.getCompilationUnit().getLineNumber(detail.getStartLine());
 			newDetails.add(new MethodInvocationDetails(detail.getMethodInvocation(), detail.getMethodName(), detail.getObjectName(), actual));
 		}
-		
+
 		return newDetails;
 	}
-	
+
 	/**
 	 * Get the actual positions of the variables.
 	 * 
@@ -330,15 +338,15 @@ public class ASTExplorer {
 	 */
 	private static List<VariableDetails> getActualVariablePositions(List<VariableDetails> details, ASTWrapper wrapper) {
 		List<VariableDetails> newDetails = new ArrayList<VariableDetails>();
-		
+
 		for (VariableDetails detail : details) {
 			int actual = wrapper.getCompilationUnit().getLineNumber(detail.getStartLine());
 			newDetails.add(new VariableDetails(detail.getVariableType(), detail.getVariableName(), actual));
 		}
-		
+
 		return newDetails;
 	}
-	
+
 	/**
 	 * Find the variable relation between the String and a Triplet.
 	 * 
@@ -354,7 +362,7 @@ public class ASTExplorer {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Generate a Method object from the provided MethodDeclaration and ASTWrapper.
 	 * 
@@ -364,21 +372,21 @@ public class ASTExplorer {
 	 */
 	private static Method generateMethod(MethodDeclaration method, ASTWrapper wrapper) {
 		String packageName = null;
-		
+
 		if (wrapper.getCompilationUnit().getPackage() != null) {
 			packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
 		}
-		
+
 		String className = wrapper.getClassName();
 		String methodName = method.getName().toString();
 		List<String> parameters = getParameterTypes(method);
 		String id = generateMethodID(packageName, className, methodName, parameters);
 		int startLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition());
 		int endLine = wrapper.getCompilationUnit().getLineNumber(method.getStartPosition() + method.getLength());
-		
+
 		return new Method(id, packageName, className, methodName, parameters, startLine, endLine);
 	}
-	
+
 	/**
 	 * Get all the parameters given a MethodDeclaration.
 	 * 
@@ -389,16 +397,16 @@ public class ASTExplorer {
 		@SuppressWarnings({ "rawtypes" })
 		List parameters = method.parameters();
 		List<String> params = new ArrayList<String>();
-		
+
 		// For each parameter, only take the class type and add it into the list of parameters.
 		for (Object param : parameters) {
 			String[] splitString = param.toString().split("\\s+");
 			params.add(splitString[0]);
 		}
-		
+
 		return params;
 	}
-	
+
 	/**
 	 * Given the various information for a method, generate the unique ID for a method.
 	 * 
@@ -411,16 +419,16 @@ public class ASTExplorer {
 	private static String generateMethodID(String packageName, String className, String methodName, List<String> parameters) {
 		String id = "";
 		String delimiter = "-";
-		
+
 		packageName = packageName == null ? "NOPACKAGENAME" : packageName;
 		className = className == null ? "NOCLASSNAME" : className;
-		
+
 		id = packageName + delimiter + className + delimiter + methodName;
-		
+
 		for(String parameter : parameters) {
 			id += delimiter+parameter;
 		}
-		
+
 		return id;
 	}
 }
