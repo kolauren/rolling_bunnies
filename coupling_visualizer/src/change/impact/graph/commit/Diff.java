@@ -5,7 +5,6 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 public class Diff {
-	private boolean isProjectRename;
 	//not provided in github diffs
 	private String oldPath;
 	private String newPath;
@@ -16,18 +15,26 @@ public class Diff {
 	private String rawCodeURL;
 	private Map<Integer, String> addedLines;
 	private Map<Integer, String> removedLines;
+	//uses line number from the old file
+	private Map<Integer, String> unchangedLines;
 	
 	public Diff() {
 		addedLines = Maps.newLinkedHashMap();
 		removedLines = Maps.newLinkedHashMap();
+		unchangedLines = Maps.newLinkedHashMap();
 	}
 	
-	public boolean isProjectRename() {
-		return isProjectRename;
-	}
+	public String constructOldFile() {
+		Map<Integer, String> lines = Maps.newLinkedHashMap();
+		lines.putAll(removedLines);
+		lines.putAll(unchangedLines);
+		StringBuilder sb = new StringBuilder();
+		
+		for(Integer number : lines.keySet()) {
+			sb.append(lines.get(number));
+		}
 
-	public void setProjectRename(boolean isProjectRename) {
-		this.isProjectRename = isProjectRename;
+		return sb.toString();
 	}
 
 	public void putAddedLine(int number, String line) {
@@ -38,6 +45,10 @@ public class Diff {
 		removedLines.put(number, line);
 	}
 	
+	public void putUnchangedLine(int number, String line) {
+		unchangedLines.put(number, line);
+	}
+	
 	public String getAddedLine(int number) {
 		return addedLines.get(number);
 	}
@@ -46,6 +57,10 @@ public class Diff {
 		return removedLines.get(number);
 	}
 	
+	public String getUnchangedLine(int number) {
+		return unchangedLines.get(number);
+	}
+
 	public String getOldTime() {
 		return oldTime;
 	}

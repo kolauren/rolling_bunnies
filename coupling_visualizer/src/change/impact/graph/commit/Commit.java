@@ -2,30 +2,40 @@ package change.impact.graph.commit;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 
 //commit data we're interested in for our visualization
 public class Commit {
 	private String sha;
-	//please don't rename these. thx.
+
 	private Collection<String> addedJavaFiles;
 	private Collection<String> removedJavaFiles;
 	private Collection<String> modifiedJavaFiles;
-	private Map<String, String> renamedJavaFiles;
+	private Collection<String> renamedJavaFiles;
 
 	private Map<String, Diff> diffs;
+	
+	private Set<String> renamedProject;
+	private Map<String, String> renamedMap;
 
 	public Commit() {
 		addedJavaFiles = Lists.newArrayList();
 		removedJavaFiles = Lists.newArrayList();
 		modifiedJavaFiles = Lists.newArrayList();
-		renamedJavaFiles = Maps.newHashMap();
+		renamedJavaFiles = Lists.newArrayList();
+
 		diffs = Maps.newHashMap();
+		
+		renamedProject = Sets.newHashSet();
+		renamedMap = Maps.newHashMap();
 	}
 
-	public Map<String,String> getRenamedJavaFiles() {
+	public Collection<String> getRenamedJavaFiles() {
 		return renamedJavaFiles;
 	}
 
@@ -61,23 +71,23 @@ public class Commit {
 		this.removedJavaFiles = removedJavaFiles;
 	}
 
-	public void setRenamedJavaFiles(Map<String,String> renamedJavaFiles) {
+	public void setRenamedJavaFiles(Collection<String> renamedJavaFiles) {
 		this.renamedJavaFiles = renamedJavaFiles;
 	}
 
-	public void addJavaFile(CommitFileStatus status, String ... file) {
+	public void addJavaFile(CommitFileStatus status, String filename) {
 		switch(status) {
 		case ADDED:
-			addedJavaFiles.add(file[0]);
+			addedJavaFiles.add(filename);
 			break;
 		case MODIFIED:
-			modifiedJavaFiles.add(file[0]);
+			modifiedJavaFiles.add(filename);
 			break;
 		case REMOVED:
-			removedJavaFiles.add(file[0]);
+			removedJavaFiles.add(filename);
 			break;
 		case RENAMED:
-			renamedJavaFiles.put(file[0], file[1]);
+			renamedJavaFiles.add(filename);
 			break;
 		}
 	}
@@ -109,13 +119,35 @@ public class Commit {
 		return diffs.get(clazz);
 	}
 	
+	public void addRenamedProject(String filename) {
+		renamedProject.add(filename);
+	}
+	
+	public Set<String> getRenamedProject() {
+		return renamedProject;
+	}
+	
 	//returns all classes that had a diff
-	public Collection<String> getChangedClasses() {
+	public Collection<String> getClassesWithDiff() {
 		return diffs.keySet();
+	}
+	
+	public void addOldFileName(String newFileName, String oldFileName) {
+		renamedMap.put(newFileName, oldFileName);
 	}
 	
 	//returns null if the file was not renamed
 	public String getOldFileName(String newFileName) {
-		return renamedJavaFiles.get(newFileName);
+		return renamedMap.get(newFileName);
+	}
+	
+	public boolean isProjectRenamed(String filename) {
+		return renamedProject.contains(filename);
+	}
+	
+	//project directory changed, package changed, class changed
+	//note that modified can be renamed
+	public boolean isFileRenamed(String newFileName) {
+		return getOldFileName(newFileName) != null;
 	}
 }

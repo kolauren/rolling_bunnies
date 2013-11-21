@@ -55,6 +55,7 @@ public class UnifiedDiffParser {
 				diff.putRemovedLine(oldLineNumber, captured[0]);
 				oldLineNumber++;
 			} else if(getCapturedGroups(UNCHANGED_LINE, line, captured, "unchanged")) {
+				diff.putUnchangedLine(oldLineNumber, captured[0]);
 				newLineNumber++;
 				oldLineNumber++;
 			} else if (line.matches(NO_NEWLINE)) {
