@@ -37,9 +37,9 @@ DependencyWheel.prototype = {
     this.svg = d3.select(this.options.selector)
       .append("svg:svg")
       .attr("width", (this.options.radius * 2.5))
-      .attr("height", (this.options.radius * 2.1))
+      .attr("height", (this.options.radius * 2.2))
       .append("svg:g")
-      .attr("transform", "translate(" + (this.options.radius * 1.25) + "," + (this.options.radius) + ")")
+      .attr("transform", "translate(" + (this.options.radius * 1.25) + "," + (this.options.radius * 1.1) + ")")
       .call(this.nodeGlow);
 
     // create the wheel
@@ -245,7 +245,7 @@ DependencyWheel.prototype = {
           var current_paths = $(".impact_edge.source-" + e.source + ".target-" + e.target).length;
           if(current_paths < e.count) {
             var num_paths_to_add = e.count - current_paths;
-            for(var j = 1; j <= num_paths_to_add + 4; j++) {
+            for(var j = 1; j <= num_paths_to_add; j++) {
               var data = [{ source: self.d3data.cluster_map[e.source], target: self.d3data.cluster_map[e.target] }];
               var splines = self.options.bundle(data);
               self.svg.selectAll(self.options.selector)

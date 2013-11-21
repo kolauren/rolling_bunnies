@@ -1,0 +1,161 @@
+[
+  {
+    "commit_SHA": "31cdd33091514a8eb34652b3c6665feb907b711f",
+    "dependency_graphs": [
+      {
+        "method_id": "test1-B-b1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          }
+        ]
+      },
+      {
+        "method_id": "test1-A-a1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-A-a1",
+            "method_name": "a1",
+            "class_name": "A",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b1"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "commit_SHA": "f6621201c1fb3374df398e09dd3dddd51e0d328a",
+    "dependency_graphs": [
+      {
+        "method_id": "test1-C-c1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-C-c1",
+            "method_name": "c1",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          }
+        ]
+      },
+      {
+        "method_id": "test1-C-c2",
+        "adjacency_list": [
+          {
+            "method_id": "test1-C-c3",
+            "method_name": "c3",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-C-c1",
+            "method_name": "c1",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-C-c2",
+            "method_name": "c2",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": [
+              "test1-C-c1",
+              "test1-C-c3"
+            ]
+          }
+        ]
+      },
+      {
+        "method_id": "test1-B-b2",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          }
+        ]
+      },
+      {
+        "method_id": "test1-B-b1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b2"
+            ]
+          }
+        ]
+      },
+      {
+        "method_id": "test1-A-a1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b2"
+            ]
+          },
+          {
+            "method_id": "test1-A-a1",
+            "method_name": "a1",
+            "class_name": "A",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b1"
+            ]
+          }
+        ]
+      },
+      {
+        "method_id": "test1-C-c3",
+        "adjacency_list": [
+          {
+            "method_id": "test1-C-c3",
+            "method_name": "c3",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          }
+        ]
+      }
+    ]
+  }
+]

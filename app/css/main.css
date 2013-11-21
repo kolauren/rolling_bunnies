@@ -4,7 +4,8 @@ body {
   font-family: "Roboto", sans-serif;
   font-size: 16px;
   font-weight: 300;
-  background-image: url("../spacebg.jpg");
+  background-color: #000000;
+  background-image: url("../bg.jpg");
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -22,7 +23,8 @@ body {
 }
 
 .info {
-  padding: 5px 40px;
+  padding: 5px 20px;
+  margin-bottom: 20px;
   font-size: 22px;
   color: white;
 }
@@ -58,7 +60,7 @@ button:hover, button.active {
   fill: #333333;
   stroke-width: 1px;
   stroke: #FFFFFF;
-  stroke-opacity:0.4;
+  stroke-opacity:0.8;
 }
 
 .edge, .animate {
