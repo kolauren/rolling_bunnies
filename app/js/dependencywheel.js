@@ -271,7 +271,7 @@ DependencyWheel.prototype = {
                     }
                   }
                   if(difference === 180) tension_const = 0.8;
-                    return line.tension(-j * tension_const)(splines[i]);
+                  return line.tension(-(j + current_paths) * tension_const)(splines[i]);
                 });
             }
           }

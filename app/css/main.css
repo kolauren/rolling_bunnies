@@ -91,9 +91,6 @@ button:hover, button.active {
   cursor: pointer;
 }
 
-.node-label {
-  font-size: 24; 
-}
 
 div.tooltip {   
   position: absolute;           

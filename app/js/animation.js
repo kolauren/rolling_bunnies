@@ -34,7 +34,7 @@ Animation.prototype = {
         
         this.utils.processCommitData(self.options.json, function(commits, final_state, impact_edges){
             //console.log(commits);
-            //console.log(impact_edges);
+            console.log(impact_edges);
             self.commits = commits;
             self.dependencyWheel.draw(final_state, impact_edges);
         });
