@@ -34,7 +34,7 @@ Animation.prototype = {
         
         this.utils.processCommitData(self.options.json, function(commits, final_state, impact_edges){
             //console.log(commits);
-            console.log(impact_edges);
+            //console.log(impact_edges);
             self.commits = commits;
             self.dependencyWheel.draw(final_state, impact_edges);
         });
@@ -76,6 +76,8 @@ Animation.prototype = {
             // update rainbow width
             d3.select("#rainbow")
                 .style("width", value + "%");
+
+            self.updateInfoLabel();
         }));
     },
 
@@ -145,8 +147,12 @@ Animation.prototype = {
     animateCommits: function () {
         var self = this;
         var commit = this.commits[this.frame];
-        $(".info").html("Commit #: " + (this.frame + 1));
         this.dependencyWheel.lightUp(commit);
+        this.updateInfoLabel();
+    },
+
+    updateInfoLabel: function() {
+        $(".info").html("Commit #: " + (this.frame + 1));
     }
 
 };
