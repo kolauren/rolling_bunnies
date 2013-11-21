@@ -33,7 +33,7 @@ Animation.prototype = {
         $(self.options.pauseButton).attr("disabled", true);
         
         this.utils.processCommitData(self.options.json, function(commits, final_state, impact_edges){
-            console.log(commits);
+            //console.log(commits);
             console.log(impact_edges);
             self.commits = commits;
             self.dependencyWheel.draw(final_state, impact_edges);
@@ -73,6 +73,9 @@ Animation.prototype = {
             var commit = self.commits[commitToStartAt];
             self.frame = commitToStartAt;
             self.sliderPosition = commitToStartAt;
+            // update rainbow width
+            d3.select("#rainbow")
+                .style("width", value + "%");
         }));
     },
 
@@ -110,10 +113,13 @@ Animation.prototype = {
     
     // updates the position of the slider as the animation progresses
     updateSliderPosition: function(frame) {
-      var self = this;
-      var newSliderPosition = frame/(0.01*self.commits.length);
-      d3.select("#slider").select(".d3-slider-handle")
-        .style("left","" + newSliderPosition + "%");  
+        var self = this;
+        var newSliderPosition = frame/(0.01*self.commits.length);
+        d3.select("#slider").select(".d3-slider-handle")
+        .style("left","" + newSliderPosition + "%"); 
+        // update rainbow width
+        d3.select("#rainbow")
+            .style("width", newSliderPosition + "%"); 
     },
     
     // set opacity of all nodes and edges to 0
@@ -139,7 +145,7 @@ Animation.prototype = {
     animateCommits: function () {
         var self = this;
         var commit = this.commits[this.frame];
-        $(".info").html("Commit #: " + commit.commit_SHA);
+        $(".info").html("Commit #: " + (this.frame + 1));
         this.dependencyWheel.lightUp(commit);
     }
 

@@ -1,0 +1,354 @@
+[
+  {
+    "commit_SHA": "31cdd33091514a8eb34652b3c6665feb907b711f",
+    "dependency_graphs": [
+      {
+        "method_id": "test1-B-b1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          }
+        ]
+      },
+      {
+        "method_id": "test1-A-a1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-A-a1",
+            "method_name": "a1",
+            "class_name": "A",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b1"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "commit_SHA": "f6621201c1fb3374df398e09dd3dddd51e0d328a",
+    "dependency_graphs": [
+      {
+        "method_id": "test1-C-c1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-C-c1",
+            "method_name": "c1",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          }
+        ]
+      },
+      {
+        "method_id": "test1-C-c2",
+        "adjacency_list": [
+          {
+            "method_id": "test1-C-c3",
+            "method_name": "c3",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-C-c1",
+            "method_name": "c1",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-C-c2",
+            "method_name": "c2",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": [
+              "test1-C-c1",
+              "test1-C-c3"
+            ]
+          }
+        ]
+      },
+      {
+        "method_id": "test1-B-b2",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          }
+        ]
+      },
+      {
+        "method_id": "test1-B-b1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b2"
+            ]
+          }
+        ]
+      },
+      {
+        "method_id": "test1-A-a1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-A-a1",
+            "method_name": "a1",
+            "class_name": "A",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b1"
+            ]
+          },
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b2"
+            ]
+          }
+        ]
+      },
+      {
+        "method_id": "test1-C-c3",
+        "adjacency_list": [
+          {
+            "method_id": "test1-C-c3",
+            "method_name": "c3",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "commit_SHA": "1e45f50935269e7d1524aefcfb2fb4660a18d475",
+    "dependency_graphs": [
+      {
+        "method_id": "test1-B-b3",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "unaffected",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-B-b3",
+            "method_name": "b3",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b2"
+            ]
+          }
+        ]
+      },
+      {
+        "method_id": "test1-A-a1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-A-a1",
+            "method_name": "a1",
+            "class_name": "A",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b1"
+            ]
+          },
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "unaffected",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "unaffected",
+            "adjacent": [
+              "test1-B-b2"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "commit_SHA": "96b01da9c495bc1e27c33bc7a3cb16b53b65cf27",
+    "dependency_graphs": [
+      {
+        "method_id": "test1-C-c2",
+        "adjacency_list": [
+          {
+            "method_id": "test1-C-c3",
+            "method_name": "c3",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-C-c1",
+            "method_name": "c1",
+            "class_name": "C",
+            "status": "unaffected",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-C-c2",
+            "method_name": "c2",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": [
+              "test1-C-c1",
+              "test1-C-c3"
+            ]
+          }
+        ]
+      },
+      {
+        "method_id": "test1-C-c3",
+        "adjacency_list": [
+          {
+            "method_id": "test1-C-c3",
+            "method_name": "c3",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "commit_SHA": "738d923df315d8ad7f8f75d0f3e0f7b422cc6c85",
+    "dependency_graphs": [
+      {
+        "method_id": "test1-C-c1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-C-c1",
+            "method_name": "c1",
+            "class_name": "C",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b3"
+            ]
+          },
+          {
+            "method_id": "test1-B-b3",
+            "method_name": "b3",
+            "class_name": "B",
+            "status": "unaffected",
+            "adjacent": [
+              "test1-B-b2"
+            ]
+          },
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "unaffected",
+            "adjacent": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "commit_SHA": "c7ff0f71e97fb73c6816e503e8fc7676ee0e0e34",
+    "dependency_graphs": [
+      {
+        "method_id": "test1-B-b1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "unaffected",
+            "adjacent": []
+          },
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b2"
+            ]
+          }
+        ]
+      },
+      {
+        "method_id": "test1-A-a1",
+        "adjacency_list": [
+          {
+            "method_id": "test1-A-a1",
+            "method_name": "a1",
+            "class_name": "A",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b1"
+            ]
+          },
+          {
+            "method_id": "test1-B-b1",
+            "method_name": "b1",
+            "class_name": "B",
+            "status": "changed",
+            "adjacent": [
+              "test1-B-b2"
+            ]
+          },
+          {
+            "method_id": "test1-B-b2",
+            "method_name": "b2",
+            "class_name": "B",
+            "status": "unaffected",
+            "adjacent": []
+          }
+        ]
+      }
+    ]
+  }
+]
