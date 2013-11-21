@@ -33,7 +33,7 @@ public class ASTExplorer {
 	public static ASTWrapper generateAST(String urlString, String sourceLoc) throws IOException {
 		// Get the code from the URL provided and parse it into a String.
 		String code = parseURLContents(urlString);
-
+		
 		// Initial parser setup.
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setSource(code.toCharArray());
@@ -50,6 +50,7 @@ public class ASTExplorer {
 
 		return new ASTWrapper(parser, cUnit, sourceLoc);
 	}
+
 
 	/**
 	 * Given the URL, access the raw code and build a String off of it.
@@ -137,6 +138,7 @@ public class ASTExplorer {
 		List<MethodDeclaration> prevMethods = getMethodDeclarations(wrapper);
 		List<MethodDeclaration> currMethods = new ArrayList<MethodDeclaration>();
 		Map<Method, Set<Method>> foundMethods = new HashMap<Method, Set<Method>>();
+		List<String> allClasses = generateClassNames(wrapperMap);
 
 		// current AST that represents the same AST in the single wrapper
 		ASTWrapper currWrapper = wrapperMap.get(wrapper.getSourceLoc());
@@ -160,7 +162,7 @@ public class ASTExplorer {
 						// if the current method declaration is null, it was removed/renamed
 						if (mapMethod == null) {
 							foundMethods.put(generateMethod(method, wrapper), null);
-							break;
+							continue;
 						}
 
 						// Grab every MethodInvocation node and extract information.
@@ -182,7 +184,6 @@ public class ASTExplorer {
 						for (MethodInvocationDetails methodInvocation : methodInvocations) {
 							String methodName = methodInvocation.getMethodName();
 							String objectName = methodInvocation.getObjectName();
-							List<String> allClasses = generateClassNames(wrapperMap);
 
 							String objectClassName = null;
 							if (objectName == null) {
@@ -190,7 +191,9 @@ public class ASTExplorer {
 								objectClassName = currWrapper.getClassName();
 							} else {
 								VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
-								objectClassName = variableDetail.getVariableType();
+
+								if(variableDetail != null)
+									objectClassName = variableDetail.getVariableType();
 							}
 
 
@@ -225,7 +228,7 @@ public class ASTExplorer {
 			}
 		} else {
 			// class was removed; indicate that every method is removed too by mapping to null
-			for (MethodDeclaration method : currMethods) {
+			for (MethodDeclaration method : prevMethods) {
 				Method m = generateMethod(method, wrapper);
 				foundMethods.put(m, null);
 			}
