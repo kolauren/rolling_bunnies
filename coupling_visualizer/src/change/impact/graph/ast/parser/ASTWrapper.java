@@ -54,15 +54,4 @@ public class ASTWrapper {
 	public void setSourceLoc(String sourceLoc) {
 		this.sourceLoc = sourceLoc;
 	}
-	
-	public ASTWrapper clone() {
-		ASTWrapper ast = null;
-		try {
-			ast = new ASTWrapper(parser, cUnit, sourceLoc);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ast;
-	}
 }
