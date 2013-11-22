@@ -251,6 +251,12 @@ public class ChangeImpactGraphGenerator {
 			List<Integer> removedLineNumbers = Lists.newArrayList();
 			removedLineNumbers.addAll(removedLines.keySet());
 			ASTWrapper previousAST = previousASTs.get(newFileName);
+			
+			//if null, that means merge, and the file was added in the other branch
+			if(previousAST == null) {
+				removedLines.clear();
+			}
+			
 			if(!removedLines.isEmpty())
 				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(removedLineNumbers, currentASTs, previousAST)); 
 
