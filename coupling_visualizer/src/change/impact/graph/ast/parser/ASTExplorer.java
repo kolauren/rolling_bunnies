@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,13 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 import change.impact.graph.Method;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class ASTExplorer {
@@ -32,7 +36,7 @@ public class ASTExplorer {
 	public static ASTWrapper generateAST(String urlString, String sourceLoc) throws IOException {
 		// Get the code from the URL provided and parse it into a String.
 		String code = parseURLContents(urlString);
-		
+
 		// Initial parser setup.
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setSource(code.toCharArray());
@@ -185,9 +189,26 @@ public class ASTExplorer {
 							String objectName = methodInvocation.getObjectName();
 
 							String objectClassName = null;
+
+							// if null then we are calling a method in the same class
 							if (objectName == null) {
-								// if null then we are calling a method in the same class
 								objectClassName = currWrapper.getClassName();
+								IMethodBinding binding = methodInvocation.getMethodInvocation().resolveMethodBinding();
+								// either a java method or project method
+								if(binding != null) {
+									IMethodBinding mbinding = binding.getMethodDeclaration();
+									ITypeBinding[] params = mbinding.getParameterTypes();
+									List<String> paramTypes = Lists.newArrayList();
+									for(ITypeBinding i : params) {
+										paramTypes.add(i.getName());
+									}
+									MethodDeclaration methodDeclaration = getMethodDeclaration(currMethods, methodName, paramTypes);
+									if(methodDeclaration != null)
+										bodyMethodsInvoked.add(generateMethod(methodDeclaration, currWrapper));
+								}
+								// ignored if its java method; otherwise added to the invoke list
+								continue;
+
 							} else {
 								VariableDetails variableDetail = findRelatedVariable(objectName, variableDetails);
 
@@ -205,8 +226,9 @@ public class ASTExplorer {
 
 									if (methodDeclarations != null) {
 										for (MethodDeclaration methodDeclaration : methodDeclarations) {
-											if (methodDeclaration.getName().toString().equals(methodName)) {
-												bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapperMethodIsIn));
+											if (methodDeclaration.getName().toString().equals(methodName))
+												if(methodInvocation.getMethodInvocation().arguments().size() == methodDeclaration.parameters().size()) {
+													bodyMethodsInvoked.add(generateMethod(methodDeclaration, wrapperMethodIsIn));
 											}
 										}
 									}
@@ -235,7 +257,7 @@ public class ASTExplorer {
 
 		return foundMethods;
 	}
-	
+
 	/**
 	 * Given a list of line numbers, determine which MethodDeclaration it is and grab all the MethodInvocations.
 	 * If the Java file was removed, return a list of all the MethodDeclaration from the wrapper and map it all to null.
@@ -264,21 +286,21 @@ public class ASTExplorer {
 		// Current AST that represents the same AST in the single wrapper.
 		// Grab the same wrapper from wrapperMap using the sourceLoc as the key.
 		ASTWrapper currWrapper = wrapperMap.get(wrapper.getSourceLoc());
-		
+
 		// Check to see if wrapperMap has the value for the provided sourceLoc key.
 		// Path between [method -> null] or ( [method -> {}] and [method -> {...}] )
 		// If currWrapper is null, it means that the sourceLoc of the single wrapper does not exist anymore.
 		if (currWrapper != null) {
 			// Since we found a wrapper with the exact same sourceLoc, get all the MethodDeclaration from currWrapper.
 			currMethodDeclarations = getMethodDeclarations(currWrapper);
-			
+
 			// Go through each line and check it against the prevMethodDeclarations list to figure out which MethodDeclaration the line is part of.
 			for (Integer lineNumber : lineNumbers) {
 				for (MethodDeclaration methodDeclaration : prevMethodDeclarations) {
 					// Get the start and end lines for the methodDeclaration against the previous wrapper.
 					int startLine = wrapper.getCompilationUnit().getLineNumber(methodDeclaration.getStartPosition());
 					int endLine = wrapper.getCompilationUnit().getLineNumber(methodDeclaration.getStartPosition() + methodDeclaration.getLength());
-					
+
 					// If the lineNumber sits the start and endLine, we are at the MethodDeclaration we are looking for.
 					// Otherwise we don't care about it.
 					// Determine which MethodDeclaration the lineNumber is part of.
@@ -287,11 +309,11 @@ public class ASTExplorer {
 						// This Set will be empty if the MethodDeclaration doesn't have any MethodInvocations in it.
 						// Otherwise, the contents of this Set will be the MethodInvocations that are defined within the same project.
 						Set<Method> methodBodyInvocations = Sets.newHashSet();
-						
+
 						// At this point, we've found what MethodDeclaration we should be working on.
 						// Now we grab the exact same MethodDeclaration in the currMethodDeclarations list.
 						MethodDeclaration methodDeclarationMatch = getMatchingMethodDeclaration(currMethodDeclarations, methodDeclaration);
-						
+
 						// If we can't find a matching MethodDeclaration from currMethodDeclarations (match comes back null), we return [method -> null]
 						// This would be a case when a method was removed.
 						if (methodDeclarationMatch == null) {
@@ -299,24 +321,24 @@ public class ASTExplorer {
 							foundMethods.put(method, null);
 						} else {
 							// Since we found a matching MethodDeclaration from currMethodDeclarations, we should now go through the method body and grab all the MethodInvocations.
-							
+
 							// Get the method body.
 							Block methodBody = methodDeclarationMatch.getBody();
-							
+
 							// Set a visitor to go through the body.
 							ASTExplorerVisitor visitor = new ASTExplorerVisitor();
 							methodBody.accept(visitor);
-							
+
 							// Grab all the MethodInvocations and Variables from the body and extract the needed information.
 							List<MethodInvocationDetails> methodInvocationDetails = getActualMethodPositions(visitor.getMethodInvocations(), currWrapper);
 							List<VariableDetails> variableDeclarationDetails = getActualVariablePositions(visitor.getVariableDeclarations(), currWrapper);
 							List<VariableDetails> singleVariableDeclarationDetails = getActualVariablePositions(visitor.getSingleVariableDeclarations(), currWrapper);
-							
+
 							// Combine both types of variables into one list.
 							List<VariableDetails> variableDetails = new ArrayList<VariableDetails>();
 							variableDetails.addAll(variableDeclarationDetails);
 							variableDetails.addAll(singleVariableDeclarationDetails);
-							
+
 							// With all the MethodInvocation and Variable details in hand, determine which methods should be put into foundMethods.
 							// Only the methods that are declared in the project should be included in foundMethods.
 							for (MethodInvocationDetails methodInvocationDetail : methodInvocationDetails) {
@@ -324,14 +346,14 @@ public class ASTExplorer {
 								// We need this because we want to figure out if the method is part of the project.
 								String methodName = methodInvocationDetail.getMethodName();
 								String objectName = methodInvocationDetail.getObjectName();
-								
+
 								// To figure out if the object is part of the project, we need to know what class type it is.
 								// To do this, we have to get all the classes available in this project first.
 								List<String> projectClasses = generateProjectClassNames(wrapperMap);
-								
+
 								// Now that we have all the names of the classes in the project, we can filter the variableDetails list to only contain variableTypes that are part of the project.
 								List<VariableDetails> projectVariables = new ArrayList<VariableDetails>();
-								
+
 								// Go through each of the variableDetails and only add in the variableDetail that has a variable type that is part of the project..
 								for (VariableDetails variableDetail : variableDetails) {
 									// If projectClasses contains the variableType from this variableDetail, we store it into projectVariableDetails.
@@ -340,7 +362,7 @@ public class ASTExplorer {
 										projectVariables.add(variableDetail);
 									}
 								}
-								
+
 								// Now that we only have the variableTypes that we care about (the ones that are part of this project), we now filter the MethodInvocations for the same reason.
 								// Get rid of all the MethodInvocations with objectName not being part of the variableTypes we care about.
 								// Before this though, there are cases when objectName is null. This happens when the method itself is in the same class that we are currently working on.
@@ -349,7 +371,7 @@ public class ASTExplorer {
 									// We still have to find the MethodDeclaration within currWrapper though.
 									// To do this we get the list of MethodDeclarations from currWrapper.
 									List<MethodDeclaration> methods = getMethodDeclarations(currWrapper);
-									
+
 									// We then go through all of the MethodDeclarations and find the matching method.
 									for (MethodDeclaration method : methods) {
 										// If the MethodDeclaration's name matched the methodName we got from the MethodInvocation, we have found the MethodDeclaration we are looking for.
@@ -369,17 +391,17 @@ public class ASTExplorer {
 
 									// Out of all the VariableDetails, we want to get the VariableDetail that has the same objectName we found.
 									VariableDetails varDetails = findRelatedVariable(objectName, variableDetails);
-									
+
 									// With this VariableDetail, we now know what class type it is.
 									String variableType = varDetails.getVariableType();
-									
+
 									// Using the variableType, we have to find the class from the list of projectClasses and then grab the wrapper for it.
 									ASTWrapper relatedWrapper = getRelatedWrapper(projectClasses, wrapperMap, variableType);
-									
+
 									// TODO: Consider refactoring this. Similar code found on the if statement.
 									// Now that we have the wrapper we want. We want to go through all the MethodDeclarations on it and find the matching methodName.
 									List<MethodDeclaration> methodDeclarations = getMethodDeclarations(relatedWrapper);
-									
+
 									for (MethodDeclaration method : methodDeclarations) {
 										// If the MethodDeclaration's name matched the methodName we got from the MethodInvocation, we have found the MethodDeclaration we are looking for.
 										// Otherwise, we just move on to the next method
@@ -399,10 +421,10 @@ public class ASTExplorer {
 						// We should now store methodBodyInvocations into the Map and have the Method the MethodInvocations belongs to as the key.
 						// First we generate the Method object from the methodDeclaration.
 						Method currMethod = generateMethod(methodDeclarationMatch, currWrapper);
-						
+
 						// After that, we now have our key. We just have to put methodBodyInvocations into the map.
 						foundMethods.put(currMethod, methodBodyInvocations);
-						
+
 						// We would have found the MethodDeclaration the line belongs to at this point so we should stop iterating.
 						break;
 					}
@@ -410,16 +432,16 @@ public class ASTExplorer {
 			}
 		} else {
 			// Since the class does not exist in wrapperMap anymore, return [method -> null]
-			
+
 			// Get all the MethodDeclaration from prevMethodDeclarations and create a Method object for every single one.
 			// For each of the Method created, put it in foundMethods and pair it with a null value.
 			for (MethodDeclaration methodDeclaration : prevMethodDeclarations) {
 				Method method = generateMethod(methodDeclaration, wrapper);
-				
+
 				foundMethods.put(method, null);
 			}
 		}
-		
+
 		return foundMethods;
 	}
 
@@ -482,6 +504,22 @@ public class ASTExplorer {
 			}
 		}
 
+		return null;
+	}
+
+	// returns the matching method declaration from project source
+	// returns null if method doesn't exist in the project source
+	private static MethodDeclaration getMethodDeclaration(List<MethodDeclaration> methodDeclarations, String methodName, List<String> paramTypes) {
+		for(MethodDeclaration methodDeclaration : methodDeclarations) {
+			String methodDeclarationName = methodDeclaration.getName().toString();
+			List<String> methodDeclarationParams = getParameterTypes(methodDeclaration);
+			if(methodDeclarationName.equals(methodName)) {
+				if(paramTypes.size() == methodDeclarationParams.size()) {
+					if(paramTypes.containsAll(methodDeclarationParams))
+						return methodDeclaration;
+				}
+			}
+		}
 		return null;
 	}
 

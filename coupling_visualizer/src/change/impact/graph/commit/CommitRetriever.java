@@ -2,18 +2,25 @@ package change.impact.graph.commit;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.egit.github.core.CommitFile;
 import org.eclipse.egit.github.core.RepositoryCommit;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import change.impact.graph.utils.Utils;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 
@@ -53,11 +60,11 @@ public class CommitRetriever {
 
 			Commit commit = new Commit();
 			commit.setSha(githubCommit.getSha());
+			Map<String, Integer> fileToDiffNumber = retrieveFiles(githubCommit, commit);
 			//retrieve relevant commit data
-			retrieveFiles(githubCommit, commit);
 			retrieveDiffs(githubCommit, commit);
 			//find all old file paths
-			findOldFileName(commit);
+			findOldFileName(commit, fileToDiffNumber);
 
 			if(!commit.isEmpty()) {
 				commits.push(commit);
@@ -73,15 +80,20 @@ public class CommitRetriever {
 		return getCommits(-1);
 	}
 
-	private void retrieveFiles(RepositoryCommit githubCommit, Commit commit) {
+	private Map<String, Integer> retrieveFiles(RepositoryCommit githubCommit, Commit commit) {
+		Map<String, Integer> fileToDiffNumber = Maps.newHashMap();
+		int i=0;
 		for(CommitFile file : githubCommit.getFiles()) {
 			String filename = file.getFilename();
 			//only interested in .java files
 			if(filename.endsWith(".java")) {
 				CommitFileStatus status = CommitFileStatus.fromString(file.getStatus());
 				commit.addJavaFile(status, filename);
+				fileToDiffNumber.put(filename, i);
 			}
+			i++;
 		}
+		return fileToDiffNumber;
 	}
 
 	private void retrieveDiffs(RepositoryCommit githubCommit, Commit commit) throws IOException {
@@ -104,94 +116,43 @@ public class CommitRetriever {
 		}
 	}
 
-	//	private void findOldFileName(Commit commit) {
-	//		//MODIFIED CAN BE RENAMED
-	//		Set<String> renamedFiles = Sets.newHashSet(); 
-	//		renamedFiles.addAll(commit.getRenamedJavaFiles().keySet());
-	//		renamedFiles.addAll(commit.getModifiedJavaFiles());
-	//		for(String newFileName : renamedFiles) {
-	//			Diff diff = commit.getDiff(newFileName);
-	//
-	//			Collection<String> removedLines = diff.getRemovedLines().values();
-	//
-	//			//removed lines are ordered by line number
-	//			for(String removedLine : removedLines) {
-	//				// check if removedLine contains class declaration
-	//				// "class" " interface "
-	//
-	//
-	//				//find old package location
-	//				String regex = "package (?<packageName>.*);";
-	//				Pattern p = Pattern.compile(regex);
-	//				Matcher m = p.matcher(removedLine);
-	//
-	//				if(m.find()) {
-	//					String oldPackageName = m.group("packageName");
-	//
-	//					regex = "(?<className>\\w*\\.java)";
-	//					p = Pattern.compile(regex);
-	//					m = p.matcher(newFileName);
-	//					m.find();
-	//					String className = m.group("className");
-	//
-	//					//project path
-	//					regex = "(?<projectPath>.*/)src/";
-	//					p = Pattern.compile(regex);
-	//					m = p.matcher(newFileName);
-	//					m.find();
-	//					String projectPath = m.group("projectPath");
-	//
-	//					String oldPath = projectPath+"src/"+oldPackageName.replaceAll("\\.", "/")+"/"+className;
-	//					commit.getRenamedJavaFiles().put(newFileName, oldPath);
-	//					continue;
-	//				}
-	//
-	//				//now find old class name
-	//				regex = " (class|interface) (?<oldClassName>\\w*)[^\\n]*?\\{";
-	//				p = Pattern.compile(regex);
-	//				m = p.matcher(removedLine);
-	//
-	//				if(m.find()) {
-	//					String oldClassName = m.group("oldClassName");
-	//					String filePathRegex = "(?<filePath>.*/)";
-	//
-	//					p = Pattern.compile(filePathRegex);
-	//					String partialOldPath = commit.getRenamedJavaFiles().get(newFileName);
-	//
-	//					//could have package name modified
-	//					String fileName = partialOldPath == null ? newFileName : partialOldPath;
-	//
-	//					m = p.matcher(fileName);
-	//					m.find();
-	//					oldClassName = m.group("filePath") + oldClassName+".java";
-	//
-	//					commit.getRenamedJavaFiles().put(newFileName, oldClassName);
-	//					break;
-	//				}
-	//			}
-	//		}
-	//	}
-
 	//probably  moved project directory which code cannot see
 	//hack to parse the github html for old file name
-	public void findOldFileName(Commit commit) throws IOException {
+	public void findOldFileName(Commit commit, Map<String, Integer> fileToDiffNumber) throws IOException {
 		Set<String> renamedFiles = Sets.newHashSet(); 
 		renamedFiles.addAll(commit.getRenamedJavaFiles());
 		renamedFiles.addAll(commit.getRenamedProject());
-		String html = null;
+		Document doc = null;
 		for(String newFileName : renamedFiles) {
-			if(html == null)
-				html = Utils.getHtml("https://github.com/"+owner+"/"+repo+"/commit/"+commit.getSha());
-
-			String regex = "\\{(?<oldSegment>.*?) &rarr; (?<newSegment>.*?)\\}";
-			Pattern p = Pattern.compile(regex);
-			Matcher m = p.matcher(html);
-			if(m.find()) {
-				String oldSegment= m.group("oldSegment");
-				String newSegment = m.group("newSegment"); 
-				String oldFileName = newFileName.replaceFirst(newSegment, oldSegment);
-				commit.addOldFileName(newFileName, oldFileName);
+			if(doc == null) {
+				String url = "https://github.com/"+owner+"/"+repo+"/commit/"+commit.getSha();
+				//jsoup can't access the url for some reason
+				String html = Utils.getHtml(url);
+				doc = Jsoup.parse(html);
 			}
+
+			String diffNumber = "#diff-"+fileToDiffNumber.get(newFileName);
+			String oldFileName = null;
+
+			for(Element link : doc.getElementsByTag("a")) {
+				String linkHref = link.attr("href");
+				if(linkHref.equals(diffNumber)) {
+					if(!link.hasAttr("class")) {
+						String linkText = StringEscapeUtils.escapeHtml4(link.text());
+						String regex = "\\{(?<oldText>.*?) &rarr; (?<newText>.*?)}";
+						Pattern p = Pattern.compile(regex);
+						Matcher m = p.matcher(linkText);
+						m.find();
+
+						String newText = m.group("newText");
+						String oldText = m.group("oldText");
+
+						oldFileName = newFileName.replace(newText, oldText);
+						break;
+					}
+				}
+			}
+			commit.addOldFileName(newFileName, oldFileName);
 		}
 	}
 }

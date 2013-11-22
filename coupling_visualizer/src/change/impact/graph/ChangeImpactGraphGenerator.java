@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -192,14 +194,14 @@ public class ChangeImpactGraphGenerator {
 				currentASTs.remove(newFileName);
 				previousASTs.remove(newFileName);
 			}
-//			TODO: this is a hack to deal with branch merging
-//			if(oldName != null && previousAST == null) {
-//				previousAST = backupASTs.get(oldName);
-//				if(previousAST == null) {
-//					previousAST = backupBackupASTs.get(oldName);
-//
-//				}
-//			}
+			//			TODO: this is a hack to deal with branch merging
+			//			if(oldName != null && previousAST == null) {
+			//				previousAST = backupASTs.get(oldName);
+			//				if(previousAST == null) {
+			//					previousAST = backupBackupASTs.get(oldName);
+			//
+			//				}
+			//			}
 
 			//update the ASTs
 			previousASTs.put(newFileName, previousAST);
@@ -230,7 +232,7 @@ public class ChangeImpactGraphGenerator {
 	private void updateNewProjectNameAST(String newFileName, String oldFileName) {
 		ASTWrapper previousAST = previousASTs.get(oldFileName);
 		ASTWrapper currentAST = currentASTs.get(oldFileName);
-		
+
 		ASTWrapper futurePreviousAST = previousASTs.get(newFileName);
 
 		// this commit is a merge; files already updated
@@ -248,10 +250,19 @@ public class ChangeImpactGraphGenerator {
 		currentASTs.remove(oldFileName);
 	}
 
+	// updates the currentAdjacencyList and currentMethods
+	// returns a list of changed methods
 	private Set<String> updateCurrentAdjacencyListAndMethods(Commit commit) {
 		Set<String> changedMethods = Sets.newHashSet();
 		for(String newFileName : commit.getDiffs().keySet()) {
-			//generate dependency graph for method with added lines
+			// if file was renamed, update method ID's in the adjacency list
+			// and method list
+			if(commit.isFileRenamed(newFileName)) {
+				String oldFileName = commit.getOldFileName(newFileName);
+				updateMethodIDsInAdjacencyList(newFileName, oldFileName);
+				updateMethodIDsInMethodList(newFileName, oldFileName);
+			}
+			// find modified modified methods mapped to a set of its method invocations
 			Map<Method, Set<Method>> adjacentNodes = Maps.newHashMap();
 
 			// map added lines to modified methods -> {method invocations}
@@ -270,10 +281,14 @@ public class ChangeImpactGraphGenerator {
 			if(!removedLines.isEmpty())
 				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(removedLineNumbers, currentASTs, previousAST)); 
 
+			// update methods
 			updateCurrentMethods(adjacentNodes);
 
+			// update the adjacency list
 			Map<String, Set<String>> strAdjacentNodes = filterID(adjacentNodes);
-			//update the adjacency list
+			
+			// method -> null
+			// means the method was deleted
 			Set<String> removedNodes = Sets.newHashSet();
 			for(String node : strAdjacentNodes.keySet()) {
 				Set<String> strAdjacentNodesSet = strAdjacentNodes.get(node);
@@ -282,8 +297,10 @@ public class ChangeImpactGraphGenerator {
 				else 
 					currentAdjacencyList.put(node, strAdjacentNodesSet);
 			}
-			//clean up removed methods
+
+			//clean up removed methods in adjacency list and method list
 			removeNodesFromAdjacencyList(removedNodes);
+			removeMethods(removedNodes);
 
 			//list all the modified methods; deleted aren't counted
 			for(String methodID : strAdjacentNodes.keySet()) {
@@ -294,6 +311,95 @@ public class ChangeImpactGraphGenerator {
 		}
 
 		return changedMethods;
+	}
+	
+	//TODO: make constants
+	private String[] generateIDreplacementParts(String newFileName, String oldFileName) {
+		String regex = "\\w*?/src/(?<packageName>[\\w/]*/)?(?<className>\\w+)\\.java";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(oldFileName);
+
+		m.find();
+
+		String oldPackageName = m.group("packageName");
+		if(oldPackageName != null)
+			oldPackageName = oldPackageName.replace("/", ".");
+		else
+			oldPackageName = "NOPACKAGENAME";
+		String oldClassName = m.group("className");
+
+		m = p.matcher(newFileName);
+		m.find();
+
+		String newPackageName = m.group("packageName");
+		if(newPackageName != null)
+			newPackageName = newPackageName.replace("/", ".");
+		else
+			newPackageName = "NOPACKAGENAME";
+		String newClassName = m.group("className");
+
+		String delimiter = "-";
+		String oldIDpart = oldPackageName+delimiter+oldClassName;
+		String newIDpart = newPackageName+delimiter+newClassName;
+
+		//TODO: this should be an object
+		return new String[]{ oldIDpart, newIDpart };
+	}
+	
+	private void updateMethodIDsInAdjacencyList(String newFileName, String oldFileName) {
+		String[] idParts = generateIDreplacementParts(newFileName, oldFileName);
+		String oldIDpart = idParts[0];
+		String newIDpart = idParts[1];
+	
+		Map<String, Set<String>> newAdjacencyList = Maps.newHashMap();
+
+		for(String node : currentAdjacencyList.keySet()) {
+			//strings are immutable 
+			Set<String> newAdjacentNodes = Sets.newHashSet();
+			for(String adjacentNode : currentAdjacencyList.get(node)) {
+				// this should match the way method ids are generated by ASTExplorer
+				if(adjacentNode.matches(oldIDpart)) {
+					String newID = adjacentNode.replace(oldIDpart, newIDpart);
+					newAdjacentNodes.add(newID);
+				} else {
+					newAdjacentNodes.add(adjacentNode);
+				}
+			}
+
+			String newIDnode = node.replace(oldIDpart, newIDpart);
+			newAdjacencyList.put(newIDnode, newAdjacentNodes);
+		}
+		
+		currentAdjacencyList = newAdjacencyList;
+	}
+	
+	private void updateMethodIDsInMethodList(String newFileName, String oldFileName) {
+		String[] idParts = generateIDreplacementParts(newFileName, oldFileName);
+		String oldIDpart = idParts[0];
+		String newIDpart = idParts[1];
+		String delimiter = "-";
+		
+		String newPackageName = newIDpart.split(delimiter)[0];
+		String newClassName = newIDpart.split(delimiter)[1];
+		
+		Map<String, Method> newMethodList = Maps.newHashMap();
+		for(String id : currentMethods.keySet()) {
+			Method m = currentMethods.get(id);
+
+			if(id.matches(oldIDpart)) {
+				m.setPackageName(newPackageName);
+				m.setClassName(newClassName);
+				
+				String newID = id.replace(oldIDpart, newIDpart);
+				m.setId(newID);
+				
+				newMethodList.put(newID, m);
+			} else {
+				newMethodList.put(id, m);
+			}
+		}
+		
+		currentMethods = newMethodList;
 	}
 
 	// method -> null		method was removed or renamed (can't tell)
@@ -321,6 +427,12 @@ public class ChangeImpactGraphGenerator {
 				adjacentNodes.remove(removedNode);
 			}
 			currentAdjacencyList.remove(removedNode);
+		}
+	}
+	
+	private void removeMethods(Set<String> removedNodes) {
+		for(String id : removedNodes) {
+			currentMethods.remove(id);
 		}
 	}
 }
