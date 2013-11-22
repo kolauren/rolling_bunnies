@@ -176,33 +176,7 @@ public class ChangeImpactGraphGenerator {
 
 		for(String newFileName : addedModifiedRenamed) {
 			ASTWrapper previousAST = null;
-			if(commit.isFileRenamed(newFileName)) {
-				String oldFileName = commit.getOldFileName(newFileName);
-				previousAST = currentASTs.get(oldFileName);
-
-				// merge; rename already happened in previous commit
-				ASTWrapper futurePreviousAST = previousASTs.get(newFileName);
-				if(futurePreviousAST != null) {
-					continue;
-				}
-
-				currentASTs.remove(oldFileName);
-				previousASTs.remove(oldFileName);
-			} else {
-				//added files will return null
-				previousAST = currentASTs.get(newFileName);
-				currentASTs.remove(newFileName);
-				previousASTs.remove(newFileName);
-			}
-			//			TODO: this is a hack to deal with branch merging
-			//			if(oldName != null && previousAST == null) {
-			//				previousAST = backupASTs.get(oldName);
-			//				if(previousAST == null) {
-			//					previousAST = backupBackupASTs.get(oldName);
-			//
-			//				}
-			//			}
-
+			previousAST = currentASTs.get(newFileName);
 			//update the ASTs
 			previousASTs.put(newFileName, previousAST);
 			String url = commit.getDiff(newFileName).getRawCodeURL();
@@ -213,9 +187,6 @@ public class ChangeImpactGraphGenerator {
 		//TODO: clean up methods?
 		for(String newFileName : commit.getRemovedJavaFiles()) {
 			ASTWrapper previousAST = currentASTs.get(newFileName);
-			//			//TODO: this is a hack to deal with removed, branch merging
-			//			if(previousAST == null)
-			//				previousAST = ASTExplorer.generateAST(commit.getDiff(clazz).getRawCodeURL(), clazz);
 			previousASTs.put(newFileName, previousAST);
 			currentASTs.remove(newFileName);
 		}
@@ -252,7 +223,7 @@ public class ChangeImpactGraphGenerator {
 
 	// updates the currentAdjacencyList and currentMethods
 	// returns a list of changed methods
-	private Set<String> updateCurrentAdjacencyListAndMethods(Commit commit) {
+	private Set<String> updateCurrentAdjacencyListAndMethods(Commit commit) throws IOException {
 		Set<String> changedMethods = Sets.newHashSet();
 		for(String newFileName : commit.getDiffs().keySet()) {
 			// if file was renamed, update method ID's in the adjacency list
