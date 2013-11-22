@@ -259,18 +259,12 @@ public class ASTExplorer {
 	}
 
 	/**
-	 * Given a list of line numbers, determine which MethodDeclaration it is and grab all the MethodInvocations.
-	 * If the Java file was removed, return a list of all the MethodDeclaration from the wrapper and map it all to null.
-	 * If the Java file was renamed, grab currSourceLoc and use that to get the wrapper from wrapperMap.
-	 * If the Java file did not change, use the wrapper's sourceLoc as the key to the wrapperMap.
-	 * 
+	 * This method will be taking a list of line numbers that determine all the line changes (added/removed) in a certain commit. 
 	 * Return Cases:
 	 * 
 	 * method -> null				method was removed or renamed
 	 * method -> {}					method was changed but contains no method invocations (perhaps removed in this commit)
 	 * method -> {... }		 		method was changed and contains some method invocations
-	 * 
-	 * This method will be taking a list of line numbers that determine all the line changes (added/removed) in a certain commit. 
 	 * 
 	 * @param lineNumbers Contains all the line numbers of changes (added/removed) in a specific commit.
 	 * @param wrapperMap Mapping of all the classes in the project. Key is the source location which is paired with the ASTWrapper for the corresponding location.
@@ -319,6 +313,8 @@ public class ASTExplorer {
 						if (methodDeclarationMatch == null) {
 							Method method = generateMethod(methodDeclaration, wrapper);
 							foundMethods.put(method, null);
+							
+							break;
 						} else {
 							// Since we found a matching MethodDeclaration from currMethodDeclarations, we should now go through the method body and grab all the MethodInvocations.
 
@@ -390,43 +386,47 @@ public class ASTExplorer {
 									// As for the ones that are not part of this project, we just ignore those.
 
 									// Out of all the VariableDetails, we want to get the VariableDetail that has the same objectName we found.
-									VariableDetails varDetails = findRelatedVariable(objectName, variableDetails);
-
-									// With this VariableDetail, we now know what class type it is.
-									String variableType = varDetails.getVariableType();
-
-									// Using the variableType, we have to find the class from the list of projectClasses and then grab the wrapper for it.
-									ASTWrapper relatedWrapper = getRelatedWrapper(projectClasses, wrapperMap, variableType);
-
-									// TODO: Consider refactoring this. Similar code found on the if statement.
-									// Now that we have the wrapper we want. We want to go through all the MethodDeclarations on it and find the matching methodName.
-									List<MethodDeclaration> methodDeclarations = getMethodDeclarations(relatedWrapper);
-
-									for (MethodDeclaration method : methodDeclarations) {
-										// If the MethodDeclaration's name matched the methodName we got from the MethodInvocation, we have found the MethodDeclaration we are looking for.
-										// Otherwise, we just move on to the next method
-										// Note: Currently, this will be only matching the names so if there are two methods with the same name but different parameters, this will just match with whatever comes first.
-										if (method.getName().toString().equals(methodName)) {
-											// In a perfect world, at some point, we will always reach this part of the code.
-											// This is because we already know that the method exists in the same source code we are working on based off the fact that objectName is null.
-											methodBodyInvocations.add(generateMethod(method, relatedWrapper));
-											break;
+									VariableDetails varDetails = findRelatedVariable(objectName, projectVariables);
+									
+									// If objectName did not match with any of the VariableDetails, it means that the current object/method is not part of the project.
+									// Otherwise
+									if (varDetails != null) {
+										// With this VariableDetail, we now know what class type it is.
+										String variableType = varDetails.getVariableType();
+										
+										// Using the variableType, we have to find the class from the list of projectClasses and then grab the wrapper for it.
+										ASTWrapper relatedWrapper = getRelatedWrapper(projectClasses, wrapperMap, variableType);
+										
+										// TODO: Consider refactoring this. Similar code found on the if statement.
+										// Now that we have the wrapper we want. We want to go through all the MethodDeclarations on it and find the matching methodName.
+										List<MethodDeclaration> methodDeclarations = getMethodDeclarations(relatedWrapper);
+										
+										for (MethodDeclaration method : methodDeclarations) {
+											// If the MethodDeclaration's name matched the methodName we got from the MethodInvocation, we have found the MethodDeclaration we are looking for.
+											// Otherwise, we just move on to the next method
+											// Note: Currently, this will be only matching the names so if there are two methods with the same name but different parameters, this will just match with whatever comes first.
+											if (method.getName().toString().equals(methodName)) {
+												// In a perfect world, at some point, we will always reach this part of the code.
+												// This is because we already know that the method exists in the same source code we are working on based off the fact that objectName is null.
+												methodBodyInvocations.add(generateMethod(method, relatedWrapper));
+												break;
+											}
 										}
 									}
 								}
 							}
+
+							// At this point, we should have contents in methodBodyInvocations (or maybe an empty one if there are no MethodInvocations in the MethodDeclaration).
+							// We should now store methodBodyInvocations into the Map and have the Method the MethodInvocations belongs to as the key.
+							// First we generate the Method object from the methodDeclaration.
+							Method currMethod = generateMethod(methodDeclarationMatch, currWrapper);
+							
+							// After that, we now have our key. We just have to put methodBodyInvocations into the map.
+							foundMethods.put(currMethod, methodBodyInvocations);
+							
+							// We would have found the MethodDeclaration the line belongs to at this point so we should stop iterating.
+							break;
 						}
-
-						// At this point, we should have contents in methodBodyInvocations (or maybe an empty one if there are no MethodInvocations in the MethodDeclaration).
-						// We should now store methodBodyInvocations into the Map and have the Method the MethodInvocations belongs to as the key.
-						// First we generate the Method object from the methodDeclaration.
-						Method currMethod = generateMethod(methodDeclarationMatch, currWrapper);
-
-						// After that, we now have our key. We just have to put methodBodyInvocations into the map.
-						foundMethods.put(currMethod, methodBodyInvocations);
-
-						// We would have found the MethodDeclaration the line belongs to at this point so we should stop iterating.
-						break;
 					}
 				}
 			}
