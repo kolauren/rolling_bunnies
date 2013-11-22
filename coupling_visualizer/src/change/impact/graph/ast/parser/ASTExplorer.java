@@ -136,7 +136,7 @@ public class ASTExplorer {
 	 * @param wrapper
 	 * @return
 	 */
-	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper) {
+	public static Map<Method, Set<Method>> getMethodInvocationsA(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper) {
 		// Get all the MethodDeclarations from the AST.
 		List<MethodDeclaration> prevMethods = getMethodDeclarations(wrapper);
 		List<MethodDeclaration> currMethods = new ArrayList<MethodDeclaration>();
@@ -271,7 +271,7 @@ public class ASTExplorer {
 	 * @param wrapper Contains the previous state of a code. This might not exist anymore if the commit involved the deletion of the class.
 	 * @return
 	 */
-	public static Map<Method, Set<Method>> getMethodInvocationsB(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper) {
+	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper) {
 		// Get all the MethodDeclarations from the AST.
 		List<MethodDeclaration> prevMethodDeclarations = getMethodDeclarations(wrapper);
 		List<MethodDeclaration> currMethodDeclarations = new ArrayList<MethodDeclaration>();
