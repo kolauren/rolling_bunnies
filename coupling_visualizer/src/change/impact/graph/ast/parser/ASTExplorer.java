@@ -1,11 +1,16 @@
 package change.impact.graph.ast.parser;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -270,12 +275,26 @@ public class ASTExplorer {
 	 * @param wrapperMap Mapping of all the classes in the project. Key is the source location which is paired with the ASTWrapper for the corresponding location.
 	 * @param wrapper Contains the previous state of a code. This might not exist anymore if the commit involved the deletion of the class.
 	 * @return
+	 * @throws IOException 
 	 */
-	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper) {
+	public static Map<Method, Set<Method>> getMethodInvocations(List<Integer> lineNumbers, Map<String, ASTWrapper> wrapperMap, ASTWrapper wrapper) throws IOException {
 		// Get all the MethodDeclarations from the AST.
 		List<MethodDeclaration> prevMethodDeclarations = getMethodDeclarations(wrapper);
 		List<MethodDeclaration> currMethodDeclarations = new ArrayList<MethodDeclaration>();
 		Map<Method, Set<Method>> foundMethods = new HashMap<Method, Set<Method>>();
+		
+		// DEBUGGING: Output to File.
+		Writer out = new OutputStreamWriter(new FileOutputStream(new File("Test.txt")), "UTF-8");
+		
+		
+		// DEBUGGING: Check the contents of the PreviousMethodDeclaration:
+		for (MethodDeclaration m : prevMethodDeclarations) {
+			out.write("Contents of prevMethodDeclarations");
+			out.write("\t" + m.getName());
+		}
+		
+		// This is an exhaustive list of all the classes that exist in the project.
+		List<String> projectClasses = generateProjectClassNames(wrapperMap);
 
 		// Current AST that represents the same AST in the single wrapper.
 		// Grab the same wrapper from wrapperMap using the sourceLoc as the key.
@@ -287,6 +306,12 @@ public class ASTExplorer {
 		if (currWrapper != null) {
 			// Since we found a wrapper with the exact same sourceLoc, get all the MethodDeclaration from currWrapper.
 			currMethodDeclarations = getMethodDeclarations(currWrapper);
+			
+			// DEBUGGING: Check the contents of the CurrentMethodDeclaration:
+			for (MethodDeclaration m : prevMethodDeclarations) {
+				out.write("Contents of currMethodDeclarations");
+				out.write("\t" + m.getName());
+			}
 
 			// Go through each line and check it against the prevMethodDeclarations list to figure out which MethodDeclaration the line is part of.
 			for (Integer lineNumber : lineNumbers) {
@@ -345,7 +370,7 @@ public class ASTExplorer {
 
 								// To figure out if the object is part of the project, we need to know what class type it is.
 								// To do this, we have to get all the classes available in this project first.
-								List<String> projectClasses = generateProjectClassNames(wrapperMap);
+								// Note: This was done up above before the loops.
 
 								// Now that we have all the names of the classes in the project, we can filter the variableDetails list to only contain variableTypes that are part of the project.
 								List<VariableDetails> projectVariables = new ArrayList<VariableDetails>();
@@ -358,6 +383,13 @@ public class ASTExplorer {
 										projectVariables.add(variableDetail);
 									}
 								}
+								
+								// DEBUGGING: Check the contents of the ProjectVariables.
+//								for (VariableDetails d : projectVariables) {
+//									out.write("Contents of projectVariables for " + methodInvocationDetail.getMethodName() + " under " + methodDeclaration.getName() + ": ");
+//									out.write("\tType: " + d.getVariableType());
+//									out.write("\tName: " + d.getVariableName());
+//								}
 
 								// Now that we only have the variableTypes that we care about (the ones that are part of this project), we now filter the MethodInvocations for the same reason.
 								// Get rid of all the MethodInvocations with objectName not being part of the variableTypes we care about.
@@ -405,7 +437,7 @@ public class ASTExplorer {
 											// If the MethodDeclaration's name matched the methodName we got from the MethodInvocation, we have found the MethodDeclaration we are looking for.
 											// Otherwise, we just move on to the next method
 											// Note: Currently, this will be only matching the names so if there are two methods with the same name but different parameters, this will just match with whatever comes first.
-											if (method.getName().toString().equals(methodName)) {
+											if (method.getName().toString().equals(methodName) && methodInvocationDetail.getMethodInvocation().arguments().size() == method.parameters().size()) {
 												// In a perfect world, at some point, we will always reach this part of the code.
 												// This is because we already know that the method exists in the same source code we are working on based off the fact that objectName is null.
 												methodBodyInvocations.add(generateMethod(method, relatedWrapper));
@@ -441,7 +473,40 @@ public class ASTExplorer {
 				foundMethods.put(method, null);
 			}
 		}
+		
+		// DEBUGGING: Check the contents of foundMethods.
+		out.write("Contents of foundMethods:");
+		for (Method method : foundMethods.keySet()) {
+			out.write("\tMethod KEY Info:");
+			out.write("\tID: " + method.getId());
+			out.write("\tPackage Name: " + method.getPackageName());
+			out.write("\tClass Name: " + method.getClassName());
+			out.write("\tMethod Name: " + method.getName());
+			out.write("\tParameters: " + method.getPackageName());
+			out.write("\tLines: " + method.getStartLine() + " - " + method.getEndLine());
+			out.write("\n");
+			
+			Set<Method> contents = foundMethods.get(method);
+			if (contents != null) {
+				for (Method methodContent : contents) {
+					out.write("\t\tMethod VALUE Info:");
+					out.write("\t\t\tID: " + methodContent.getId());
+					out.write("\t\t\tPackage Name: " + methodContent.getPackageName());
+					out.write("\t\t\tClass Name: " + methodContent.getClassName());
+					out.write("\t\t\tMethod Name: " + methodContent.getName());
+					out.write("\t\t\tParameters: " + methodContent.getPackageName());
+					out.write("\t\t\tLines: " + methodContent.getStartLine() + " - " + methodContent.getEndLine());
+					out.write("\n");
+				}
+			} else {
+				out.write("\t\tMethod VALUE Info:");
+				out.write("\t\t\tNULL");
+			}
+			
+			foundMethods.get(method);
+		}
 
+		out.close();
 		return foundMethods;
 	}
 
