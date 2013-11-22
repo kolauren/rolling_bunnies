@@ -211,7 +211,9 @@ public class ChangeImpactGraphGenerator {
 		if(null == previousAST && null == currentAST && futurePreviousAST != null)
 			return;
 
-		previousAST.setSourceLoc(newFileName);
+		//file was new in previous commit
+		if(previousAST != null)
+			previousAST.setSourceLoc(newFileName);
 		currentAST.setSourceLoc(newFileName);
 
 		previousASTs.put(newFileName, previousAST);
