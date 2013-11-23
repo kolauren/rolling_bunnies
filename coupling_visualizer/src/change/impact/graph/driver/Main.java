@@ -36,7 +36,7 @@ public class Main {
 		List<Commit> commits = p.getCommits();
 		
 		ChangeImpactGraphGenerator graphGenerator = new ChangeImpactGraphGenerator();
-		List<CommitGraph> commitGraphs = graphGenerator.generate(commits, 1);
+		List<CommitGraph> commitGraphs = graphGenerator.generate(commits, 1, 50);
 		
 		List<JsonCommitGraph> jsonCommitGraphs = JsonBuilder.build(commitGraphs);
 		

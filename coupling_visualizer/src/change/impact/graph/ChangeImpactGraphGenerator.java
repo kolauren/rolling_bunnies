@@ -41,14 +41,15 @@ public class ChangeImpactGraphGenerator {
 		backupBackupASTs = Maps.newHashMap();
 	}
 
-	public List<CommitGraph> generate(List<Commit> commits, int numCommits) throws MalformedURLException, IOException {
+	public List<CommitGraph> generate(List<Commit> commits, int combineNumCommits, int max) throws MalformedURLException, IOException {
+		int stopAtNum = commits.size() < max ? commits.size() : max;
 		List<CommitGraph> commitGraphs = Lists.newArrayList();
 
-		for(int i=0; i<commits.size(); i+=numCommits) {
+		for(int i=0; i<stopAtNum; i+=combineNumCommits) {
 			System.out.println(commits.get(i).getSha());
 			CommitGraph commitGraph = new CommitGraph();
 			Set<String> changedMethods = Sets.newHashSet();
-			for(int j=0; j<numCommits && i+j < commits.size(); j++) {
+			for(int j=0; j<combineNumCommits && i+j < stopAtNum; j++) {
 				Commit commit = commits.get(i+j);
 
 				if(commitGraph.getCommit_SHA() == null)
