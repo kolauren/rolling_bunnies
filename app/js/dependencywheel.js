@@ -16,7 +16,7 @@ DependencyWheel.prototype = {
 
   options: {
     selector: "", /* class or id of the element containing the dependency wheel */
-    radius: 250,
+    radius: 500,
     line: null, /* line function */
     bundle: null,
     impact_line: null
@@ -25,7 +25,7 @@ DependencyWheel.prototype = {
   opacity: 0.4,
   tooltip: null,
   opacity_increment: 0.1,
-  impact_mode: "multiline", // either "thickness" or "multiline"
+  impact_mode: "thickness", // either "thickness" or "multiline"
   d3data: null,
   nodeGlow: null,
   gradient: null,
@@ -39,10 +39,10 @@ DependencyWheel.prototype = {
     // create the main svg
     this.svg = d3.select(this.options.selector)
       .append("svg:svg")
-      .attr("width", (this.options.radius * 2.5))
-      .attr("height", (this.options.radius * 2.2))
+      .attr("width", (this.options.radius * 5))
+      .attr("height", (this.options.radius * 5))
       .append("svg:g")
-      .attr("transform", "translate(" + (this.options.radius * 1.25) + "," + (this.options.radius * 1.1) + ")")
+      .attr("transform", "translate(" + (this.options.radius * 2.5) + "," + (this.options.radius * 2.5) + ")")
       .call(this.nodeGlow)
       .call(this.gradient);
 
@@ -59,14 +59,14 @@ DependencyWheel.prototype = {
     this.options.bundle = d3.layout.bundle();
 
     this.options.line = d3.svg.line.radial()
-      .radius(function(d){ return d.y - 10; })
+      .radius(function(d){ return d.y; })
       .angle(function(d){ return d.x / 180 * Math.PI })
       .interpolate("bundle");
 
     this.options.impact_line = d3.svg.line.radial()
-      .radius(function(d){ return d.y - 10; })
+      .radius(function(d){ return d.y; })
       .angle(function(d){ return d.x / 180 * Math.PI })
-      .tension(0.1)
+      //.tension(-0.5)
       .interpolate("bundle");
 
     this.tooltip = d3.select("body").append("div")   
@@ -118,11 +118,11 @@ DependencyWheel.prototype = {
       
       d3.select("g").selectAll("path")
         .filter(".edge.target-" + t.method_id)
-        .style('opacity', 0.5);
+        .style('opacity', self.opacity);
       
       // de-highlight node labels
         $("." + t.class).siblings()
-            .css("opacity", 0.5);
+            .css("opacity", self.opacity);
       
   },
 
@@ -130,6 +130,10 @@ DependencyWheel.prototype = {
   draw: function(state, impact_edges) {
       var self = this;  
       var d3data = self.parseDataToD3(state, impact_edges);
+
+      console.log("d3data");
+
+      console.log(d3data);
 
       var splines = self.options.bundle(d3data.edges);
       var impact_splines = self.options.bundle(d3data.impact_edges);
@@ -158,7 +162,10 @@ DependencyWheel.prototype = {
           .attr("class", function(d) { return "impact_edge " + d.class; })
           .style("stroke", "#DDDDDD")
           .style("opacity", 0)
-          .attr("d", function(d, i) { return self.options.impact_line(impact_splines[i]); });
+          .attr("d", function(d, i) { 
+            //console.log(d);
+            return self.options.impact_line.tension(-d.count * 0.1)(impact_splines[i]); 
+          });
       }
 
       // this.svg.selectAll(".arrow")
@@ -173,24 +180,24 @@ DependencyWheel.prototype = {
         .data(d3data.nodes.filter(function(n) { return !n.children; }))
         .enter().append("svg:g")
         .attr("class", "node")
-        .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
-        .style("filter", "url(#nodeGlow)");
+        .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; });
+        //.style("filter", "url(#nodeGlow)");
 
       node.append("svg:circle")
         .attr("class", function(d) { return d.class })
-        .attr("r", 10)
+        .attr("r", 2)
         .style("fill", function(d) { return self.utils.getColour(d.hue, 70, 60); })
         .style("opacity", self.opacity);
       node.append("svg:text")
           .attr("dx", function(d) { return d.x < 180 ? 15 : -15; })
           .attr("dy", "0.4em")
           .attr("class", "node-label")
-          .attr("font-size", "15")
+          .attr("font-size", "8")
           .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
           .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
           .text(function(d) { return d.method_name; })
           .attr("fill","white")
-          .style("opacity", 0.7);
+          .style("opacity", self.opacity);
 
       
       //event handlers for nodes on mouse over
@@ -206,6 +213,7 @@ DependencyWheel.prototype = {
 
   animatePath: function(selector) {
     var path = this.svg.select(".animate" + selector);
+    if(!path || !(path.node())) return;
     var totalLength = path.node().getTotalLength();
     path.attr("stroke-dasharray", totalLength + " " + totalLength)
         .attr("stroke-dashoffset", totalLength)
@@ -235,12 +243,13 @@ DependencyWheel.prototype = {
             .transition()
             .delay(function(d,i) { return i * 10; })
             .duration(1200)
-            .style('stroke-width', function(d) { return Math.pow(3, e.count); })
-            .style('opacity', 0.5);
+            .style('stroke-width', function(d) { return e.count; })
+            .style("stroke", "url(#pathGradient)")
+            .style('opacity', 0.8);
       });
     } else {
         var line = d3.svg.line.radial()
-          .radius(function(d){ return d.y - 10; })
+          .radius(function(d){ return d.y; })
           .angle(function(d){ return d.x / 180 * Math.PI })
           .interpolate("bundle");
         commit.impact_edges.forEach(function(e, i) {
@@ -261,7 +270,7 @@ DependencyWheel.prototype = {
                 .attr("d", function(d, i) { 
                   var prev_spline = {};
                   var difference = 0;
-                  var tension_const = 0.1;
+                  var tension_const = 0.3;
                   for(var h = 0; h < splines[i].length; h++) {
                     if(splines[i][h].name !== "root") {
                       if(!$.isEmptyObject(prev_spline)) {
@@ -271,7 +280,7 @@ DependencyWheel.prototype = {
                     }
                   }
                   if(difference === 180) tension_const = 0.8;
-                  return line.tension(-(j + current_paths) * tension_const)(splines[i]);
+                  return line.tension((j + current_paths) * tension_const)(splines[i]);
                 });
             }
           }
@@ -288,7 +297,8 @@ DependencyWheel.prototype = {
       var d3_impact_edges = [];
 
       // creating equidistant color math
-      var increment = Math.ceil(360 / state.values().length);
+      var increment = 360 / state.values().length;
+      console.log(increment);
       for(var i = 0; i < 360 && colours.length <= state.values().length; i += increment) {
         colours.push(i);
       }
@@ -297,6 +307,7 @@ DependencyWheel.prototype = {
       state.forEach(function(k, n) {
           n.class = "node-" + n.method_id;
           n.hue = colours.pop();
+
       });
 
       // create the nodes from cluster
@@ -311,8 +322,10 @@ DependencyWheel.prototype = {
       nodes.forEach(function(n) {
         if(n.adjacent) {
           n.adjacent.forEach(function(a){
-            var css_class = "source-" + n.method_id + " target-" + a;
-            edges.push({ source: cluster_map[n.method_id], target: cluster_map[a], "class": css_class });
+            if(cluster_map[n.method_id] && cluster_map[a]) {
+              var css_class = "source-" + n.method_id + " target-" + a;
+              edges.push({ source: cluster_map[n.method_id], target: cluster_map[a], "class": css_class });
+            }
           });
         }
       });
@@ -321,7 +334,8 @@ DependencyWheel.prototype = {
         var source = impact_edges[key].source;
         var target = impact_edges[key].target;
         var css_class = "source-" + source + " target-" + target;
-        d3_impact_edges.push({ source: cluster_map[source], target: cluster_map[target], "class": css_class });
+        if(cluster_map[source] && cluster_map[target])
+          d3_impact_edges.push({ source: cluster_map[source], target: cluster_map[target], "class": css_class, "count": impact_edges[key].count});
       }
 
       self.d3data = {

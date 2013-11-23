@@ -64,7 +64,7 @@ button:hover, button.active {
 }
 
 .edge, .animate {
-  stroke-width: 2px;
+  stroke-width: 1px;
   fill:  none;
 }
 
