@@ -2,7 +2,6 @@ package change.impact.graph.commit;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +30,7 @@ public class CommitRetriever {
 	String repo;
 	String branch;
 
-	public CommitRetriever(String owner, String repo, String branch) {
-		//TODO: move args to properties file
-		String user = "pammil";
-		String password = "610fe6b39158d3ec2699cdb0bbd52bf24b9f3913";
-
+	public CommitRetriever(String user, String password, String owner, String repo, String branch) {
 		this.owner = owner;
 		this.repo = repo;
 		this.branch = branch;

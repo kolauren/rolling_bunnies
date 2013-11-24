@@ -29,16 +29,11 @@ public class ChangeImpactGraphGenerator {
 	//never removes a method once its added
 	private Map<String,Method> currentMethods;
 
-	private Map<String,ASTWrapper> backupASTs;
-	private Map<String,ASTWrapper> backupBackupASTs;
-
 	public ChangeImpactGraphGenerator() {
 		currentASTs = Maps.newHashMap();
 		previousASTs = Maps.newHashMap();
 		currentAdjacencyList = Maps.newHashMap();
 		currentMethods = Maps.newHashMap();
-		backupASTs = Maps.newHashMap();
-		backupBackupASTs = Maps.newHashMap();
 	}
 
 	public List<CommitGraph> generate(List<Commit> commits, int combineNumCommits, int max) throws MalformedURLException, IOException {
