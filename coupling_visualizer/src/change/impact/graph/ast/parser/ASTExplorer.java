@@ -2,12 +2,10 @@ package change.impact.graph.ast.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
@@ -667,6 +665,7 @@ public class ASTExplorer {
 
 		if (wrapper.getCompilationUnit().getPackage() != null) {
 			packageName = wrapper.getCompilationUnit().getPackage().getName().getFullyQualifiedName();
+			packageName = packageName.replace('.', '_');
 		}
 
 		String className = wrapper.getClassName();
@@ -710,15 +709,14 @@ public class ASTExplorer {
 	 */
 	private static String generateMethodID(String packageName, String className, String methodName, List<String> parameters) {
 		String id = "";
-		String delimiter = "-";
 
-		packageName = packageName == null ? "NOPACKAGENAME" : packageName;
-		className = className == null ? "NOCLASSNAME" : className;
+		packageName = packageName == null ? Method.NO_PACKAGE_NAME : packageName;
+		className = className == null ? Method.NO_CLASS_NAME : className;
 
-		id = packageName + delimiter + className + delimiter + methodName;
+		id = packageName + Method.DELIMITER + className + Method.DELIMITER + methodName;
 
 		for(String parameter : parameters) {
-			id += delimiter+parameter;
+			id += Method.DELIMITER + parameter;
 		}
 
 		return id;

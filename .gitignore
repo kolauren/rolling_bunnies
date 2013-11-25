@@ -45,6 +45,9 @@ local.properties
 *.war
 *.ear
 
+# 410 input #
+input/
+*.properties
 # 410 output #
 output/
 *Test.txt

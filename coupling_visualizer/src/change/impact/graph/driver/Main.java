@@ -2,9 +2,11 @@ package change.impact.graph.driver;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 
@@ -20,10 +22,21 @@ import com.google.gson.GsonBuilder;
 
 public class Main {
 	public static void main(String[] args) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		//fill in this info
-		String owner = "kolauren";
-		String repo = "rolling_bunnies";
-		String branch = "master";
+		//load properties from file
+		Properties properties = new Properties();
+		properties.load(new FileInputStream("input/github_config.properties"));
+
+		//fill in this info in the properties file
+		//github basic authentification:
+		String user = properties.getProperty("user");
+		String password = properties.getProperty("password");
+		//target repo:
+		String owner = properties.getProperty("owner"); 
+		String repo = properties.getProperty("repo");
+		String branch = properties.getProperty("branch");
+		//number of commits to combine in a timeframe and maximum number of commits to analyze
+		int combine = Integer.valueOf(properties.getProperty("combine"));
+		int max = Integer.valueOf(properties.getProperty("max"));
 		
 		//run the analysis
 		//it will save json to the output folder
@@ -32,11 +45,11 @@ public class Main {
 		File jsonPretty = new File("output/"+owner+"_"+repo+"/"+time+"/commits.json");
 		File jsonGraphs = new File("output/"+owner+"_"+repo+"/"+time+"/graphs.json");
 		
-		CommitRetriever p = new CommitRetriever(owner, repo, branch);
+		CommitRetriever p = new CommitRetriever(user, password, owner, repo, branch);
 		List<Commit> commits = p.getCommits();
 		
 		ChangeImpactGraphGenerator graphGenerator = new ChangeImpactGraphGenerator();
-		List<CommitGraph> commitGraphs = graphGenerator.generate(commits, 1, 50);
+		List<CommitGraph> commitGraphs = graphGenerator.generate(commits, combine, max);
 		
 		List<JsonCommitGraph> jsonCommitGraphs = JsonBuilder.build(commitGraphs);
 		
