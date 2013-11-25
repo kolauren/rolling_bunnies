@@ -3,6 +3,11 @@ package change.impact.graph;
 import java.util.List;
 
 public class Method {
+	public static final String NO_PACKAGE_NAME = "NOPACKAGENAME";
+	public static final String NO_CLASS_NAME = "NOCLASSNAME";
+	public static final String DELIMITER = "-";
+	public static final String PACKAGE_DELIMITER = "_";
+	
 	private String id;
 	private String packageName;
 	private String className;

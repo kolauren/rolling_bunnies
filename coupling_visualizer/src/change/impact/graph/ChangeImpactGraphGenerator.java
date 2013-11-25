@@ -47,10 +47,10 @@ public class ChangeImpactGraphGenerator {
 			for(int j=0; j<combineNumCommits && i+j < stopAtNum; j++) {
 				Commit commit = commits.get(i+j);
 
-				if(commitGraph.getCommit_SHA() == null)
-					commitGraph.setCommit_SHA(commit.getSha());
+				if(commitGraph.getCommitSHA() == null)
+					commitGraph.setCommitSHA(commit.getSha());
 				else
-					commitGraph.setCommit_SHA(commitGraph.getCommit_SHA()+"_"+commit.getSha());
+					commitGraph.setCommitSHA(commitGraph.getCommitSHA()+"_"+commit.getSha());
 
 				changedMethods.addAll(updateState(commit));
 			}
@@ -61,7 +61,6 @@ public class ChangeImpactGraphGenerator {
 	}
 
 	Set<String> updateState(Commit commit) throws MalformedURLException, IOException {
-		updateNewProjectName(commit);
 		updateASTs(commit);
 		Set<String> changedMethods = updateCurrentAdjacencyListAndMethods(commit);
 		return changedMethods;
@@ -80,7 +79,6 @@ public class ChangeImpactGraphGenerator {
 
 			frontier.add(rootID);
 			frontierSet.add(rootID);
-
 
 			//BFS
 			while(!frontier.isEmpty()) {
@@ -164,6 +162,12 @@ public class ChangeImpactGraphGenerator {
 	}
 
 	private void updateASTs(Commit commit) throws MalformedURLException, IOException {
+		//update renamed and moved files (ASTs are keyed by file path)
+		for(String newFileName : commit.getRenamedJavaFiles()) {
+			String oldFileName = commit.getOldFileName(newFileName);
+			updateFilePath(newFileName, oldFileName);
+		}
+		
 		//add new and modified ASTs
 		Set<String> addedModifiedRenamed = Sets.newHashSet();
 		addedModifiedRenamed.addAll(commit.getAddedJavaFiles());
@@ -188,15 +192,7 @@ public class ChangeImpactGraphGenerator {
 		}
 	}
 
-	//updates ASTs with project directory change ONLY (no modified code)
-	private void updateNewProjectName(Commit commit) {
-		for(String newFileName : commit.getRenamedJavaFiles()) {
-			String oldFileName = commit.getOldFileName(newFileName);
-			updateNewProjectNameAST(newFileName, oldFileName);
-		}
-	}
-
-	private void updateNewProjectNameAST(String newFileName, String oldFileName) {
+	private void updateFilePath(String newFileName, String oldFileName) {
 		ASTWrapper previousAST = previousASTs.get(oldFileName);
 		ASTWrapper currentAST = currentASTs.get(oldFileName);
 
@@ -249,9 +245,8 @@ public class ChangeImpactGraphGenerator {
 			ASTWrapper previousAST = previousASTs.get(newFileName);
 			
 			//if null, that means merge, and the file was added in the other branch
-			if(previousAST == null) {
+			if(previousAST == null)
 				removedLines.clear();
-			}
 			
 			if(!removedLines.isEmpty())
 				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(removedLineNumbers, currentASTs, previousAST)); 
@@ -299,10 +294,11 @@ public class ChangeImpactGraphGenerator {
 		String oldPackageName = m.group("packageName");
 		if(oldPackageName != null) {
 			oldPackageName = oldPackageName.substring(0 , oldPackageName.length()-1);
-			oldPackageName = oldPackageName.replace("/", ".");
+			oldPackageName = oldPackageName.replace("/", Method.PACKAGE_DELIMITER);
+		} else {
+			oldPackageName = Method.NO_PACKAGE_NAME;
 		}
-		else
-			oldPackageName = "NOPACKAGENAME";
+
 		String oldClassName = m.group("className");
 
 		m = p.matcher(newFileName);
@@ -311,15 +307,15 @@ public class ChangeImpactGraphGenerator {
 		String newPackageName = m.group("packageName");
 		if(newPackageName != null) {
 			newPackageName = newPackageName.substring(0, newPackageName.length()-1);
-			newPackageName = newPackageName.replace("/", ".");
+			newPackageName = newPackageName.replace("/", Method.PACKAGE_DELIMITER);
+		} else {
+			newPackageName = Method.NO_PACKAGE_NAME;
 		}
-		else
-			newPackageName = "NOPACKAGENAME";
+
 		String newClassName = m.group("className");
 
-		String delimiter = "-";
-		String oldIDpart = oldPackageName+delimiter+oldClassName;
-		String newIDpart = newPackageName+delimiter+newClassName;
+		String oldIDpart = oldPackageName+Method.DELIMITER+oldClassName;
+		String newIDpart = newPackageName+Method.DELIMITER+newClassName;
 
 		//TODO: this should be an object
 		return new String[]{ oldIDpart, newIDpart };
@@ -356,10 +352,9 @@ public class ChangeImpactGraphGenerator {
 		String[] idParts = generateIDreplacementParts(newFileName, oldFileName);
 		String oldIDpart = idParts[0];
 		String newIDpart = idParts[1];
-		String delimiter = "-";
 		
-		String newPackageName = newIDpart.split(delimiter)[0];
-		String newClassName = newIDpart.split(delimiter)[1];
+		String newPackageName = newIDpart.split(Method.DELIMITER)[0];
+		String newClassName = newIDpart.split(Method.DELIMITER)[1];
 		
 		Map<String, Method> newMethodList = Maps.newHashMap();
 		for(String id : currentMethods.keySet()) {

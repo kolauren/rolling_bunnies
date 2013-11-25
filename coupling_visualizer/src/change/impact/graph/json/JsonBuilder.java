@@ -16,7 +16,7 @@ public class JsonBuilder {
 			JsonCommitGraph jcg = new JsonCommitGraph();
 			jcgs.add(jcg);
 
-			jcg.commit_SHA = commitGraph.getCommit_SHA();
+			jcg.commit_SHA = commitGraph.getCommitSHA();
 
 			for(ChangeImpactGraph cig : commitGraph.getGraphs()) {
 				JsonChangeImpactGraph jcig = new JsonChangeImpactGraph();
