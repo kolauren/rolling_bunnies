@@ -85,12 +85,6 @@ DependencyWheel.prototype = {
       // highlight node labels
         $("." + t.class).siblings()
             .css("opacity", 1);
-        
-      // // Show tool tip with class name
-      //   this.tooltip.transition().duration(200).style("opacity", .9);      
-      //   this.tooltip.html(t.name)  
-      //     .style("left", (d3.event.pageX) + "px")     
-      //     .style("top", (d3.event.pageY - 50) + "px");
       
       // Search for dependencies connected to this node and thicken dependencies
       d3.select("g").selectAll("path")
@@ -130,10 +124,6 @@ DependencyWheel.prototype = {
   draw: function(state, impact_edges) {
       var self = this;  
       var d3data = self.parseDataToD3(state, impact_edges);
-
-      console.log("d3data");
-
-      console.log(d3data);
 
       var splines = self.options.bundle(d3data.edges);
       var impact_splines = self.options.bundle(d3data.impact_edges);
@@ -204,11 +194,6 @@ DependencyWheel.prototype = {
       d3.selectAll("svg").selectAll("circle")
         .on("mouseover", function(t) { self.classOver(t) })
         .on("mouseout", function(t) { self.classOut(t) });
-      
-      // d3.selectAll("svg").selectAll("circle").append("div")
-      //   .attr("class", "tooltip")
-      //   .style("opacity", 0);
-      
   },
 
   animatePath: function(selector) {
