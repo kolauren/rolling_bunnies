@@ -19,7 +19,7 @@ Animation.prototype = {
         slider: ""
     },
     commits: [],
-    interval: 2000,
+    interval: 200,
     timer: null,
     dependencyWheel: null,
     frame: 0,

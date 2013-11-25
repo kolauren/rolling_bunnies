@@ -189,7 +189,7 @@ DependencyWheel.prototype = {
         .style("fill", function(d) { return self.utils.getColour(d.hue, 70, 60); })
         .style("opacity", self.opacity);
       node.append("svg:text")
-          .attr("dx", function(d) { return d.x < 180 ? 15 : -15; })
+          .attr("dx", function(d) { return d.x < 180 ? 5 : -5; })
           .attr("dy", "0.4em")
           .attr("class", "node-label")
           .attr("font-size", "8")
@@ -218,7 +218,7 @@ DependencyWheel.prototype = {
     path.attr("stroke-dasharray", totalLength + " " + totalLength)
         .attr("stroke-dashoffset", totalLength)
         .transition()
-        .duration(1000)
+        .duration(50)
         .ease("linear")
         .attr("stroke-dashoffset", 0)
         .style("opacity", 1);
@@ -230,7 +230,7 @@ DependencyWheel.prototype = {
       self.svg.selectAll(".node-" + n.method_id)
         .transition()
         .delay(function(d,i) { return i * 10; })
-        .duration(1200)
+        .duration(50)
         .style('opacity', 1);
     });
 
@@ -242,7 +242,7 @@ DependencyWheel.prototype = {
           self.svg.selectAll(".impact_edge.source-" + e.source + ".target-" + e.target)
             .transition()
             .delay(function(d,i) { return i * 10; })
-            .duration(1200)
+            .duration(50)
             .style('stroke-width', function(d) { return e.count; })
             .style("stroke", "url(#pathGradient)")
             .style('opacity', 0.8);

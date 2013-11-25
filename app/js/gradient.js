@@ -24,7 +24,7 @@ function gradient(url) {
          
     gradient.append("stop")
     .attr("offset", "100%")
-    .attr("stop-color", "blue")
+    .attr("stop-color", "yellow")
     .attr("stop-opacity", 1);
   }
  
