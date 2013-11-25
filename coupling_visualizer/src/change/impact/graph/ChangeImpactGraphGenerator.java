@@ -24,15 +24,12 @@ public class ChangeImpactGraphGenerator {
 	private Map<String,ASTWrapper> currentFiles;
 	private Map<String,ASTWrapper> previousFiles;
 	//method id -> [method_id]
-	private Map<String,Set<String>> currentMethodDependencies;
-	//method id -> Method
-	private Map<String,Method> currentMethods;
+	private Map<Method,Set<Method>> currentMethodDependencies;
 
 	public ChangeImpactGraphGenerator() {
 		currentFiles = Maps.newHashMap();
 		previousFiles = Maps.newHashMap();
 		currentMethodDependencies = Maps.newHashMap();
-		currentMethods = Maps.newHashMap();
 	}
 
 	public List<CommitGraph> generate(List<Commit> commits, int combineNumCommits, int max) throws MalformedURLException, IOException {
@@ -42,7 +39,7 @@ public class ChangeImpactGraphGenerator {
 		for(int i=0; i<stopAtNum; i+=combineNumCommits) {
 			System.out.println(commits.get(i).getSha());
 			CommitGraph commitGraph = new CommitGraph();
-			Set<String> changedMethods = Sets.newHashSet();
+			Set<Method> changedMethods = Sets.newHashSet();
 			for(int j=0; j<combineNumCommits && i+j < stopAtNum; j++) {
 				Commit commit = commits.get(i+j);
 
@@ -59,52 +56,52 @@ public class ChangeImpactGraphGenerator {
 		return commitGraphs;
 	}
 
-	private Set<String> updateState(Commit commit) throws MalformedURLException, IOException {
+	private Set<Method> updateState(Commit commit) throws MalformedURLException, IOException {
 		updateFiles(commit);
-		Set<String> changedMethods = updateCurrentMethodDependenciesListAndMethods(commit);
+		Set<Method> changedMethods = updateCurrentMethodDependencies(commit);
 		return changedMethods;
 	}
 
-	private Collection<ChangeImpactGraph> generateGraphsForChangedMethods(Set<String> changedMethods) {
+	private Collection<ChangeImpactGraph> generateGraphsForChangedMethods(Set<Method> changedMethods) {
 		Collection<ChangeImpactGraph> graphs = Lists.newArrayList();
 
 		//generate dependency graph for each method
-		for(String rootID : changedMethods) {
+		for(Method root : changedMethods) {
 			ChangeImpactGraph graph = new ChangeImpactGraph();
-			Queue<String> frontier = Queues.newPriorityQueue();
-			Set<String> frontierSet = Sets.newHashSet();
+			Queue<Method> frontier = Queues.newArrayDeque();
+			Set<Method> frontierSet = Sets.newHashSet();
 			//cycle check
-			Set<String> visited = Sets.newHashSet();
+			Set<Method> visited = Sets.newHashSet();
 
-			frontier.add(rootID);
-			frontierSet.add(rootID);
+			frontier.add(root);
+			frontierSet.add(root);
 
 			//BFS
 			while(!frontier.isEmpty()) {
-				String nodeID = frontier.poll();
-				frontierSet.remove(nodeID);
+				Method method = frontier.poll();
+				frontierSet.remove(method);
 
-				CommitMethod node = new CommitMethod();
-				node.setMethod(currentMethods.get(nodeID));
+				CommitMethod commitMethod = new CommitMethod();
+				commitMethod.setMethod(method);
 
-				if(changedMethods.contains(nodeID)) {
-					node.setStatus(ChangeStatus.CHANGED);
+				if(changedMethods.contains(method)) {
+					commitMethod.setStatus(ChangeStatus.CHANGED);
 				} else {
-					node.setStatus(ChangeStatus.UNAFFECTED);
+					commitMethod.setStatus(ChangeStatus.UNAFFECTED);
 				}
 
 				if(visited.isEmpty())
-					graph.setRoot(node);
+					graph.setRoot(commitMethod);
 
-				Set<String> adjacentNodes = currentMethodDependencies.get(nodeID);
-				graph.setAdjacentNodes(node, adjacentNodes);
+				Set<Method> dependencies = currentMethodDependencies.get(method);
+				graph.setAdjacentNodes(commitMethod, filterMethodIDs(dependencies));
 
-				visited.add(nodeID);
+				visited.add(method);
 
-				for(String adjacentNode : adjacentNodes) {
-					if(!frontierSet.contains(adjacentNode) && !visited.contains(adjacentNode)) {
-						frontier.add(adjacentNode);
-						frontierSet.add(adjacentNode);
+				for(Method dependency : dependencies) {
+					if(!frontierSet.contains(dependency) && !visited.contains(dependency)) {
+						frontier.add(dependency);
+						frontierSet.add(dependency);
 					}
 				}
 			}
@@ -135,29 +132,13 @@ public class ChangeImpactGraphGenerator {
 			}
 		}
 	}
-
-	//store method ids only
-	private Set<String> filterID(Set<Method> methods) {
-		//the method was removed so it has a null method invocation set
-		if(methods == null)
-			return null;
-
-		Set<String> ids = Sets.newHashSet();
+	
+	private Set<String> filterMethodIDs(Set<Method> methods) {
+		Set<String> methodIDs = Sets.newHashSet();
 		for(Method method : methods) {
-			boolean unique = ids.add(method.getId());
-			assert(unique);
+			methodIDs.add(method.getId());
 		}
-		return ids;
-	}
-
-	private Map<String,Set<String>> filterID(Map<Method, Set<Method>> methodMap) {
-		Map<String,Set<String>> idMap = Maps.newHashMap();
-
-		for(Method m : methodMap.keySet()) {
-			idMap.put(m.getId(), filterID(methodMap.get(m)));
-		}
-
-		return idMap;
+		return methodIDs;
 	}
 
 	private void updateFiles(Commit commit) throws MalformedURLException, IOException {
@@ -216,18 +197,19 @@ public class ChangeImpactGraphGenerator {
 
 	// updates the currentAdjacencyList and currentMethods
 	// returns a list of changed methods
-	private Set<String> updateCurrentMethodDependenciesListAndMethods(Commit commit) throws IOException {
-		Set<String> changedMethods = Sets.newHashSet();
+	private Set<Method> updateCurrentMethodDependencies(Commit commit) throws IOException {
+
+		Set<Method> changedMethods = Sets.newHashSet();
+
 		for(String newFileName : commit.getDiffs().keySet()) {
 			// if file was renamed, update method ID's in the adjacency list
 			// and method list
 			if(commit.isFileRenamed(newFileName)) {
 				String oldFileName = commit.getOldFileName(newFileName);
-				updateIDsInMethodDependenciesList(newFileName, oldFileName);
-				updateMethodIDsInMethodList(newFileName, oldFileName);
+				updateMethodsInMethodDependencies(newFileName, oldFileName);
 			}
 			// find modified modified methods mapped to a set of its method invocations
-			Map<Method, Set<Method>> adjacentNodes = Maps.newHashMap();
+			Map<Method, Set<Method>> changedMethodDependencies = Maps.newHashMap();
 
 			// map added lines to modified methods -> {method invocations}
 			Map<Integer,String> addedLines = commit.getDiff(newFileName).getAddedLines();
@@ -235,7 +217,7 @@ public class ChangeImpactGraphGenerator {
 			addedLineNumbers.addAll(addedLines.keySet());
 			ASTWrapper currentFile = currentFiles.get(newFileName);
 			if(!addedLineNumbers.isEmpty())
-				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(addedLineNumbers, currentFiles, currentFile));
+				changedMethodDependencies.putAll(ASTExplorer.getMethodInvocations(addedLineNumbers, currentFiles, currentFile));
 
 			// map removed lines to modified methods -> {method invocations}
 			Map<Integer,String> removedLines = commit.getDiff(newFileName).getRemovedLines();
@@ -248,33 +230,23 @@ public class ChangeImpactGraphGenerator {
 				removedLines.clear();
 			
 			if(!removedLines.isEmpty())
-				adjacentNodes.putAll(ASTExplorer.getMethodInvocations(removedLineNumbers, currentFiles, previousFile)); 
+				changedMethodDependencies.putAll(ASTExplorer.getMethodInvocations(removedLineNumbers, currentFiles, previousFile)); 
 
-			// update methods
-			updateCurrentMethods(adjacentNodes);
+			// method -> null		method was removed or renamed (can't tell)
+			// method -> {}			method was modified but has no method invocations in body
+			// method -> {...}		method was modified and contains method invocations in body
 
-			// update the adjacency list
-			Map<String, Set<String>> strAdjacentNodes = filterID(adjacentNodes);
-			
-			// method -> null
-			// means the method was deleted
-			Set<String> removedNodes = Sets.newHashSet();
-			for(String node : strAdjacentNodes.keySet()) {
-				Set<String> strAdjacentNodesSet = strAdjacentNodes.get(node);
-				if(strAdjacentNodesSet == null) 
-					removedNodes.add(node);
-				else 
-					currentMethodDependencies.put(node, strAdjacentNodesSet);
-			}
-
-			//clean up removed methods in adjacency list and method list
-			removeNodesFromMethodDependencies(removedNodes);
-			removeMethods(removedNodes);
-
-			//list all the modified methods; deleted aren't counted
-			for(String methodID : strAdjacentNodes.keySet()) {
-				if(strAdjacentNodes.get(methodID) != null) {
-					changedMethods.add(methodID);
+			for(Method changedMethod : changedMethodDependencies.keySet()) {
+				Set<Method> changedDependencies = changedMethodDependencies.get(changedMethod);
+				if(changedDependencies == null) {
+					currentMethodDependencies.remove(changedMethod);
+					for(Method method : currentMethodDependencies.keySet()) {
+						currentMethodDependencies.get(method).remove(changedMethod);
+					}
+				}
+				else { 
+					currentMethodDependencies.put(changedMethod, changedDependencies);
+					changedMethods.add(changedMethod);
 				}
 			}
 		}
@@ -320,92 +292,36 @@ public class ChangeImpactGraphGenerator {
 		return new String[]{ oldIDpart, newIDpart };
 	}
 	
-	private void updateIDsInMethodDependenciesList(String newFileName, String oldFileName) {
-		String[] idParts = generateIDreplacementParts(newFileName, oldFileName);
-		String oldIDpart = idParts[0];
-		String newIDpart = idParts[1];
-	
-		Map<String, Set<String>> newAdjacencyList = Maps.newHashMap();
-
-		for(String node : currentMethodDependencies.keySet()) {
-			//strings are immutable 
-			Set<String> newAdjacentNodes = Sets.newHashSet();
-			for(String adjacentNode : currentMethodDependencies.get(node)) {
-				// this should match the way method ids are generated by ASTExplorer
-				if(adjacentNode.contains(oldIDpart)) {
-					String newID = adjacentNode.replace(oldIDpart, newIDpart);
-					newAdjacentNodes.add(newID);
-				} else {
-					newAdjacentNodes.add(adjacentNode);
-				}
-			}
-
-			String newIDnode = node.replace(oldIDpart, newIDpart);
-			newAdjacencyList.put(newIDnode, newAdjacentNodes);
-		}
-		
-		currentMethodDependencies = newAdjacencyList;
-	}
-	
-	private void updateMethodIDsInMethodList(String newFileName, String oldFileName) {
+	private void updateMethodsInMethodDependencies(String newFileName, String oldFileName) {
 		String[] idParts = generateIDreplacementParts(newFileName, oldFileName);
 		String oldIDpart = idParts[0];
 		String newIDpart = idParts[1];
 		
 		String newPackageName = newIDpart.split(Method.DELIMITER)[0];
 		String newClassName = newIDpart.split(Method.DELIMITER)[1];
-		
-		Map<String, Method> newMethodList = Maps.newHashMap();
-		for(String id : currentMethods.keySet()) {
-			Method m = currentMethods.get(id);
-
-			if(id.contains(oldIDpart)) {
-				m.setPackageName(newPackageName);
-				m.setClassName(newClassName);
-				
-				String newID = id.replace(oldIDpart, newIDpart);
-				m.setId(newID);
-				
-				newMethodList.put(newID, m);
-			} else {
-				newMethodList.put(id, m);
-			}
-		}
-		
-		currentMethods = newMethodList;
-	}
-
-	// method -> null		method was removed or renamed (can't tell)
-	// method -> {}			method was modified but has no method invocations in body
-	// method -> {...}		method was modified and contains method invocations in body
-	private void updateCurrentMethods(Map<Method, Set<Method>> methodMap) {
-		for(Method node : methodMap.keySet()) {
-			Set<Method> adjacentNodes = methodMap.get(node);
-			if(adjacentNodes == null) {
-				currentMethods.remove(node.getId());
-			} else {
-				currentMethods.put(node.getId(), node);
-				for(Method adjacentNode : methodMap.get(node)) {
-					currentMethods.put(adjacentNode.getId(), adjacentNode);
-				}
-			}
-		}
-	}
-
-	//removes the node from the method dependencies list
-	private void removeNodesFromMethodDependencies(Set<String> removedNodes) {
-		for(String removedNode : removedNodes) {
-			for(String node : currentMethodDependencies.keySet()) {
-				Set<String> adjacentNodes = currentMethodDependencies.get(node);
-				adjacentNodes.remove(removedNode);
-			}
-			currentMethodDependencies.remove(removedNode);
-		}
-	}
 	
-	private void removeMethods(Set<String> removedNodes) {
-		for(String id : removedNodes) {
-			currentMethods.remove(id);
+		//the keys are immutable so make a new map
+		Map<Method, Set<Method>> renamedMethodDependencies = Maps.newHashMap();
+		for(Method method : currentMethodDependencies.keySet()) {
+			Set<Method> dependencies = currentMethodDependencies.get(method);
+			for(Method dependency : dependencies) {
+				// this should match the way method ids are generated by ASTExplorer
+				if(dependency.getId().contains(oldIDpart)) {
+					String newID = dependency.getId().replace(oldIDpart, newIDpart);
+					dependency.setId(newID);
+					dependency.setClassName(newClassName);
+					dependency.setPackageName(newPackageName);
+				} 
+			}
+			
+			if(method.getId().contains(oldIDpart)) {
+				String newID = method.getId().replace(oldIDpart, newIDpart);
+				method.setId(newID);
+				method.setClassName(newClassName);
+				method.setPackageName(newPackageName);
+			}
+			renamedMethodDependencies.put(method, dependencies);
 		}
+		currentMethodDependencies = renamedMethodDependencies;
 	}
 }

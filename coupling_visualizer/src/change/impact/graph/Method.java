@@ -84,7 +84,12 @@ public class Method {
 	
 	@Override
 	public boolean equals(Object method) {
-		return method instanceof Method && ((Method) method).getId().equals(id);
+		if(method == null)
+			return false;
+		if(!(method instanceof Method))
+			return false;
+		
+		return ((Method) method).getId().equals(id);
 	}
 	
 	@Override
