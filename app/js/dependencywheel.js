@@ -42,7 +42,7 @@ DependencyWheel.prototype = {
       .attr("width", (this.options.radius * 5))
       .attr("height", (this.options.radius * 5))
       .append("svg:g")
-      .attr("transform", "translate(" + (this.options.radius + 500) + "," + (this.options.radius + 300) + ")")
+      .attr("transform", "translate(" + (this.options.radius + 500) + "," + (this.options.radius + 200) + ")")
       .call(this.nodeGlow)
       .call(this.gradient);
 
@@ -75,6 +75,7 @@ DependencyWheel.prototype = {
 
   },
     
+  // function for hovering over nodes
   classOver: function(t) {
       // highlight nodes
         d3.selectAll("g").selectAll("." + t.class)
@@ -86,7 +87,8 @@ DependencyWheel.prototype = {
         $("." + t.class).siblings()
             .css("opacity", 1);
       
-      // Search for dependencies connected to this node and thicken dependencies
+      // Search for dependencies connected
+      // to this node and highlight dependencies
       d3.select("g").selectAll("path")
         .filter(".edge.source-" + t.method_id)
         .style('opacity', 1);
