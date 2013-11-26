@@ -13,6 +13,8 @@ body {
 #main {
   margin-top: 2%;
   text-align: center;
+  width: 2000px;
+  height: 2000px;
 }
 
 #graph_title {

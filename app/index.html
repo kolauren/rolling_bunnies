@@ -36,10 +36,17 @@
     <script src="js/dependencywheel.js"></script>  
     <script src="js/animation.js"></script>  
     <script src="js/d3.slider.js"></script>
-    <script src="js/matrix.js"></script>
+    <script src="js/jquery.overscroll.js"></script>
     <script type="text/javascript">
     // store all global variables in globals
     var globals = globals || {};
+    
+    // for dragging so we can explore the big arse wheel    
+    $(document).ready(function(){
+        $("#main").overscroll();
+    });
+
+        
     globals.animation = new Animation({ selector: "#wheel", json: "graphs_rolling_bunnies.json", startButton: "#start", pauseButton: "#pause", slider: "#slider" });
         
    //var testMatrix = [[0,1,3],[3,0,1],[2,1,0]];

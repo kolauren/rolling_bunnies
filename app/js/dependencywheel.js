@@ -42,7 +42,7 @@ DependencyWheel.prototype = {
       .attr("width", (this.options.radius * 5))
       .attr("height", (this.options.radius * 5))
       .append("svg:g")
-      .attr("transform", "translate(" + (this.options.radius * 2.5) + "," + (this.options.radius * 2.5) + ")")
+      .attr("transform", "translate(" + (this.options.radius + 500) + "," + (this.options.radius + 300) + ")")
       .call(this.nodeGlow)
       .call(this.gradient);
 
