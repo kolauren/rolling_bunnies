@@ -9,7 +9,7 @@ Animation = function(options) {
 }
 
 Animation.prototype = {
-    utils: Utils.getInstance(),
+    processor: new CommitsProcessor(),
 
     options: {
         selector: "",
@@ -32,7 +32,7 @@ Animation.prototype = {
         var self = this;
         $(self.options.pauseButton).attr("disabled", true);
         
-        this.utils.processCommitData(self.options.json, function(commits, final_state, impact_edges){
+        this.processor.processCommitData(self.options.json, function(commits, final_state, impact_edges){
             console.log(commits);
             console.log(impact_edges);
             self.commits = commits;
