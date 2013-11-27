@@ -91,7 +91,8 @@ DependencyWheel.prototype = {
       
       // highlight node labels
         $("." + t.class).siblings()
-            .css("opacity", 1);
+            .css("opacity", 1)
+            .css("font-size", "16px");
       
       // Search for dependencies connected
       // to this node and highlight dependencies
@@ -101,8 +102,7 @@ DependencyWheel.prototype = {
       
       d3.select("g").selectAll("path")
         .filter(".edge.target-" + t.method_id)
-        .style('opacity', 1);
-      
+        .style('opacity', 1);  
   },
     
   classOut: function(t) {
@@ -124,11 +124,8 @@ DependencyWheel.prototype = {
       
       // de-highlight node labels
         $("." + t.class).siblings()
-            .css("opacity", self.opacity);
-      
-  },
-    
-  getGradientAngle: function(x1, x2) {
+            .css("opacity", self.opacity)
+        .css("font-size", "8px");
       
   },
 
@@ -209,8 +206,7 @@ DependencyWheel.prototype = {
           .text(function(d) { return d.method_name; })
           .attr("fill","white")
           .style("opacity", self.opacity);
-
-      
+ 
       //event handlers for nodes on mouse over
       d3.selectAll("svg").selectAll("circle")
         .on("mouseover", function(t) { self.classOver(t) })
@@ -252,7 +248,6 @@ DependencyWheel.prototype = {
             .delay(function(d,i) { return i * 10; })
             .duration(50)
             .style('stroke-width', function(d) { return e.count; })
-            //.style("stroke", "url(#pathGradient)")
             .style('opacity', 0.8);
       });
     } else {
