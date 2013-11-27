@@ -111,7 +111,6 @@ DependencyWheel.prototype = {
       d3.selectAll("g").selectAll("." + t.class)
         .style('opacity', self.opacity)
         .style('stroke-width', 0);
-      //this.tooltip.transition().duration(500).style("opacity", 0); 
       
       // de-highlight dependencies
       d3.select("g").selectAll("path")
@@ -160,15 +159,10 @@ DependencyWheel.prototype = {
           .data(d3data.impact_edges).enter().append("svg:path")
           .attr("class", function(d) { return "impact_edge " + d.class; })
         .style("stroke", function(d) {
-            //console.log("s-x: " + d.source.x);
-            //console.log("t-x: " + d.target.x);
             if((d.source.x >= 0 && d.source.x <= 45) || (d.source.x > 135 && d.source.x < 225) || (d.source.x > 315))
                 return "url(#pathGradient1)";
             else return "url(#pathGradient3)";
         })  
-        
-        
-        //.style("stroke", "url(#pathGradient)")
           .style("opacity", 0)
           .attr("d", function(d, i) { 
             console.log(d);
@@ -349,16 +343,5 @@ DependencyWheel.prototype = {
       };
 
       return self.d3data;
-  },
-
-  // returns a list of dependencies of given class
-  // helper function for parsing data
-  getDependencies: function(className, currentEdges){
-      var dependencies = [];
-      currentEdges.forEach(function (d){
-         if(d.target === className)
-             dependencies.push(d.source);
-      });
-      return dependencies;
   }
 };
