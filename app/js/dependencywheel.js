@@ -28,12 +28,15 @@ DependencyWheel.prototype = {
   impact_mode: "thickness", // either "thickness" or "multiline"
   d3data: null,
   nodeGlow: null,
-  gradient: null,
+  gradient: [],
 
   init: function(options) {
 
       this.nodeGlow = glow("nodeGlow").rgb("#7f7f7f").stdDeviation(3);
-      this.gradient = gradient("pathGradient");
+      this.gradient[0] = gradient("pathGradient0", 0, "yellow", "white");
+      this.gradient[1] = gradient("pathGradient1", 0, "white", "yellow");
+      this.gradient[2] = gradient("pathGradient2", 90, "yellow", "white");
+      this.gradient[3] = gradient("pathGradient3", 90, "white", "yellow");
       
       
     // create the main svg
@@ -44,7 +47,10 @@ DependencyWheel.prototype = {
       .append("svg:g")
       .attr("transform", "translate(" + (this.options.radius + 500) + "," + (this.options.radius + 200) + ")")
       .call(this.nodeGlow)
-      .call(this.gradient);
+      .call(this.gradient[0])
+      .call(this.gradient[1])
+      .call(this.gradient[2])
+      .call(this.gradient[3]);
 
     // create the wheel
     this.svg.append("svg:path")
@@ -121,6 +127,10 @@ DependencyWheel.prototype = {
             .css("opacity", self.opacity);
       
   },
+    
+  getGradientAngle: function(x1, x2) {
+      
+  },
 
   // Draws all the nodes and edges based on input data
   draw: function(state, impact_edges) {
@@ -152,10 +162,19 @@ DependencyWheel.prototype = {
         var impact_paths = self.svg.selectAll(self.options.selector)
           .data(d3data.impact_edges).enter().append("svg:path")
           .attr("class", function(d) { return "impact_edge " + d.class; })
-          .style("stroke", "#DDDDDD")
+        .style("stroke", function(d) {
+            //console.log("s-x: " + d.source.x);
+            //console.log("t-x: " + d.target.x);
+            if((d.source.x >= 0 && d.source.x <= 45) || (d.source.x > 135 && d.source.x < 225) || (d.source.x > 315))
+                return "url(#pathGradient1)";
+            else return "url(#pathGradient3)";
+        })  
+        
+        
+        //.style("stroke", "url(#pathGradient)")
           .style("opacity", 0)
           .attr("d", function(d, i) { 
-            //console.log(d);
+            console.log(d);
             return self.options.impact_line.tension(-d.count * 0.1)(impact_splines[i]); 
           });
       }
@@ -221,9 +240,11 @@ DependencyWheel.prototype = {
         .style('opacity', 1);
     });
 
+      
     commit.edges.forEach(function(e, i) {
       self.animatePath(".source-" + e.source + ".target-" + e.target);
     });
+      
     if(self.impact_mode === "thickness") {
       commit.impact_edges.forEach(function(e, i) {
           self.svg.selectAll(".impact_edge.source-" + e.source + ".target-" + e.target)
@@ -231,7 +252,7 @@ DependencyWheel.prototype = {
             .delay(function(d,i) { return i * 10; })
             .duration(50)
             .style('stroke-width', function(d) { return e.count; })
-            .style("stroke", "url(#pathGradient)")
+            //.style("stroke", "url(#pathGradient)")
             .style('opacity', 0.8);
       });
     } else {
@@ -251,7 +272,7 @@ DependencyWheel.prototype = {
                 .attr("class", function(d) { return "impact_edge source-" + e.source + " target-" + e.target; })
                 //.style("stroke", "#DDDDDD")
                 .style("fill", "none")
-                .style("stroke", "url(#pathGradient)")
+                .style("stroke", "url(#pathGradient0)")
                 .style("filter", "url(#nodeGlow)")
                 .style("opacity", 0.9)
                 .attr("d", function(d, i) { 

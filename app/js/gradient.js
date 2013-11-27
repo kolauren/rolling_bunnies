@@ -1,4 +1,4 @@
-function gradient(url) {
+function gradient(url, rotate, start, stop) {
  
   if (!arguments.length) {
     url = "gradient";
@@ -10,22 +10,20 @@ function gradient(url) {
       
    var gradient = defs.append("linearGradient")
     .attr("id", url)
-    .attr("x1", "50%")
-    .attr("y1", "50%")
-    .attr("x2", "100%")
-    .attr("y2", "50%")
+    .attr("gradientTransform", "rotate(" + rotate + ")")
     .attr("spreadMethod", "pad");
 
 
     gradient.append("stop")
         .attr("offset", "0%")
-        .attr("stop-color", "white")
+        .attr("stop-color", start)
         .attr("stop-opacity", 1);
          
     gradient.append("stop")
     .attr("offset", "100%")
-    .attr("stop-color", "yellow")
+    .attr("stop-color", stop)
     .attr("stop-opacity", 1);
+      
   }
  
  
